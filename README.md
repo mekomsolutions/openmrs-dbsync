@@ -1,5 +1,7 @@
-# Installation Guide For DB Sync
+# OpenMRS Database Synchronization
+Sender and Receiver applications to sync data between OpenMRS databases.
 
+## Table Of Contents
 1. [Introduction](#introduction)
 2. [Requirements](#requirements)
 3. [Assumptions](#assumptions)
@@ -15,11 +17,11 @@
 
 ## Introduction
 This installation guide is for those intending to set up database synchronization between 2 OpenMRS databases.
-Currently, only one-way DB sync is supported therefore, you can have a receiver application to write to the destination 
-database and one or more sender applications to read from the source database(s). You would also need a JMS server to 
+Currently, only one-way DB sync is supported therefore, you can have a receiver application to write to the destination
+database and one or more sender applications to read from the source database(s). You would also need a JMS server to
 provide a way for a sender and receiver applications to exchange sync data.
 
-Please try to make sure you install the required applications in the order laid out in the installation section i.e. 
+Please try to make sure you install the required applications in the order laid out in the installation section i.e.
 JMS Server, receiver and then sender(s).
 
 ## Requirements
@@ -31,39 +33,39 @@ JMS Server, receiver and then sender(s).
 ## Assumptions
 
 #### One-way data sync
-Currently, the receiver application doesn't sync data back to a sender but in future release support for two-way sync 
+Currently, the receiver application doesn't sync data back to a sender but in future release support for two-way sync
 will be supported.
 
 #### OpenMRS Instances are already installed
-This guide doesn't cover installation of the sender and receiver OpenMRS instances and databases, if not, please refer 
+This guide doesn't cover installation of the sender and receiver OpenMRS instances and databases, if not, please refer
 to the [OpenMRS](https://openmrs.org) documentation.
 
 #### Shared JMS server
-Both the sender and receiver sync applications have access to a single JSM instance in order for them to be able to 
+Both the sender and receiver sync applications have access to a single JSM instance in order for them to be able to
 exchange sync data.
 
 #### Only Patient and clinical data is synced
-Currently, the only data that is synchronized is patient records and their clinical data, assuming metadata is already 
+Currently, the only data that is synchronized is patient records and their clinical data, assuming metadata is already
 centrally managed using the available metadata sharing tools.
 
 #### Receiver not a POC system (Point Of Care)
-The receiving OpenMRS system isn't a POC system used to manage patient records and their clinical data that is 
-synced from other sites, there is some technical reasons behind this, the changes you make to records received from 
-other sites at the receiver site can always be overwritten by future sync attempts for the same record. Because of 
-this, there is a built-in mechanism to minimise this happening, it checks if a record was edited on the receiver side 
+The receiving OpenMRS system isn't a POC system used to manage patient records and their clinical data that is
+synced from other sites, there is some technical reasons behind this, the changes you make to records received from
+other sites at the receiver site can always be overwritten by future sync attempts for the same record. Because of
+this, there is a built-in mechanism to minimise this happening, it checks if a record was edited on the receiver side
 since the last time it was synced and if it was, the application won't sync incoming data for the same record and will
 move the event to a conflict queue, it's until you remove the item from the conflict queue that the entity gets synced
-ever again, this implies you will need to periodically monitor this queue to ensure it's empty and also you will have 
+ever again, this implies you will need to periodically monitor this queue to ensure it's empty and also you will have
 to manually edit the record with conflicts in the receiver DB to apply the changes.
 
-With that said, if you wish to use the receiver OpenMRS instance as a POC system, there has to be a mechanism to ensure 
-its users only have access to patients and their clinical data entered at the receiver site, this can be achieved using 
-by installing the [datafilter](https://github.com/openmrs/openmrs-module-datafilter) module, documentation can be found 
-[here](https://wiki.openmrs.org/x/6QBiDQ). If your sender sites are syncing to a receiver database used for purposes of 
+With that said, if you wish to use the receiver OpenMRS instance as a POC system, there has to be a mechanism to ensure
+its users only have access to patients and their clinical data entered at the receiver site, this can be achieved using
+by installing the [datafilter](https://github.com/openmrs/openmrs-module-datafilter) module, documentation can be found
+[here](https://wiki.openmrs.org/x/6QBiDQ). If your sender sites are syncing to a receiver database used for purposes of
 centralizing all site data in a single OpenMRS database. This is typical in cases where an organization wishes to have a
 single centralized database with all remote sites syncing to a single centralized database and they still want to have a
-POC instance at the central location, we highly recommend that they set up a separate OpenMRS instance with its own 
-database and sender sync application so that it also sync to the centralized database that way the centralized database 
+POC instance at the central location, we highly recommend that they set up a separate OpenMRS instance with its own
+database and sender sync application so that it also sync to the centralized database that way the centralized database
 is kept as a read-only instance.
 
 ## Installation
@@ -92,9 +94,9 @@ inside your JMS server using the console application.
   that wishes to join the party to push data to the receiver and it's using a different JMS instance or topic name,
   then the receiver **MUST** always connect first so that a durable subscription is created for it before the new sender
   application can start pushing sync data. Technically this applies whenever you switch to a new JMS broker instance.
-  
+
 ### Building OpenMRS EIP
-From the terminal, navigate to your working directory, clone and build the project to generate the executable artifacts 
+From the terminal, navigate to your working directory, clone and build the project to generate the executable artifacts
 by running the commands below.
 ```shell
 git clone https://github.com/openmrs/openmrs-eip.git
@@ -108,14 +110,14 @@ with the actual version number from, this number can be found as part of the gen
 of the OpenMRS EIP project you cloned above.
 
 In practice, the sender and receiver applications are installed on separate physical machines, but for local deployments
-on a dev or testing machine this could be the same machine so be careful to use different directories for application 
+on a dev or testing machine this could be the same machine so be careful to use different directories for application
 properties that take directory paths as values e.g. log file, complex obs data directory and others.
 
-### Receiver 
+### Receiver
 1. Create an installation directory for your receiver app.
 2. Copy to the working directory the `dbsync-receiver-app-{VERSION}.jar` file that was generated when you built OpenMRS
    EIP above, this file should be located in the `dbsync-receiver-app/target` folder.
-3. There is an application.properties file in the `dbsync-receiver-app/configuration` directory relative to the root of 
+3. There is an application.properties file in the `dbsync-receiver-app/configuration` directory relative to the root of
    the OpenMR EIP project, copy it to your installation directory.
 4. Open the `application.properties` you just copied in step 2 to the installation directory and set the property values
    accordingly, carefully read the in-inline documentation as you set each property value.
@@ -135,31 +137,31 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
 ### Sender
 
 1. #### Setup MySQL binlog
-    Because the sending application relies on the embedded debezium engine, we need to first setup MySQL binary logging in 
-    the sender site's OpenMRS database, please refer to this [enabling the binlog](https://debezium.io/documentation/reference/connectors/mysql.html#enable-mysql-binlog)
-    section from the debezium docs, you will need some of the values you set when configuring the sender application, 
-    the server-id needs to match the value of `debezium.db.serverId` property in the sender `application.properties` file.
+   Because the sending application relies on the embedded debezium engine, we need to first setup MySQL binary logging in
+   the sender site's OpenMRS database, please refer to this [enabling the binlog](https://debezium.io/documentation/reference/connectors/mysql.html#enable-mysql-binlog)
+   section from the debezium docs, you will need some of the values you set when configuring the sender application,
+   the server-id needs to match the value of `debezium.db.serverId` property in the sender `application.properties` file.
 
-    **DO NOT** set the `expire_logs_days` because you never want your logs to expire just in case the sync application is 
-    run for a while due to unforeseen circumstances
+   **DO NOT** set the `expire_logs_days` because you never want your logs to expire just in case the sync application is
+   run for a while due to unforeseen circumstances
 
 2. #### Debezium user account
 
-    First we need to create a user account the debezium MySQL connector will use to read the sender site's Openmrs MySQl DB.
-    This is just a standard practice so that the account is assigned just the privileges it needs to read the MySQL bin-log 
-    files without access to the actual OpenMRS DB data, please refer to this [creating a user](https://debezium.io/documentation/reference/connectors/mysql.html#mysql-creating-user) 
-    section from the debezium docs, you will need the created user account details when configuring the sender application.
-    i.e. `debezium.db.user` and `debezium.db.password` properties in the sender `application.properties` file.
+   First we need to create a user account the debezium MySQL connector will use to read the sender site's Openmrs MySQl DB.
+   This is just a standard practice so that the account is assigned just the privileges it needs to read the MySQL bin-log
+   files without access to the actual OpenMRS DB data, please refer to this [creating a user](https://debezium.io/documentation/reference/connectors/mysql.html#mysql-creating-user)
+   section from the debezium docs, you will need the created user account details when configuring the sender application.
+   i.e. `debezium.db.user` and `debezium.db.password` properties in the sender `application.properties` file.
 
 3. #### Installing the Sender Application
     1. Create an installation directory for your sender app.
     2. Copy to the working directory the `dbsync-sender-app-{VERSION}.jar` file that was generated when you built OpenMRS
        EIP above, this file should be located in the `dbsync-sender-app/target` folder.
-    3. There is an application.properties file in the `dbsync-sender-app/configuration` directory relative to the root 
+    3. There is an application.properties file in the `dbsync-sender-app/configuration` directory relative to the root
        of the OpenMR EIP project, copy it to your installation directory.
     4. Open the `application.properties` you just copied above to the installation directory and set the property values
        accordingly, carefully read the in-inline documentation as you set each property value.
-    5. It is highly recommended to set the value of the `eip.home` property in your properties file to match the path to 
+    5. It is highly recommended to set the value of the `eip.home` property in your properties file to match the path to
        your installation directory.
     6. Launch the sender app by navigating to its installation directory from the terminal and run the command below.
     ```shell
@@ -170,8 +172,8 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
 
 # Security
 Sync messages exchanged  between the sender and the receiver can be encrypted. For that purpose, 2 Camel processors were
-developed to encrypt and sign (`PGPEncryptService`) message on one side and verify and decrypt (`PGPDecryptService`) on 
-the other side. They simply need to be registered in the corresponding Camel route before being sent or after being 
+developed to encrypt and sign (`PGPEncryptService`) message on one side and verify and decrypt (`PGPDecryptService`) on
+the other side. They simply need to be registered in the corresponding Camel route before being sent or after being
 received.
 
 The encryption is performed by PGP. So public and private keys shall be generated for each side of the exchange.
@@ -180,7 +182,7 @@ The encryption is performed by PGP. So public and private keys shall be generate
 * To verify the message, the receiver needs the sender's private key
 * To decrypt the message, the receiver needs a private key
 
-Thus, the sender needs to hold it's own private key and the receiver's public key in a folder and the 
+Thus, the sender needs to hold it's own private key and the receiver's public key in a folder and the
 `application.properties` file of the sender should be as follows:
 
 `pgp.sender.keysFolderPath=<folder_path>` The path is a relative path of the working directory of the application.
@@ -191,23 +193,23 @@ Thus, the sender needs to hold it's own private key and the receiver's public ke
 
 `pgp.sender.receiverUserId=<reveiver_user_id>`
 
-The receiver needs to hold it's private key and all the public keys of the sender's providing data in a folder and the 
+The receiver needs to hold it's private key and all the public keys of the sender's providing data in a folder and the
 `application.properties` file of the sender should be as follows:
 
 `pgp.receiver.keysFolderPath=<folder_path>` The path is a relative path of the working directory of the application.
 
 `pgp.receiver.password=<private_key_password>`
 
-**To be detected by the program, the private keys should all end with -sec.asc and the public keys should all end with 
+**To be detected by the program, the private keys should all end with -sec.asc and the public keys should all end with
 -pub.asc**
 
 # DB Sync Technical Overview
 
 ## Sender Overview
-The sender is really a spring boot application with custom camel routes, it depends on the `openmrs-watcher` module to 
+The sender is really a spring boot application with custom camel routes, it depends on the `openmrs-watcher` module to
 track DB changes in the configured sending OpenMRS database.
 
-When the application is fired up in sender mode, the built-in debezium route starts the debezium component which will 
+When the application is fired up in sender mode, the built-in debezium route starts the debezium component which will
 periodically read entries in the MySQL binlog, it constructs an [Event](../../openmrs-watcher/src/main/java/org/openmrs/eip/mysql/watcher/Event.java) instance which has several
 fields with key fields being the source table name, the unique identifier of the affected row usually a uuid, the
 operation that triggered the event(c, u, d) which stand for Create, Update or Delete respectively. The debezium route
@@ -222,7 +224,7 @@ option, it means the message would be pushed to a sync queue in an external mess
 receiving sync application.
 
 ## Receiver Overview
-The receiver is also a spring boot application with its own set of camel routes but instead running at another physical 
+The receiver is also a spring boot application with its own set of camel routes but instead running at another physical
 location with an OpenMRS installation.
 
 Recall from the sender documentation above, that the out-bound DB sync listener route ends by publishing the payload of
@@ -239,3 +241,4 @@ in the incoming payload, the application won't sync the entity and it will move 
 table. Currently, to resolve the conflict, the entity has to be manually updated in the receiver or sender, then as it
 may dictate adjust date changed in the sender so that it is ahead of date voided/retired of the entity in the receiver
 and then mark the row as resolved in `receiver_conflict_queue` table.
+
