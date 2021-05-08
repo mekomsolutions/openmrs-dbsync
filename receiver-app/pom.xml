@@ -15,9 +15,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openmrs.eip</groupId>
-            <artifactId>common</artifactId>
-            <version>${eipVersion}</version>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

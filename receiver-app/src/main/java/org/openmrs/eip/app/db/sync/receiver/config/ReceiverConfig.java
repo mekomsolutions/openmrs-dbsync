@@ -7,7 +7,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.openmrs.eip.app.management.config.Constants;
+import org.openmrs.eip.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;

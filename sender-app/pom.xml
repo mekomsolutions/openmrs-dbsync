@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openmrs.eip</groupId>
             <artifactId>openmrs-watcher</artifactId>
             <version>${eipVersion}</version>
@@ -24,11 +29,6 @@
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.eip</groupId>
-            <artifactId>common</artifactId>
-            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

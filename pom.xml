@@ -9,6 +9,7 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <modules>
+        <module>api</module>
         <module>receiver-app</module>
         <module>sender-app</module>
         <module>distribution</module>
@@ -20,14 +21,44 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <javaCompilerVersion>1.8</javaCompilerVersion>
-        <eipVersion>2.0-SNAPSHOT</eipVersion>
+        <eipVersion>2.0.0-SNAPSHOT</eipVersion>
         <sprintBootVersion>2.3.0.RELEASE</sprintBootVersion>
         <camelVersion>3.3.0</camelVersion>
         <jsonassert.version>1.5.0</jsonassert.version>
+        <bouncy-gpg.version>2.0.1</bouncy-gpg.version>
+        <lombok.version>1.18.8</lombok.version>
+        <hibernateVersion>5.4.21.Final</hibernateVersion>
+        <hibernateValidatorVersion>6.1.0.Final</hibernateValidatorVersion>
+        <mockitoVersion>3.3.3</mockitoVersion>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.openmrs.eip</groupId>
+                <artifactId>commons</artifactId>
+                <version>${eipVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${sprintBootVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernateVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernateValidatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
@@ -42,7 +73,7 @@
             </dependency>
             <dependency>
                 <groupId>org.openmrs.eip</groupId>
-                <artifactId>common</artifactId>
+                <artifactId>commons</artifactId>
                 <version>${eipVersion}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
@@ -57,6 +88,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-test</artifactId>
                 <version>${sprintBootVersion}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockitoVersion}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -86,6 +123,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>bintray</id>
+            <name>bintray</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <repository>
