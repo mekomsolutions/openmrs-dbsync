@@ -26,7 +26,7 @@ services:
     image: tomcat:8.5.65-jdk8-openjdk-slim
     container_name: openmrs-central
     depends_on:
-      - db-central
+      - mysql-central
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./central-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
@@ -38,7 +38,7 @@ services:
     image: tomcat:8.5.65-jdk8-openjdk-slim
     container_name: openmrs-remote
     depends_on:
-      - db-remote
+      - mysql-remote
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./remote-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
