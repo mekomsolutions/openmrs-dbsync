@@ -23,7 +23,7 @@ services:
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
 
   openmrs-central:
-    image: tomcat:8.5.65-jdk8-openjdk-slim
+    image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-central
     depends_on:
       - mysql-central
@@ -35,7 +35,7 @@ services:
       - "8081:8080"
 
   openmrs-remote:
-    image: tomcat:8.5.65-jdk8-openjdk-slim
+    image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-remote
     depends_on:
       - mysql-remote
