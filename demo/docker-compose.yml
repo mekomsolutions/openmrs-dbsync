@@ -1,26 +1,32 @@
 version: "3.3"
 
 services:
-  db_central:
+  mysql-central:
     image: mysql:5.6
+    container_name: mysql-central
     env_file:
       - db.env
     ports:
       - "3307:3306"
+    volumes:
+      - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
 
-  db_remote:
+  mysql-remote:
     image: mysql:5.6
-    environment:
+    container_name: mysql-remote
+    env_file:
       - db.env
     ports:
       - "3308:3306"
     volumes:
       - ./remote-my.cnf:/etc/mysql/my.cnf
+      - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
 
   openmrs-central:
     image: tomcat:8.5.65-jdk8-openjdk-slim
+    container_name: openmrs-central
     depends_on:
-      - db_central
+      - db-central
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./central-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
@@ -30,8 +36,9 @@ services:
 
   openmrs-remote:
     image: tomcat:8.5.65-jdk8-openjdk-slim
+    container_name: openmrs-remote
     depends_on:
-      - db_remote
+      - db-remote
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./remote-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
