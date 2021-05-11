@@ -22,6 +22,16 @@ services:
       - ./remote-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
 
+  artemis:
+    image: cnocorch/activemq-artemis
+    container_name: artemis
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    volumes:
+      - ./artemis-roles.properties:/var/lib/artemis/etc/artemis-roles.properties
+      - ./artemis-users.properties:/var/lib/artemis/etc/artemis-users.properties
+
   openmrs-central:
     image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-central
