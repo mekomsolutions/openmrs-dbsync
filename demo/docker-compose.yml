@@ -37,6 +37,7 @@ services:
     container_name: openmrs-central
     depends_on:
       - mysql-central
+      - artemis
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./central-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
@@ -49,6 +50,7 @@ services:
     container_name: openmrs-remote
     depends_on:
       - mysql-remote
+      - artemis
     volumes:
       - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
       - ./remote-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties

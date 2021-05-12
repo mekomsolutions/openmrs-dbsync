@@ -48,7 +48,10 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.2.3.RELEASE</version>
                 <configuration>
-                    <attach>false</attach>
+                    <!-- will generate 2 jars:  -->
+                    <!-- the normal jar usable as a dependency-->
+                    <!-- an executable jar with the classifier exe-->
+                    <classifier>exe</classifier>
                 </configuration>
                 <executions>
                     <execution>
