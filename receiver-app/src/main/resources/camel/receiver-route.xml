@@ -23,7 +23,7 @@
                 <method ref="isFilePredicate" />
                 <log message="Received complex_obs data file: ${headers.CamelFileName}" />
 
-                <to uri="direct:complex-obs-sync" />
+                <to uri="direct:receiver-complex-obs-sync" />
             </when>
             <otherwise>
                 <log message="Received entity-payload: ${body}" />

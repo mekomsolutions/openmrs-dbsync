@@ -21,7 +21,7 @@ public class ReceiverConfig {
 	
 	@Bean("receiverErrorHandler")
 	public DeadLetterChannelBuilder getReceiverErrorHandler() {
-		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:dbsync-error-handler");
+		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-error-handler");
 		builder.setUseOriginalMessage(true);
 		return builder;
 	}
@@ -30,7 +30,7 @@ public class ReceiverConfig {
 	public PropertySource getReceiverPropertySource(ConfigurableEnvironment env) {
 		Map<String, Object> props = new HashMap();
 		props.put(Constants.PROP_PACKAGES_TO_SCAN, "org.openmrs.eip.app.db.sync.receiver.management.entity");
-		props.put("message.destination", "db-sync");
+		props.put("message.destination", "receiver-db-sync");
 		PropertySource customPropSource = new MapPropertySource("receiverPropSource", props);
 		env.getPropertySources().addLast(customPropSource);
 		

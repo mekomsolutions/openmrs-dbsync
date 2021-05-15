@@ -9,6 +9,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
+      - ./central-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
 
   mysql-remote:

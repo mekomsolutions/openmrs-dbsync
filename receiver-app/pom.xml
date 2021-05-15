@@ -11,7 +11,7 @@
     <artifactId>receiver-app</artifactId>
     <packaging>jar</packaging>
 
-    <name>OpenMRS EIP DB Sync Receiver App</name>
+    <name>DB Sync Receiver App</name>
 
     <dependencies>
         <dependency>

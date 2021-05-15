@@ -1,10 +1,10 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="db-sync" errorHandlerRef="receiverErrorHandler">
-        <from uri="direct:db-sync" />
+    <route id="receiver-db-sync" errorHandlerRef="receiverErrorHandler">
+        <from uri="direct:receiver-db-sync" />
         
         <convertBodyTo type="java.lang.String" />
 
-        <log message="Start inbound db-sync: ${body}" />
+        <log message="Start receiver-db-sync: ${body}" />
 
         <setProperty name="original-msg-body">
             <simple>${body}</simple>
@@ -168,6 +168,6 @@
             </otherwise>
         </choice>
 
-        <log message="End db-sync route" />
+        <log message="End receiver-db-sync route" />
     </route>
 </routes>
