@@ -55,7 +55,7 @@
                                 <simple>${exchangeProperty.retry-item.entityPayload}</simple>
                             </setBody>
 
-                            <toD uri="direct:{{message.destination}}" />
+                            <toD uri="direct:receiver-db-sync" />
 
                             <log message="Removing from queue" />
 
