@@ -12,6 +12,7 @@
         <module>api</module>
         <module>receiver-app</module>
         <module>sender-app</module>
+        <module>sync-app</module>
         <module>distribution</module>
     </modules>
 
