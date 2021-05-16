@@ -31,7 +31,7 @@
                     <choice>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.component.model.PersonNameModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PersonNameModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -48,7 +48,7 @@
                         </when>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.component.model.PatientIdentifierModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PatientIdentifierModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -65,7 +65,7 @@
                         </when>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.component.model.PersonAttributeModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PersonAttributeModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -121,7 +121,7 @@
                     </choice>
 
                     <doCatch>
-                        <exception>org.openmrs.eip.component.exception.ConflictsFoundException</exception>
+                        <exception>org.openmrs.eip.app.db.sync.exception.ConflictsFoundException</exception>
                         <setProperty name="conflict-item">
                             <spel>
                                 #{new org.openmrs.eip.app.db.sync.receiver.management.entity.ConflictQueueItem()}

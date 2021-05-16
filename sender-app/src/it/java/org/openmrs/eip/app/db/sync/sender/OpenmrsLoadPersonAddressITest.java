@@ -4,10 +4,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.After;
 import org.junit.Test;
-import org.openmrs.eip.component.entity.PersonAddress;
-import org.openmrs.eip.component.entity.light.UserLight;
-import org.openmrs.eip.component.model.PersonAddressModel;
-import org.openmrs.eip.component.repository.SyncEntityRepository;
+import org.openmrs.eip.app.db.sync.entity.PersonAddress;
+import org.openmrs.eip.app.db.sync.entity.light.UserLight;
+import org.openmrs.eip.app.db.sync.model.PersonAddressModel;
+import org.openmrs.eip.app.db.sync.repository.SyncEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;

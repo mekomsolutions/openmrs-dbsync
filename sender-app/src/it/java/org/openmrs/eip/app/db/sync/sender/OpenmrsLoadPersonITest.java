@@ -4,11 +4,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.After;
 import org.junit.Test;
-import org.openmrs.eip.component.entity.Person;
-import org.openmrs.eip.component.entity.light.UserLight;
-import org.openmrs.eip.component.model.PersonModel;
-import org.openmrs.eip.component.repository.SyncEntityRepository;
-import org.openmrs.eip.component.service.security.PGPEncryptService;
+import org.openmrs.eip.app.db.sync.entity.Person;
+import org.openmrs.eip.app.db.sync.entity.light.UserLight;
+import org.openmrs.eip.app.db.sync.model.PersonModel;
+import org.openmrs.eip.app.db.sync.repository.SyncEntityRepository;
+import org.openmrs.eip.app.db.sync.service.security.PGPEncryptService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;

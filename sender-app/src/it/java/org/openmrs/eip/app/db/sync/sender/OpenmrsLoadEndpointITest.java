@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openmrs.eip.app.db.sync.sender.config.TestConfig;
-import org.openmrs.eip.component.camel.OpenmrsComponent;
+import org.openmrs.eip.app.db.sync.camel.OpenmrsComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;

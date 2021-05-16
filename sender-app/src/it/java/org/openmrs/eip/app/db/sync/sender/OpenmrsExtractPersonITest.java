@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.json.JSONException;
 import org.junit.Test;
-import org.openmrs.eip.component.model.PersonModel;
+import org.openmrs.eip.app.db.sync.model.PersonModel;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class OpenmrsExtractPersonITest extends OpenmrsExtractEndpointITest {

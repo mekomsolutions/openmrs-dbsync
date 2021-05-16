@@ -3,8 +3,8 @@ package org.openmrs.eip.app.db.sync.sender;
 import org.apache.camel.Exchange;
 import org.json.JSONException;
 import org.junit.Test;
-import org.openmrs.eip.component.entity.light.UserLight;
-import org.openmrs.eip.component.model.PersonAddressModel;
+import org.openmrs.eip.app.db.sync.entity.light.UserLight;
+import org.openmrs.eip.app.db.sync.model.PersonAddressModel;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.time.LocalDateTime;

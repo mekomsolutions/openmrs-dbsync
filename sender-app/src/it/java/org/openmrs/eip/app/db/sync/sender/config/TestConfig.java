@@ -1,7 +1,7 @@
 package org.openmrs.eip.app.db.sync.sender.config;
 
-import org.openmrs.eip.component.config.ReceiverEncryptionProperties;
-import org.openmrs.eip.component.config.SenderEncryptionProperties;
+import org.openmrs.eip.app.db.sync.config.ReceiverEncryptionProperties;
+import org.openmrs.eip.app.db.sync.config.SenderEncryptionProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -26,13 +26,13 @@ import java.util.Map;
 @EnableAutoConfiguration(exclude = ArtemisAutoConfiguration.class)
 @EnableJpaRepositories(
         entityManagerFactoryRef = "entityManager",
-        basePackages = {"org.openmrs.eip.component.repository"}
+        basePackages = {"org.openmrs.eip.app.db.sync.repository"}
 )
-@EntityScan("org.openmrs.eip.component.entity")
+@EntityScan("org.openmrs.eip.app.db.sync.entity")
 @ComponentScan({
-        "org.openmrs.eip.component.service",
-        "org.openmrs.eip.component.mapper",
-        "org.openmrs.eip.component.camel"
+        "org.openmrs.eip.app.db.sync.service",
+        "org.openmrs.eip.app.db.sync.mapper",
+        "org.openmrs.eip.app.db.sync.camel"
 })
 public class TestConfig {
 
@@ -74,7 +74,7 @@ public class TestConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages("org.openmrs.eip.component.entity")
+                .packages("org.openmrs.eip.app.db.sync.entity")
                 .persistenceUnit("openmrs")
                 .properties(props)
                 .build();
