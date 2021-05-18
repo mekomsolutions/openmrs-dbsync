@@ -1,13 +1,18 @@
 package org.openmrs.eip.app.db.sync.sender;
 
+import org.openmrs.eip.app.db.sync.SyncApplication;
+import org.openmrs.eip.app.db.sync.SyncMode;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "org.openmrs.eip")
-public class Application {
+public class Application extends SyncApplication {
 	
 	public static void main(final String[] args) {
 		SpringApplication.run(Application.class, args);
+	}
+	
+	@Override
+	protected SyncMode getMode() {
+		return SyncMode.SENDER;
 	}
 	
 }
