@@ -61,7 +61,7 @@ public class OpenmrsLoadPersonITest extends OpenmrsLoadEndpointITest {
                 "\"deathDate\":null," +
                 "\"causeOfDeathUuid\":null," +
                 "\"deathdateEstimated\":false," +
-                "\"birthtime\":null" +
+                "\"birthtime\":\"11:01:45-00:00\"" +
                 "}" +
                 "}";
     }

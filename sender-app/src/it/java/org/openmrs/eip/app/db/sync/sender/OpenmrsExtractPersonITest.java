@@ -6,6 +6,7 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
+import java.time.OffsetTime;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -55,7 +56,7 @@ public class OpenmrsExtractPersonITest extends OpenmrsExtractEndpointITest {
                         "\"deathDate\":null," +
                         "\"causeOfDeathUuid\":null," +
                         "\"deathdateEstimated\":false," +
-                        "\"birthtime\":null" +
+                        "\"birthtime\":\"13:01:45"+ OffsetTime.now().getOffset() +"\"" +
                     "}" +
                 "}";
     }
