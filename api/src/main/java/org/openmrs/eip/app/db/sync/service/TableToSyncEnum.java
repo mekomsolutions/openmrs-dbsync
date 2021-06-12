@@ -33,7 +33,6 @@ import org.openmrs.eip.app.db.sync.entity.Location;
 import org.openmrs.eip.app.db.sync.entity.LocationAttribute;
 import org.openmrs.eip.app.db.sync.entity.Observation;
 import org.openmrs.eip.app.db.sync.entity.Order;
-import org.openmrs.eip.app.db.sync.entity.OrderFrequency;
 import org.openmrs.eip.app.db.sync.entity.Patient;
 import org.openmrs.eip.app.db.sync.entity.PatientIdentifier;
 import org.openmrs.eip.app.db.sync.entity.PatientProgram;
@@ -46,7 +45,6 @@ import org.openmrs.eip.app.db.sync.entity.ProviderAttribute;
 import org.openmrs.eip.app.db.sync.entity.TestOrder;
 import org.openmrs.eip.app.db.sync.entity.Visit;
 import org.openmrs.eip.app.db.sync.entity.VisitAttribute;
-import org.openmrs.eip.app.db.sync.model.OrderFrequencyModel;
 import org.openmrs.eip.app.db.sync.model.OrderModel;
 import org.openmrs.eip.app.db.sync.model.PersonAddressModel;
 import org.openmrs.eip.app.db.sync.model.TestOrderModel;
@@ -77,9 +75,7 @@ public enum TableToSyncEnum {
     PATIENT_IDENTIFIER(PatientIdentifier.class, PatientIdentifierModel.class),
     ORDERS(Order.class, OrderModel.class),
     DRUG_ORDER(DrugOrder.class, DrugOrderModel.class),
-    TEST_ORDER(TestOrder.class, TestOrderModel.class),
-    ORDER_FREQUENCY(OrderFrequency.class, OrderFrequencyModel.class);
-    //ICRC_ERP_WORK_ORDER_STATE(ErpWorkOrderState.class, ErpWorkOrderStateModel.class);
+    TEST_ORDER(TestOrder.class, TestOrderModel.class);
 
     private Class<? extends BaseEntity> entityClass;
 
