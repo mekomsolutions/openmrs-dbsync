@@ -2,7 +2,6 @@ package org.openmrs.eip.app.db.sync.utils;
 
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,7 +23,7 @@ public class LocalTimeSerializer extends StdSerializer<LocalTime> {
 	
 	@Override
 	public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-		gen.writeString(value.atOffset(OffsetTime.now().getOffset()).format(DateTimeFormatter.ISO_OFFSET_TIME));
+		gen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_TIME));
 	}
 	
 }

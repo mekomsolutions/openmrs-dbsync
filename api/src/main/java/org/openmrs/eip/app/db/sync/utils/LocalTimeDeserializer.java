@@ -2,7 +2,6 @@ package org.openmrs.eip.app.db.sync.utils;
 
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,8 +24,7 @@ public class LocalTimeDeserializer extends StdDeserializer<LocalTime> {
 	
 	@Override
 	public LocalTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		return OffsetTime.parse(p.getText(), DateTimeFormatter.ISO_OFFSET_TIME)
-		        .withOffsetSameInstant(OffsetTime.now().getOffset()).toLocalTime();
+		return LocalTime.parse(p.getText(), DateTimeFormatter.ISO_LOCAL_TIME);
 	}
 	
 }

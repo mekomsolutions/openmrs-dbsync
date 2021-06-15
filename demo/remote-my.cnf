@@ -2,4 +2,4 @@
 server-id=2
 binlog_format=row
 log_bin=bin-log
-# default-time-zone="-05:00"
+default-time-zone="-05:00"
