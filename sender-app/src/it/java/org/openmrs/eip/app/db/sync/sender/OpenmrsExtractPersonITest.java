@@ -56,7 +56,7 @@ public class OpenmrsExtractPersonITest extends OpenmrsExtractEndpointITest {
                         "\"deathDate\":null," +
                         "\"causeOfDeathUuid\":null," +
                         "\"deathdateEstimated\":false," +
-                        "\"birthtime\":\"13:01:45"+ OffsetTime.now().getOffset() +"\"" +
+                        "\"birthtime\":\"13:01:45\"" +
                     "}" +
                 "}";
     }
