@@ -63,8 +63,12 @@
                 <setProperty name="retry-count">
                     <spel>0</spel>
                 </setProperty>
+                <setProperty name="model-classes">
+                    <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getModelClassesInHierarchy(${exchangeProperty.model-class})" />
+                </setProperty>
 
-                <toD uri="jpa:ReceiverRetryQueueItem?query=SELECT i from ReceiverRetryQueueItem i WHERE i.modelClassName ='${exchangeProperty.model-class}' AND i.identifier='${exchangeProperty.entity-id}'" />
+                <toD uri="jpa:ReceiverRetryQueueItem?query=SELECT i FROM ReceiverRetryQueueItem i WHERE i.modelClassName IN (${exchangeProperty.model-classes}) AND i.identifier='${exchangeProperty.entity-id}'" />
+
                 <setProperty name="retry-count">
                     <simple>${body.size()}</simple>
                 </setProperty>
