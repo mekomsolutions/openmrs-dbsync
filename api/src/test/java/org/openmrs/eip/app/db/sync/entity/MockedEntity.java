@@ -4,15 +4,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Entity
 public class MockedEntity extends BaseChangeableDataEntity {
 
     private String field1;
 
     private String field2;
 
+    @ManyToOne
     private MockedLightEntity linkedEntity;
 
 

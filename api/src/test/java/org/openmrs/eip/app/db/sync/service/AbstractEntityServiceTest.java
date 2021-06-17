@@ -9,6 +9,7 @@ import org.openmrs.eip.app.db.sync.entity.MockedEntity;
 import org.openmrs.eip.app.db.sync.exception.ConflictsFoundException;
 import org.openmrs.eip.app.db.sync.mapper.EntityToModelMapper;
 import org.openmrs.eip.app.db.sync.mapper.ModelToEntityMapper;
+import org.openmrs.eip.app.db.sync.repository.MockedOpenmrsRepository;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -42,29 +43,6 @@ public class AbstractEntityServiceTest {
         MockitoAnnotations.initMocks(this);
 
         mockedEntityService = new MockedEntityService(repository, entityToModelMapper, modelToEntityMapper);
-    }
-
-    @Test
-    public void getModels() {
-        // Given
-        LocalDateTime lastSyncDate = LocalDateTime.now();
-        MockedEntity mockedEntity1 = new MockedEntity(1L, "uuid1");
-        MockedEntity mockedEntity2 = new MockedEntity(2L, "uuid2");
-        MockedModel mockedModel1 = new MockedModel("uuid1");
-        MockedModel mockedModel2 = new MockedModel("uuid2");
-        when(repository.findModelsChangedAfterDate(lastSyncDate)).thenReturn(Arrays.asList(mockedEntity1, mockedEntity2));
-        when(entityToModelMapper.apply(mockedEntity1)).thenReturn(mockedModel1);
-        when(entityToModelMapper.apply(mockedEntity2)).thenReturn(mockedModel2);
-
-        // When
-        List<MockedModel> result = mockedEntityService.getModels(lastSyncDate);
-
-        // Then
-        assertEquals(2, result.size());
-        assertTrue(result.stream().anyMatch(model -> model.equals(mockedModel1)));
-        assertTrue(result.stream().anyMatch(model -> model.equals(mockedModel2)));
-        verify(repository, never()).findAll();
-        verify(repository).findModelsChangedAfterDate(lastSyncDate);
     }
 
     @Test
@@ -138,7 +116,6 @@ public class AbstractEntityServiceTest {
         assertTrue(result.stream().anyMatch(model -> model.equals(mockedModel1)));
         assertTrue(result.stream().anyMatch(model -> model.equals(mockedModel2)));
         verify(repository).findAll();
-        verify(repository, never()).findModelsChangedAfterDate(lastSyncDate);
     }
 
     @Test

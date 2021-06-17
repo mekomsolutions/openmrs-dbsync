@@ -2,7 +2,6 @@ package org.openmrs.eip.app.db.sync.service;
 
 import org.openmrs.eip.app.db.sync.model.BaseModel;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EntityService<M extends BaseModel> {
@@ -21,14 +20,6 @@ public interface EntityService<M extends BaseModel> {
      * @return a list of BaseModel
      */
     List<M> getAllModels();
-
-    /**
-     * getAll models for the entity
-     *
-     * @param lastSyncDate
-     * @return a list of BaseModel
-     */
-    List<M> getModels(LocalDateTime lastSyncDate);
 
     /**
      * get model with the given uuid

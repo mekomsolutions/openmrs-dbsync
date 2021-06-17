@@ -7,7 +7,6 @@ import org.openmrs.eip.app.db.sync.service.TableToSyncEnum;
 import org.openmrs.eip.app.db.sync.entity.BaseEntity;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -29,18 +28,6 @@ public class EntityServiceFacade {
      */
     public <M extends BaseModel> List<M> getAllModels(final TableToSyncEnum tableToSyncEnum) {
         return (List<M>) getService(tableToSyncEnum).getAllModels();
-    }
-
-    /**
-     * get all models of type in parameter after the last sync date
-     *
-     * @param tableToSyncEnum the type of entities to get
-     * @param lastSyncDate    the last sync date
-     * @param <M>
-     * @return the entities
-     */
-    public <M extends BaseModel> List<M> getModelsAfterDate(final TableToSyncEnum tableToSyncEnum, final LocalDateTime lastSyncDate) {
-        return (List<M>) getService(tableToSyncEnum).getModels(lastSyncDate);
     }
 
     /**

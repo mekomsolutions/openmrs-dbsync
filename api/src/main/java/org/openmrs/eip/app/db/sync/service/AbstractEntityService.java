@@ -67,13 +67,6 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
     }
 
     @Override
-    public List<M> getModels(final LocalDateTime lastSyncDate) {
-        List<E> entities = repository.findModelsChangedAfterDate(lastSyncDate);
-
-        return mapEntities(entities);
-    }
-
-    @Override
     public M getModel(final String uuid) {
         E entity  = repository.findByUuid(uuid);
         return entity != null ? entityToModelMapper.apply(entity) : null;
