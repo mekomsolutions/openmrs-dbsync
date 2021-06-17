@@ -1,8 +1,8 @@
 package org.openmrs.eip.app.db.sync.mapper.operations;
 
 import lombok.Getter;
-import org.openmrs.eip.EIPException;
 import org.openmrs.eip.app.db.sync.entity.light.LightEntity;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 
 @Getter
 public class DecomposedUuid {
@@ -20,7 +20,7 @@ public class DecomposedUuid {
         try {
             return (Class<? extends LightEntity>) Class.forName(entityTypeName);
         } catch (ClassNotFoundException e) {
-            throw new EIPException("No entity class exists with the name " + entityTypeName, e);
+            throw new SyncException("No entity class exists with the name " + entityTypeName, e);
         }
     }
 }

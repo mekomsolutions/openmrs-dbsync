@@ -1,7 +1,7 @@
 package org.openmrs.eip.app.db.sync.service;
 
 import org.junit.Test;
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.PersonModel;
 import org.openmrs.eip.app.db.sync.MockedModel;
 import org.openmrs.eip.app.db.sync.entity.MockedEntity;
@@ -35,7 +35,7 @@ public class TableToSyncEnumTest {
         assertEquals(TableToSyncEnum.PERSON, result);
     }
 
-    @Test(expected = EIPException.class)
+    @Test(expected = SyncException.class)
     public void getTableToSyncEnum_with_model_class_should_throw_exception() {
         // Given
         Class<MockedModel> personModelClass = MockedModel.class;
@@ -58,7 +58,7 @@ public class TableToSyncEnumTest {
         assertEquals(PersonModel.class, result);
     }
 
-    @Test(expected = EIPException.class)
+    @Test(expected = SyncException.class)
     public void getModelClass_should_throw_exception() {
         // Given
         MockedEntity mockedEntity = new MockedEntity(1L, "uuid");

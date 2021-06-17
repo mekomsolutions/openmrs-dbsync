@@ -31,6 +31,9 @@
         <hibernateVersion>5.4.21.Final</hibernateVersion>
         <hibernateValidatorVersion>6.1.0.Final</hibernateValidatorVersion>
         <mockitoVersion>3.3.3</mockitoVersion>
+        <testContainersVersion>1.15.2</testContainersVersion>
+        <jsonVersion>20190722</jsonVersion>
+        <guavaVersion>29.0-jre</guavaVersion>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +63,17 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${jsonVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guavaVersion}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
@@ -95,6 +109,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockitoVersion}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>mysql</artifactId>
+                <version>${testContainersVersion}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

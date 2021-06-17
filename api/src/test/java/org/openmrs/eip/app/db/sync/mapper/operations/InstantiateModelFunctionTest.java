@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.BaseModel;
 import org.openmrs.eip.app.db.sync.service.MapperService;
 import org.openmrs.eip.app.db.sync.entity.MockedEntity;
@@ -43,7 +43,7 @@ public class InstantiateModelFunctionTest {
         assertEquals(entity, result.getEntity());
     }
 
-    @Test(expected = EIPException.class)
+    @Test(expected = SyncException.class)
     public void apply_should_throw_exception() {
         // Given
         MockedEntity entity = new MockedEntity(1L, "uuid");

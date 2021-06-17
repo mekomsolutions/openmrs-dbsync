@@ -1,7 +1,7 @@
 package org.openmrs.eip.app.db.sync.camel;
 
 import org.apache.camel.Producer;
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 
 import java.util.Arrays;
 
@@ -23,6 +23,6 @@ public enum SyncActionEnum {
         return Arrays.stream(values())
                 .filter(e -> e.name().equalsIgnoreCase(actionString))
                 .findFirst()
-                .orElseThrow(() -> new EIPException("No action found with name: " + actionString));
+                .orElseThrow(() -> new SyncException("No action found with name: " + actionString));
     }
 }

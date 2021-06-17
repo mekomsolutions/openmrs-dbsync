@@ -8,8 +8,8 @@ import org.apache.camel.Processor;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
-import org.openmrs.eip.EIPException;
 import org.openmrs.eip.app.db.sync.config.ReceiverEncryptionProperties;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -56,7 +56,7 @@ public class PGPDecryptService extends AbstractSecurityService implements Proces
             Streams.pipeAll(bouncyGPGInputStream, bufferedOutputStream);
 
         } catch (IOException | PGPException | NoSuchProviderException e) {
-            throw new EIPException("Error during decryption process", e);
+            throw new SyncException("Error during decryption process", e);
         }
 
         return toString(unencryptedOutputStream);
@@ -66,7 +66,7 @@ public class PGPDecryptService extends AbstractSecurityService implements Proces
         String[] splittedString = encryptedMessage.split(LINE_SEPARATOR_REGEX, 2);
 
         if (!splittedString[0].startsWith(HEADER_USER_KEY_PROP)) {
-            throw new EIPException("Message should start with 'sender:'");
+            throw new SyncException("Message should start with 'sender:'");
         }
 
         return splittedString[0].replace(HEADER_USER_KEY_PROP, "");

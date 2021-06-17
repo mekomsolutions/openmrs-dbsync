@@ -1,6 +1,6 @@
 package org.openmrs.eip.app.db.sync.service;
 
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.AllergyModel;
 import org.openmrs.eip.app.db.sync.model.AttributeModel;
 import org.openmrs.eip.app.db.sync.model.BaseModel;
@@ -103,7 +103,7 @@ public enum TableToSyncEnum {
         return Arrays.stream(values())
                 .filter(e -> e.getModelClass().equals(tableToSyncClass))
                 .findFirst()
-                .orElseThrow(() -> new EIPException("No enum found for model class " + tableToSyncClass));
+                .orElseThrow(() -> new SyncException("No enum found for model class " + tableToSyncClass));
     }
 
     public static Class<? extends BaseModel> getModelClass(final BaseEntity entity) {
@@ -111,7 +111,7 @@ public enum TableToSyncEnum {
                 .filter(e -> e.getEntityClass().equals(entity.getClass()))
                 .findFirst()
                 .map(TableToSyncEnum::getModelClass)
-                .orElseThrow(() -> new EIPException("No model class found corresponding to entity class " + entity.getClass()));
+                .orElseThrow(() -> new SyncException("No model class found corresponding to entity class " + entity.getClass()));
     }
 
     public static Class<? extends BaseEntity> getEntityClass(final BaseModel model) {
@@ -119,6 +119,6 @@ public enum TableToSyncEnum {
                 .filter(e -> e.getModelClass().equals(model.getClass()))
                 .findFirst()
                 .map(TableToSyncEnum::getEntityClass)
-                .orElseThrow(() -> new EIPException("No entity class found corresponding to model class " + model.getClass()));
+                .orElseThrow(() -> new SyncException("No entity class found corresponding to model class " + model.getClass()));
     }
 }

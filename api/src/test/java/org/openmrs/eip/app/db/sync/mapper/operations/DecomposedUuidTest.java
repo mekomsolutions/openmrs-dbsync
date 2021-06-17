@@ -1,8 +1,8 @@
 package org.openmrs.eip.app.db.sync.mapper.operations;
 
 import org.junit.Test;
-import org.openmrs.eip.EIPException;
 import org.openmrs.eip.app.db.sync.entity.light.UserLight;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +35,7 @@ public class DecomposedUuidTest {
             fail();
         } catch (Exception e) {
             // Then
-            assertTrue(e instanceof EIPException);
+            assertTrue(e instanceof SyncException);
             assertTrue(e.getCause() instanceof ClassNotFoundException);
             assertEquals("No entity class exists with the name this.class.does.not.Exist", e.getMessage());
         }

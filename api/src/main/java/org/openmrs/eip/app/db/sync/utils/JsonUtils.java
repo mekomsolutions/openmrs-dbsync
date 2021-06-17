@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.BaseModel;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public final class JsonUtils {
 		}
 		catch (JsonProcessingException e) {
 			log.error("Error while marshalling object", e);
-			throw new EIPException("Error while marshalling object", e);
+			throw new SyncException("Error while marshalling object", e);
 		}
 	}
 	
@@ -66,7 +66,7 @@ public final class JsonUtils {
 		}
 		catch (IOException e) {
 			log.error("Error while unmarshalling object", e);
-			throw new EIPException("Error while unmarshalling object", e);
+			throw new SyncException("Error while unmarshalling object", e);
 		}
 	}
 	

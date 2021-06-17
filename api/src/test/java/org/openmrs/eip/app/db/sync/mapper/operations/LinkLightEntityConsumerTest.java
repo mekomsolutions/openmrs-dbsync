@@ -4,10 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openmrs.eip.EIPException;
 import org.openmrs.eip.app.db.sync.entity.MockedEntity;
 import org.openmrs.eip.app.db.sync.entity.light.UserLight;
 import org.openmrs.eip.app.db.sync.MockedModel;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.service.light.LightService;
 import org.openmrs.eip.app.db.sync.service.light.impl.UserLightService;
 import org.springframework.context.ApplicationContext;
@@ -100,7 +100,7 @@ public class LinkLightEntityConsumerTest {
         // Then
     }
 
-    @Test(expected = EIPException.class)
+    @Test(expected = SyncException.class)
     public void apply_should_throw_exception_if_no_service_available_for_getter_return_type() {
         // Given
         MockedEntity entity = new MockedEntity(1L, "uuid");

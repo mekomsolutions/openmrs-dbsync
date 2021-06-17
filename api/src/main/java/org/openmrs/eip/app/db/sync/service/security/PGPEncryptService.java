@@ -7,8 +7,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.util.io.Streams;
-import org.openmrs.eip.EIPException;
 import org.openmrs.eip.app.db.sync.config.SenderEncryptionProperties;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -53,7 +53,7 @@ public class PGPEncryptService extends AbstractSecurityService implements Proces
             log.info("Successfully encrypted the message");
 
         } catch (IOException | PGPException | NoSuchAlgorithmException | SignatureException | NoSuchProviderException e) {
-            throw new EIPException("Error during encryption process", e);
+            throw new SyncException("Error during encryption process", e);
         }
         return toString(encryptedOutputStream);
     }

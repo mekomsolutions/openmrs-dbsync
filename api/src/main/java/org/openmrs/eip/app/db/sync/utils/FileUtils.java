@@ -1,6 +1,6 @@
 package org.openmrs.eip.app.db.sync.utils;
 
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -30,12 +30,12 @@ public final class FileUtils {
         List<Path> paths = listKeysFromFolder(folderPath, PRIVATE_KEY_SUFFIX);
 
         if (paths.size() > 1) {
-            throw new EIPException("There should be only one private key. " + paths.size() + " found");
+            throw new SyncException("There should be only one private key. " + paths.size() + " found");
         }
 
         return paths.stream().findFirst()
                 .map(FileUtils::extractKeyFromFile)
-                .orElseThrow(() -> new EIPException("No private key found"));
+                .orElseThrow(() -> new SyncException("No private key found"));
     }
 
     /**
@@ -67,7 +67,7 @@ public final class FileUtils {
 
             return sb.toString().getBytes(UTF_8);
         } catch (IOException e) {
-            throw new EIPException("Impossible to read file", e);
+            throw new SyncException("Impossible to read file", e);
         }
     }
 

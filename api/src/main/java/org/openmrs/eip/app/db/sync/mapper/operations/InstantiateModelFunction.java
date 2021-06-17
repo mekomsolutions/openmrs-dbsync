@@ -1,6 +1,6 @@
 package org.openmrs.eip.app.db.sync.mapper.operations;
 
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.BaseModel;
 import org.openmrs.eip.app.db.sync.service.MapperService;
 import org.openmrs.eip.app.db.sync.entity.BaseEntity;
@@ -25,7 +25,7 @@ public class InstantiateModelFunction<E extends BaseEntity, M extends BaseModel>
             M instanciatedModel = modelClass.getConstructor().newInstance();
             return new Context<>(entity, instanciatedModel, MappingDirectionEnum.ENTITY_TO_MODEL);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            throw new EIPException("cause while instantiating entity " + modelClass, e);
+            throw new SyncException("cause while instantiating entity " + modelClass, e);
         }
     }
 }

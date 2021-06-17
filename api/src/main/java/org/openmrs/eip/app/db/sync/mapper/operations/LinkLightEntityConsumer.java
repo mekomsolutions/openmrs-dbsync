@@ -1,7 +1,7 @@
 package org.openmrs.eip.app.db.sync.mapper.operations;
 
 import lombok.extern.slf4j.Slf4j;
-import org.openmrs.eip.EIPException;
+import org.openmrs.eip.app.db.sync.exception.SyncException;
 import org.openmrs.eip.app.db.sync.model.BaseModel;
 import org.openmrs.eip.app.db.sync.utils.ModelUtils;
 import org.openmrs.eip.app.db.sync.entity.BaseEntity;
@@ -56,7 +56,7 @@ public class LinkLightEntityConsumer<E extends BaseEntity, M extends BaseModel> 
         );
 
         if (beanNamesForType.length == 0) {
-            throw new EIPException("Unable to find service of type " + LightService.class +
+            throw new SyncException("Unable to find service of type " + LightService.class +
                     " with class parameter " + entityDesc.getPropertyType());
         }
 

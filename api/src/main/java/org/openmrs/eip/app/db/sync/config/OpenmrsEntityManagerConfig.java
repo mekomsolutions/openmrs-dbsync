@@ -3,7 +3,7 @@ package org.openmrs.eip.app.db.sync.config;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.openmrs.eip.Constants;
+import org.openmrs.eip.app.db.sync.SyncConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +28,7 @@ public class OpenmrsEntityManagerConfig {
 	@Primary
 	@Bean(name = "openmrsEntityManager")
 	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
-	                                                            @Qualifier(Constants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource) {
+	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource) {
 		
 		return builder.dataSource(dataSource).packages("org.openmrs.eip.app.db.sync.entity").persistenceUnit("openmrs")
 		        .build();
