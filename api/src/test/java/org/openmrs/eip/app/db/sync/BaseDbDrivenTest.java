@@ -37,9 +37,9 @@ import org.testcontainers.lifecycle.Startables;
         ResetMocksTestExecutionListener.class, DeleteDataTestExecutionListener.class, SqlScriptsTestExecutionListener.class,
         TransactionalTestExecutionListener.class })
 @TestPropertySource(properties = { "spring.jpa.properties.hibernate.hbm2ddl.auto=update" })
-public abstract class BaseDbTest {
+public abstract class BaseDbDrivenTest {
 	
-	private static final Logger log = LoggerFactory.getLogger(BaseDbTest.class);
+	private static final Logger log = LoggerFactory.getLogger(BaseDbDrivenTest.class);
 	
 	protected static MySQLContainer mysqlContainer = new MySQLContainer<>(parse("mysql:5.6"));
 	

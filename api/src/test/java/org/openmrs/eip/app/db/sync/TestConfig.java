@@ -2,8 +2,6 @@ package org.openmrs.eip.app.db.sync;
 
 import static org.openmrs.eip.app.db.sync.SyncConstants.OPENMRS_DATASOURCE_NAME;
 
-import java.sql.SQLException;
-
 import javax.jms.ConnectionFactory;
 import javax.sql.DataSource;
 
@@ -22,8 +20,9 @@ public class TestConfig {
 	
 	@Bean(OPENMRS_DATASOURCE_NAME)
 	public DataSource getDataSource() {
-		return DataSourceBuilder.create().url(BaseDbTest.mysqlContainer.getJdbcUrl())
-		        .username(BaseDbTest.mysqlContainer.getUsername()).password(BaseDbTest.mysqlContainer.getPassword()).build();
+		return DataSourceBuilder.create().url(BaseDbDrivenTest.mysqlContainer.getJdbcUrl())
+		        .username(BaseDbDrivenTest.mysqlContainer.getUsername())
+		        .password(BaseDbDrivenTest.mysqlContainer.getPassword()).build();
 	}
 	
 	@Bean("activeMqConnFactory")
