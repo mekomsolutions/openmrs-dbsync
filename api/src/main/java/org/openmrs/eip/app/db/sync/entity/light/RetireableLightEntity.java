@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class RetireableLightEntity extends LightEntity {
 
+    @NotNull
     @Column(name = "retired")
     private boolean retired;
 

@@ -27,4 +27,13 @@ public class SyncContext implements ApplicationContextAware {
 		return appContext.getBean(SyncMode.class);
 	}
 	
+	/**
+	 * Gets the bean matching the specified type from the application context
+	 *
+	 * @return an instance of the bean matching the specified type
+	 */
+	public static <T> T getBean(Class<T> clazz) {
+		return appContext.getBean(clazz);
+	}
+	
 }

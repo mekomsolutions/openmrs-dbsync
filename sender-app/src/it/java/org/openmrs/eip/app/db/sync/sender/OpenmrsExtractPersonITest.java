@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.json.JSONException;
 import org.junit.Test;
+import org.openmrs.eip.app.db.sync.entity.light.UserLight;
 import org.openmrs.eip.app.db.sync.model.PersonModel;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -41,7 +42,7 @@ public class OpenmrsExtractPersonITest extends OpenmrsExtractEndpointITest {
                     "\"tableToSyncModelClass\":\"" + PersonModel.class.getName() + "\"," +
                     "\"model\":{" +
                         "\"uuid\":\"dd279794-76e9-11e9-8cd9-0242ac1c000b\"," +
-                        "\"creatorUuid\":null," +
+                        "\"creatorUuid\":"+ UserLight.class.getName() +"(user_uuid)," +
                         "\"dateCreated\":\"" + of(2005, 1, 1, 0, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\"," +
                         "\"changedByUuid\":null," +
                         "\"dateChanged\":null," +

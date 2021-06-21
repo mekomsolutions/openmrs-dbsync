@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class LightEntity extends BaseEntity {
 
+    @NotNull
     @Column(name = "creator")
     private Long creator;
 
