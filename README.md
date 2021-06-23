@@ -36,6 +36,13 @@ JMS Server, receiver and then sender(s).
 Currently, the receiver application doesn't sync data back to a sender but in future release support for two-way sync
 will be supported.
 
+#### Time Zone and Calendar system
+The DB sync sender and receiver applications MUST be running in the same calendar system. It's also highly recommended
+to run both the sender and receiver in UTC. If another time zone is preferred, it would be best to run both of them in
+the same time zone. With that said, the application should be able to sync data between a sender and receiver in different
+time zones by converting the datetime field values to the receiver's time zone. This conversion is not done for time ONLY
+fields and date fields with no time component.
+
 #### OpenMRS Instances are already installed
 This guide doesn't cover installation of the sender and receiver OpenMRS instances and databases, if not, please refer
 to the [OpenMRS](https://openmrs.org) documentation.
