@@ -1,5 +1,6 @@
 package org.openmrs.eip.app.db.sync.sender.config;
 
+import org.openmrs.eip.app.db.sync.SyncConstants;
 import org.openmrs.eip.app.db.sync.config.ReceiverEncryptionProperties;
 import org.openmrs.eip.app.db.sync.config.SenderEncryptionProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ public class TestConfig {
     @Value("${spring.datasource.ddlAuto}")
     private String ddlAuto;
 
-    @Bean
+    @Bean(SyncConstants.OPENMRS_DATASOURCE_NAME)
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
         return DataSourceBuilder.create().build();

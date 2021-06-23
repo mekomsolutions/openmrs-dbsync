@@ -24,6 +24,7 @@ import org.openmrs.eip.app.db.sync.entity.PersonAddress;
 import org.openmrs.eip.app.db.sync.entity.PersonAttribute;
 import org.openmrs.eip.app.db.sync.entity.PersonName;
 import org.openmrs.eip.app.db.sync.entity.ProviderAttribute;
+import org.openmrs.eip.app.db.sync.entity.Relationship;
 import org.openmrs.eip.app.db.sync.entity.TestOrder;
 import org.openmrs.eip.app.db.sync.entity.Visit;
 import org.openmrs.eip.app.db.sync.entity.VisitAttribute;
@@ -48,6 +49,7 @@ import org.openmrs.eip.app.db.sync.model.PersonAddressModel;
 import org.openmrs.eip.app.db.sync.model.PersonAttributeModel;
 import org.openmrs.eip.app.db.sync.model.PersonModel;
 import org.openmrs.eip.app.db.sync.model.PersonNameModel;
+import org.openmrs.eip.app.db.sync.model.RelationshipModel;
 import org.openmrs.eip.app.db.sync.model.TestOrderModel;
 import org.openmrs.eip.app.db.sync.model.VisitAttributeModel;
 import org.openmrs.eip.app.db.sync.model.VisitModel;
@@ -98,7 +100,9 @@ public enum TableToSyncEnum {
 	
 	DRUG_ORDER(DrugOrder.class, DrugOrderModel.class),
 	
-	TEST_ORDER(TestOrder.class, TestOrderModel.class);
+	TEST_ORDER(TestOrder.class, TestOrderModel.class),
+	
+	RELATIONSHIP(Relationship.class, RelationshipModel.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	

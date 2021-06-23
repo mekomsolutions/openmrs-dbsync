@@ -31,7 +31,7 @@ public class OpenmrsLoadPersonITest extends OpenmrsLoadEndpointITest {
         template.send(exchange);
 
         // Then
-        assertEquals(2, repository.findAll().size());
+        assertEquals(3, repository.findAll().size());
     }
 
     // TEAR-DOWN

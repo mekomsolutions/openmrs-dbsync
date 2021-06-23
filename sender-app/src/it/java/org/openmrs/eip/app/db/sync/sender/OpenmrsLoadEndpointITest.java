@@ -7,16 +7,31 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.openmrs.eip.app.db.sync.DeleteDataTestExecutionListener;
 import org.openmrs.eip.app.db.sync.sender.config.TestConfig;
 import org.openmrs.eip.app.db.sync.camel.OpenmrsComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
+import org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import java.security.Security;
 
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootTest(classes = TestConfig.class)
+@TestExecutionListeners({ DirtiesContextBeforeModesTestExecutionListener.class, MockitoTestExecutionListener.class,
+        DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        ResetMocksTestExecutionListener.class, DeleteDataTestExecutionListener.class, SqlScriptsTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
+@Sql("classpath:test_data_it.sql")
 public abstract class OpenmrsLoadEndpointITest {
 
     @Autowired
