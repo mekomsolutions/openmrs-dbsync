@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
-
 import org.openmrs.eip.app.db.sync.SyncContext;
 import org.openmrs.eip.app.db.sync.entity.BaseEntity;
 import org.openmrs.eip.app.db.sync.entity.Person;
@@ -62,7 +57,13 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			if (person != null) {
 				log.info("No matching row in the patient table, inserting one");
 				id = person.getId();
-				createPatient(ety, id, (PatientModel) model);
+				PatientModel pModel = (PatientModel) model;
+				UserLight user = SyncContext.getBean(UserLightRepository.class).findByUuid(pModel.getPatientCreatorUuid());
+				Long creatorId = user != null ? user.getId() : AbstractLightService.DEFAULT_USER_ID;
+				
+				PatientServiceUtils.createPatient(id, pModel.getUuid(), pModel.isPatientVoided(), creatorId,
+				    pModel.getPatientDateCreated());
+				
 				ety.setId(id);
 			}
 		}
@@ -123,36 +124,4 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		return "Entity of type " + ety.getClass().getName() + " with uuid " + uuid + s;
 	}
 	
-	private void createPatient(E ety, Long id, PatientModel model) {
-		EntityManager em = SyncContext.getBean(EntityManagerFactory.class).createEntityManager();
-		EntityTransaction tx = null;
-		try {
-			tx = em.getTransaction();
-			tx.begin();
-			String sql = "insert into patient (patient_id,creator,date_created,voided) values (?, ?, ?, ?)";
-			Query query = em.createNativeQuery(sql);
-			query.setParameter(1, id);
-			UserLight user = SyncContext.getBean(UserLightRepository.class).findByUuid(model.getCreatorUuid());
-			query.setParameter(2, user != null ? user.getId() : AbstractLightService.DEFAULT_USER_ID);
-			query.setParameter(3, model.getDateCreated());
-			query.setParameter(4, model.isVoided());
-			
-			query.executeUpdate();
-			
-			tx.commit();
-		}
-		catch (Exception e) {
-			log.info("Failed to insert row for patient: " + ety);
-			if (tx != null) {
-				tx.rollback();
-			}
-			
-			throw e;
-		}
-		finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-	}
 }
