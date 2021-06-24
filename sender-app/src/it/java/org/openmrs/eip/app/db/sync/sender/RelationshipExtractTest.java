@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.json.JSONException;
 import org.junit.Test;
+import org.openmrs.eip.app.db.sync.entity.light.PatientLight;
 import org.openmrs.eip.app.db.sync.entity.light.PersonLight;
 import org.openmrs.eip.app.db.sync.entity.light.RelationshipTypeLight;
 import org.openmrs.eip.app.db.sync.entity.light.UserLight;
@@ -35,7 +36,7 @@ public class RelationshipExtractTest extends OpenmrsExtractEndpointITest {
 		        + "(user_uuid)\"," + "\"dateCreated\":\""
 		        + of(2021, 6, 22, 0, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\","
 		        + "\"changedByUuid\":null," + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null,"
-		        + "\"dateVoided\":null," + "\"voidReason\":null," + "\"personaUuid\":\"" + PersonLight.class.getName()
+		        + "\"dateVoided\":null," + "\"voidReason\":null," + "\"personaUuid\":\"" + PatientLight.class.getName()
 		        + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\"," + "\"personbUuid\":\"" + PersonLight.class.getName()
 		        + "(dd279794-76e9-11e9-8cd9-0242ac1c000b)\"," + "\"relationshipTypeUuid\":\""
 		        + RelationshipTypeLight.class.getName() + "(1d279794-76e9-11e9-8cd8-0242ac1c111e)\"," + "\"startDate\":\""

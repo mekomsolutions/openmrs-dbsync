@@ -33,7 +33,7 @@ public class OpenmrsExtractPersonITest extends OpenmrsExtractEndpointITest {
 
         // Then
         List<Exchange> result = resultEndpoint.getExchanges();
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
         JSONAssert.assertEquals(getExpectedJson(), (String) result.get(0).getIn().getBody(), false);
     }
 
