@@ -16,6 +16,7 @@ import org.openmrs.eip.app.db.sync.entity.Location;
 import org.openmrs.eip.app.db.sync.entity.LocationAttribute;
 import org.openmrs.eip.app.db.sync.entity.Observation;
 import org.openmrs.eip.app.db.sync.entity.Order;
+import org.openmrs.eip.app.db.sync.entity.OrderGroup;
 import org.openmrs.eip.app.db.sync.entity.Patient;
 import org.openmrs.eip.app.db.sync.entity.PatientIdentifier;
 import org.openmrs.eip.app.db.sync.entity.PatientProgram;
@@ -42,6 +43,7 @@ import org.openmrs.eip.app.db.sync.model.EncounterModel;
 import org.openmrs.eip.app.db.sync.model.EncounterProviderModel;
 import org.openmrs.eip.app.db.sync.model.LocationModel;
 import org.openmrs.eip.app.db.sync.model.ObservationModel;
+import org.openmrs.eip.app.db.sync.model.OrderGroupModel;
 import org.openmrs.eip.app.db.sync.model.OrderModel;
 import org.openmrs.eip.app.db.sync.model.PatientIdentifierModel;
 import org.openmrs.eip.app.db.sync.model.PatientModel;
@@ -106,7 +108,9 @@ public enum TableToSyncEnum {
 	
 	RELATIONSHIP(Relationship.class, RelationshipModel.class),
 	
-	ENCOUNTER_PROVIDER(EncounterProvider.class, EncounterProviderModel.class);
+	ENCOUNTER_PROVIDER(EncounterProvider.class, EncounterProviderModel.class),
+	
+	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	

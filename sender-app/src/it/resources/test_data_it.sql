@@ -30,4 +30,10 @@ insert into encounter_role(encounter_role_id,name,creator,date_created,retired,u
 values (1, 'Doctor', 1, '2021-06-23 00:00:00', 0, '1a789794-31e9-11e9-8cf7-0242ac1c177f');
 
 insert into encounter_provider(encounter_provider_id,encounter_id,provider_id,encounter_role_id,creator,date_created,voided,uuid)
-values (1, 1, 1, 1, 1, '2021-06-23 00:00:00', 0, '1e319794-31e9-11e9-8cf7-0242ac1c177d')
+values (1, 1, 1, 1, 1, '2021-06-23 00:00:00', 0, '1e319794-31e9-11e9-8cf7-0242ac1c177d');
+
+insert into order_set(order_set_id,name,operator,creator,date_created,retired,uuid)
+values (1, 'Chemo', 'ANY', 1, '2021-06-23 00:00:00', 0, '1a379794-31e9-11e9-8cf7-0242ac1c177b');
+
+insert into order_group(order_group_id,encounter_id,patient_id,order_set_id,creator,date_created,voided,uuid)
+values (1, 1, 2, 1, 1, '2021-06-23 00:00:00', 0, '1c819794-31e9-11e9-9cf7-0242ac1c177a');
