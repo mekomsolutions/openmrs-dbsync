@@ -20,7 +20,7 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 	
 	private static final String DEFAULT_UUID_PREFIX = "PLACEHOLDER_";
 	
-	protected static final String DEFAULT_STRING = "[Default]";
+	public static final String DEFAULT_STRING = "[Default]";
 	
 	protected static final LocalDateTime DEFAULT_DATE = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0);
 	
