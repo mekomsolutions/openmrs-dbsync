@@ -17,6 +17,8 @@ import static org.mockito.Mockito.when;
 
 public class ProgramLightServiceTest {
 
+    private static final String UUID = "uuid";
+
     @Mock
     private OpenmrsRepository<ProgramLight> repository;
 
@@ -36,10 +38,9 @@ public class ProgramLightServiceTest {
     public void createPlaceholderEntity() {
         // Given
         when(conceptService.getOrInitPlaceholderEntity()).thenReturn(getConcept());
-        String uuid = "uuid";
 
         // When
-        ProgramLight result = service.createPlaceholderEntity(uuid);
+        ProgramLight result = service.createPlaceholderEntity(UUID);
 
         // Then
         assertEquals(getExpectedProgram(), result);
@@ -49,7 +50,7 @@ public class ProgramLightServiceTest {
         ProgramLight program = new ProgramLight();
         program.setDateCreated(LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0));
         program.setCreator(1L);
-        program.setName("[Default]");
+        program.setName("[Default] - " + UUID);
         program.setConcept(getConcept());
         return program;
     }

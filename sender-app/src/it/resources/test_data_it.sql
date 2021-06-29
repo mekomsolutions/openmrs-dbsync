@@ -37,3 +37,24 @@ values (1, 'Chemo', 'ANY', 1, '2021-06-23 00:00:00', 0, '1a379794-31e9-11e9-8cf7
 
 insert into order_group(order_group_id,encounter_id,patient_id,order_set_id,creator,date_created,voided,uuid)
 values (1, 1, 2, 1, 1, '2021-06-23 00:00:00', 0, '1c819794-31e9-11e9-9cf7-0242ac1c177a');
+
+INSERT INTO concept_datatype (concept_datatype_id, name,creator,date_created,retired,uuid)
+VALUES  (1, 'N/A', 1, '2020-03-05 00:00:00', 0, '4e6dcb16-d43e-46bb-b6bf-7088b9b82139');
+
+INSERT INTO concept_class (concept_class_id,name,creator,date_created,retired,uuid)
+VALUES  (1, 'Misc', 1, '2020-03-05 00:00:00', 0, 'f4464518-f5e2-4aab-a54e-1f1a2ec6d431');
+
+insert into concept(concept_id,datatype_id,class_id,is_set,creator,date_created,retired,uuid)
+values (1, 1, 1, 0, 1, '2021-06-23 00:00:00', 0, '1e279794-76e9-11e9-9cd8-0242ac1c111f');
+
+insert into program (program_id,concept_id,name,creator,date_created,retired,uuid)
+values (1, 1, 'Test Program', 1, '2021-06-23 00:00:00', 0, '1b229794-76e9-11f9-8cd8-0242ac1c111b');
+
+insert into patient_program(patient_program_id,program_id,patient_id,creator,date_created,voided,uuid)
+values (1, 1, 2, 1, '2021-06-23 00:00:00', 0, '1a819794-31e9-11e9-9cf7-0452ac1c177f');
+
+insert into program_attribute_type (program_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
+values (1, 'Location Name', 1, 0, '2021-06-23 00:00:00', 0, '1d229794-76e1-11f9-8cd8-0242ac1c111d');
+
+insert into patient_program_attribute(patient_program_attribute_id,patient_program_id,attribute_type_id,value_reference,creator,date_created,voided,uuid)
+values (1, 1, 1, 'Kampala', 1, '2021-06-23 00:00:00', 0, '1c816394-31e8-11e9-9cf7-0452ac1c177a');

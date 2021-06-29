@@ -20,6 +20,7 @@ import org.openmrs.eip.app.db.sync.entity.OrderGroup;
 import org.openmrs.eip.app.db.sync.entity.Patient;
 import org.openmrs.eip.app.db.sync.entity.PatientIdentifier;
 import org.openmrs.eip.app.db.sync.entity.PatientProgram;
+import org.openmrs.eip.app.db.sync.entity.PatientProgramAttribute;
 import org.openmrs.eip.app.db.sync.entity.PatientState;
 import org.openmrs.eip.app.db.sync.entity.Person;
 import org.openmrs.eip.app.db.sync.entity.PersonAddress;
@@ -47,6 +48,7 @@ import org.openmrs.eip.app.db.sync.model.OrderGroupModel;
 import org.openmrs.eip.app.db.sync.model.OrderModel;
 import org.openmrs.eip.app.db.sync.model.PatientIdentifierModel;
 import org.openmrs.eip.app.db.sync.model.PatientModel;
+import org.openmrs.eip.app.db.sync.model.PatientProgramAttributeModel;
 import org.openmrs.eip.app.db.sync.model.PatientProgramModel;
 import org.openmrs.eip.app.db.sync.model.PatientStateModel;
 import org.openmrs.eip.app.db.sync.model.PersonAddressModel;
@@ -110,7 +112,9 @@ public enum TableToSyncEnum {
 	
 	ENCOUNTER_PROVIDER(EncounterProvider.class, EncounterProviderModel.class),
 	
-	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class);
+	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class),
+	
+	PATIENT_PROGRAM_ATTRIBUTE(PatientProgramAttribute.class, PatientProgramAttributeModel.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	
