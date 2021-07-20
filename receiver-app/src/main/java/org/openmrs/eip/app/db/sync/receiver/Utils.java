@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.openmrs.eip.app.db.sync.SyncContext;
 import org.openmrs.eip.app.db.sync.model.DrugOrderModel;
 import org.openmrs.eip.app.db.sync.model.OrderModel;
 import org.openmrs.eip.app.db.sync.model.PatientModel;
 import org.openmrs.eip.app.db.sync.model.PersonModel;
 import org.openmrs.eip.app.db.sync.model.TestOrderModel;
+import org.springframework.core.env.Environment;
 
 public class Utils {
 	
@@ -45,6 +47,15 @@ public class Utils {
 	public static String getModelClassesInHierarchy(String modelClass) {
 		List<String> classes = getListOfModelClassHierarchy(modelClass);
 		return String.join(",", classes.stream().map(clazz -> "'" + clazz + "'").collect(Collectors.toList()));
+	}
+	
+	/**
+	 * Gets the value of the specified property name
+	 *
+	 * @return the property value
+	 */
+	public static String getProperty(String propertyName) {
+		return SyncContext.getBean(Environment.class).getProperty(propertyName);
 	}
 	
 }

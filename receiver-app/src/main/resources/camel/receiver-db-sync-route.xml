@@ -110,13 +110,30 @@
                                 </otherwise>
                             </choice>
 
+                            <process ref="oauthProcessor" />
+
                             <log message="Rebuilding search Index..." />
 
                             <setHeader name="CamelHttpMethod">
                                 <constant>POST</constant>
                             </setHeader>
 
-                            <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername={{openmrs.username}}&amp;authPassword={{openmrs.password}}" />
+                            <choice>
+                                <when>
+                                    <simple>${headers.Authorization} == null</simple>
+                                    <setProperty name="openmrsUser">
+                                        <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getProperty('openmrs.username')" />
+                                    </setProperty>
+                                    <setProperty name="openmrsPassword">
+                                        <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getProperty('openmrs.password')" />
+                                    </setProperty>
+
+                                    <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
+                                </when>
+                                <otherwise>
+                                    <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
+                                </otherwise>
+                            </choice>
                         </when>
                     </choice>
 
