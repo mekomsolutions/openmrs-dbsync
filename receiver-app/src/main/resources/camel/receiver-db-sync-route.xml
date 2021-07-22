@@ -121,6 +121,8 @@
                             <choice>
                                 <when>
                                     <simple>${headers.Authorization} == null</simple>
+                                    <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
+
                                     <setProperty name="openmrsUser">
                                         <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getProperty('openmrs.username')" />
                                     </setProperty>
@@ -131,6 +133,8 @@
                                     <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
                                 </when>
                                 <otherwise>
+                                    <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with oauth token" />
+
                                     <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
                                 </otherwise>
                             </choice>
