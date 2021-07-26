@@ -28,6 +28,10 @@
             <artifactId>camel-spring-boot</artifactId>
             <version>${camelVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
