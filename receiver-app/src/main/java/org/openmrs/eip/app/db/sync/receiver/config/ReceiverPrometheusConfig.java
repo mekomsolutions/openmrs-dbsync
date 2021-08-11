@@ -1,39 +1,64 @@
 package org.openmrs.eip.app.db.sync.receiver.config;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import static org.openmrs.eip.Constants.OPENMRS_DATASOURCE_NAME;
 
-import javax.servlet.DispatcherType;
+import javax.sql.DataSource;
 
 import org.apache.camel.ProducerTemplate;
-import org.openmrs.eip.app.db.sync.receiver.PrometheusFilter;
+import org.openmrs.eip.app.db.sync.receiver.management.entity.ConflictQueueItem;
+import org.openmrs.eip.app.db.sync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.actuate.jdbc.DataSourceHealthIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.binder.MeterBinder;
 
 @Configuration
 public class ReceiverPrometheusConfig {
 	
 	private static final String METER_PREFIX = "openmrs_dbsync_receiver_";
 	
-	@Bean
-	@ConditionalOnAvailableEndpoint(endpoint = PrometheusScrapeEndpoint.class)
-	public FilterRegistrationBean<PrometheusFilter> registerPrometheusFilter(@Autowired MeterRegistry meterRegistry,
-	                                                                         @Autowired ProducerTemplate producerTemplate) {
+	private static final String DS_PREFIX = METER_PREFIX + "datasource_status_";
+	
+	@Bean("openmrsDsHealthIndicator")
+	public DataSourceHealthIndicator getDataSourceHealthIndicator(@Autowired @Qualifier(OPENMRS_DATASOURCE_NAME) DataSource dataSource) {
+		return new DataSourceHealthIndicator(dataSource);
+	}
+	
+	@Bean("receiverErrorsMeter")
+	public MeterBinder getErrorsMeterBinder(@Autowired ProducerTemplate producerTemplate) {
 		
-		AtomicInteger errorsGauge = meterRegistry.gauge(METER_PREFIX + "errors", new AtomicInteger());
-		AtomicInteger conflictsGauge = meterRegistry.gauge(METER_PREFIX + "conflicts", new AtomicInteger());
+		return (registry) -> Gauge.builder(METER_PREFIX + "errors", () -> {
+			String entity = ReceiverRetryQueueItem.class.getName();
+			return producerTemplate.requestBody("jpa:" + entity + "?query=SELECT count(*) FROM " + entity, null,
+			    Integer.class);
+		}).register(registry);
 		
-		PrometheusFilter filter = new PrometheusFilter(producerTemplate, errorsGauge, conflictsGauge);
-		FilterRegistrationBean<PrometheusFilter> registration = new FilterRegistrationBean(filter);
-		registration.addUrlPatterns("/actuator/prometheus");
-		registration.setDispatcherTypes(DispatcherType.REQUEST);
+	}
+	
+	@Bean("conflictsMeter")
+	public MeterBinder getConflictsMeterBinder(@Autowired ProducerTemplate producerTemplate) {
 		
-		return registration;
+		return (registry) -> Gauge.builder(METER_PREFIX + "conflicts", () -> {
+			String entity = ConflictQueueItem.class.getName();
+			return producerTemplate.requestBody("jpa:" + entity + "?query=SELECT count(*) FROM " + entity, null,
+			    Integer.class);
+		}).register(registry);
+		
+	}
+	
+	@Bean("openmrsDsMeter")
+	public MeterBinder getOpenmrsDbHealth(@Autowired DataSourceHealthIndicator indicator) {
+		
+		return (registry) -> {
+			Gauge.builder(DS_PREFIX + "openmrs", () -> indicator.health().getStatus().equals(Status.UP) ? 1 : 0)
+			        .register(registry);
+		};
+		
 	}
 	
 }
