@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <javaCompilerVersion>1.8</javaCompilerVersion>
-        <eipVersion>2.0.0-SNAPSHOT</eipVersion>
+        <eipVersion>3.0.0-SNAPSHOT</eipVersion>
         <sprintBootVersion>2.3.0.RELEASE</sprintBootVersion>
         <camelVersion>3.3.0</camelVersion>
         <jsonassert.version>1.5.0</jsonassert.version>
@@ -79,7 +79,7 @@
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometerVersion}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
