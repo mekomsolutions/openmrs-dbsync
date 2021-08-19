@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.openmrs.eip.app.db.sync</groupId>
-    <artifactId>openmrs-db-sync</artifactId>
+    <groupId>org.openmrs.eip.dbsync</groupId>
+    <artifactId>dbsync</artifactId>
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
@@ -16,7 +16,7 @@
         <module>distribution</module>
     </modules>
 
-    <name>OpenMRS DB sync</name>
+    <name>OpenMRS DB Sync</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

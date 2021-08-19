@@ -4,11 +4,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.openmrs.eip.app.db.sync</groupId>
-        <artifactId>openmrs-db-sync</artifactId>
+        <groupId>org.openmrs.eip.dbsync</groupId>
+        <artifactId>dbsync</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>receiver-app</artifactId>
+    <artifactId>dbsync-receiver</artifactId>
     <packaging>jar</packaging>
 
     <name>DB Sync Receiver App</name>
@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>dbsync-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
