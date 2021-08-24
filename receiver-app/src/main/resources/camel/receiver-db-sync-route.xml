@@ -31,7 +31,7 @@
                     <choice>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PersonNameModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PersonNameModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -48,7 +48,7 @@
                         </when>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PatientIdentifierModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PatientIdentifierModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -65,7 +65,7 @@
                         </when>
                         <when>
                             <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.app.db.sync.model.PersonAttributeModel')]
+                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PersonAttributeModel')]
                             </jsonpath>
                             <setProperty name="rebuild-search-index">
                                 <constant>true</constant>
@@ -124,10 +124,10 @@
                                     <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
 
                                     <setProperty name="openmrsUser">
-                                        <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getProperty('openmrs.username')" />
+                                        <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.username')" />
                                     </setProperty>
                                     <setProperty name="openmrsPassword">
-                                        <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getProperty('openmrs.password')" />
+                                        <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.password')" />
                                     </setProperty>
 
                                     <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
@@ -142,10 +142,10 @@
                     </choice>
 
                     <doCatch>
-                        <exception>org.openmrs.eip.app.db.sync.exception.ConflictsFoundException</exception>
+                        <exception>org.openmrs.eip.dbsync.exception.ConflictsFoundException</exception>
                         <setProperty name="conflict-item">
                             <spel>
-                                #{new org.openmrs.eip.app.db.sync.receiver.management.entity.ConflictQueueItem()}
+                                #{new org.openmrs.eip.dbsync.receiver.management.entity.ConflictQueueItem()}
                             </spel>
                         </setProperty>
 

@@ -10,7 +10,7 @@
             <log message="Entities with failed retries in current retry run: ${exchangeProperty.failed-entities.size()}" loggingLevel="DEBUG" />
 
             <setBody>
-                <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getListOfModelClassHierarchy(${exchangeProperty.retry-item.modelClassName})" />
+                <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getListOfModelClassHierarchy(${exchangeProperty.retry-item.modelClassName})" />
             </setBody>
             <split parallelProcessing="false" >
                 <simple>${body}</simple>
@@ -63,7 +63,7 @@
                 <log message="Adding new item to retry queue" />
                 <setProperty name="retry-item">
                     <spel>
-                        #{new org.openmrs.eip.app.db.sync.receiver.management.entity.ReceiverRetryQueueItem()}
+                        #{new org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem()}
                     </spel>
                 </setProperty>
                 <script>

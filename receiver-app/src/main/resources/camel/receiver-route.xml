@@ -49,7 +49,7 @@
                             <simple>${body.trim().split(":")[1]}</simple>
                         </setProperty>
                         <setProperty name="table-to-sync-enum">
-                            <method beanType="org.openmrs.eip.app.db.sync.service.TableToSyncEnum" method="getTableToSyncEnum(${exchangeProperty.entity-table})" />
+                            <method beanType="org.openmrs.eip.dbsync.service.TableToSyncEnum" method="getTableToSyncEnum(${exchangeProperty.entity-table})" />
                         </setProperty>
                         <setProperty name="model-class">
                             <simple>${exchangeProperty.table-to-sync-enum.getModelClass().getName()}</simple>
@@ -64,7 +64,7 @@
                     <spel>0</spel>
                 </setProperty>
                 <setProperty name="model-classes">
-                    <method beanType="org.openmrs.eip.app.db.sync.receiver.Utils" method="getModelClassesInHierarchy(${exchangeProperty.model-class})" />
+                    <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getModelClassesInHierarchy(${exchangeProperty.model-class})" />
                 </setProperty>
 
                 <toD uri="jpa:ReceiverRetryQueueItem?query=SELECT i FROM ReceiverRetryQueueItem i WHERE i.modelClassName IN (${exchangeProperty.model-classes}) AND i.identifier='${exchangeProperty.entity-id}'" />
