@@ -40,6 +40,18 @@ services:
       - "8083:8080"
     env_file:
       - keycloak.env
+  #  volumes:
+  #    - ./keycloak-db:/opt/jboss/keycloak/standalone/data
+
+  #prometheus:
+  #  image: prom/prometheus
+  #  container_name: prometheus
+  #  ports:
+  #    - "9090:9090"
+  #  depends_on:
+  #    - openmrs-central
+  #  volumes:
+  #  - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
 
   openmrs-central:
     image: tomcat:7.0.109-jdk8-openjdk-slim
