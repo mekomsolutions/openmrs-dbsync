@@ -3,7 +3,7 @@
     <route id="sender-db-sync" errorHandlerRef="watcherErrorHandler">
         <from uri="direct:sender-db-sync" />
 
-        <log message="Start: sender-db-sync: ${body}" loggingLevel="DEBUG" />
+        <log message="Start: ${routeId}" loggingLevel="DEBUG" />
 
         <choice>
             <when>
@@ -19,7 +19,7 @@
 
                 <toD uri="openmrs:extract?tableToSync=${exchangeProperty.event.tableName.toUpperCase()}&amp;uuid=${exchangeProperty.event.identifier}" />
 
-                <log message="Loaded entity -> ${body}" />
+                <log loggingLevel="DEBUG" message="Loaded entity -> ${body}" />
 
                 <choice>
                     <when>
@@ -62,7 +62,7 @@
             </otherwise>
         </choice>
 
-        <log message="End: sender-db-sync route" loggingLevel="DEBUG" />
+        <log message="End: ${routeId}" loggingLevel="DEBUG" />
 
     </route>
 
