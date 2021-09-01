@@ -1,10 +1,13 @@
 package org.openmrs.eip.dbsync.service;
 
+import static org.openmrs.eip.dbsync.service.light.AbstractLightService.DEFAULT_VOID_REASON;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.entity.BaseDataEntity;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -69,11 +72,16 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		}
 		
 		M modelToReturn = model;
+		boolean isEtyInDbPlaceHolder = false;
+		if (etyInDb != null && etyInDb instanceof BaseDataEntity) {
+			BaseDataEntity bde = (BaseDataEntity) etyInDb;
+			isEtyInDbPlaceHolder = bde.isVoided() && DEFAULT_VOID_REASON.equals(bde.getVoidReason());
+		}
 		
 		if (etyInDb == null) {
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
-		} else if (!etyInDb.wasModifiedAfter(ety)) {
+		} else if (isEtyInDbPlaceHolder || !etyInDb.wasModifiedAfter(ety)) {
 			ety.setId(etyInDb.getId());
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " updated"));

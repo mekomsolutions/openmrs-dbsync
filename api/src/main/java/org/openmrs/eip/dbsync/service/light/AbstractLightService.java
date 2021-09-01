@@ -26,6 +26,8 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 	
 	public static final long DEFAULT_USER_ID = 1L;
 	
+	public static final String DEFAULT_VOID_REASON = "[placeholder]";
+	
 	protected OpenmrsRepository<E> repository;
 	
 	public AbstractLightService(final OpenmrsRepository<E> repository) {
@@ -101,7 +103,7 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 	
 	private void voidPlaceholder(final E entity) {
 		entity.setMuted(true);
-		entity.setMuteReason("[placeholder]");
+		entity.setMuteReason(DEFAULT_VOID_REASON);
 		entity.setDateMuted(DEFAULT_DATE);
 		entity.setMutedBy(DEFAULT_USER_ID);
 	}
