@@ -4,7 +4,7 @@
         
         <convertBodyTo type="java.lang.String" />
 
-        <log message="Start receiver-db-sync: ${body}" />
+        <log loggingLevel="DEBUG" message="Start: ${routeId}" />
 
         <setProperty name="original-msg-body">
             <simple>${body}</simple>
@@ -149,6 +149,8 @@
                             </spel>
                         </setProperty>
 
+                        <log message="Adding message to conflict queue" />
+
                         <choice>
                             <when>
                                 <!-- This is a new message with a conflict -->
@@ -179,16 +181,16 @@
                             <simple>${exchangeProperty.conflict-item}</simple>
                         </setBody>
 
-                        <log message="Adding message to conflict queue" loggingLevel="DEBUG" />
+                        <log message="Saving conflict item" loggingLevel="DEBUG" />
 
                         <to uri="jpa:ConflictQueueItem" />
 
-                        <log message="Successfully added message to conflict queue" loggingLevel="DEBUG" />
+                        <log message="Successfully saved conflict item" loggingLevel="DEBUG" />
                     </doCatch>
                 </doTry>
             </otherwise>
         </choice>
 
-        <log message="End receiver-db-sync route" />
+        <log loggingLevel="DEBUG" message="End: ${routeId}" />
     </route>
 </routes>

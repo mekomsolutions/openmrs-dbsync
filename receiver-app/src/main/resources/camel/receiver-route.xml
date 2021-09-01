@@ -3,6 +3,7 @@
         <from uri="{{camel.input.endpoint}}" />
         
         <log message=":" loggingLevel="DEBUG" />
+        <log message="Received sync message" />
 
         <when>
             <simple>{{openmrs.eip.dbsync.encryption.enabled}} == true</simple>
@@ -26,7 +27,7 @@
                 <to uri="direct:receiver-complex-obs-sync" />
             </when>
             <otherwise>
-                <log message="Received entity-payload: ${body}" />
+                <log loggingLevel="DEBUG" message="Received entity-payload: ${body}" />
                 <choice>
                     <when>
                         <!-- If this not a record for a deleted entity -->
@@ -40,6 +41,8 @@
                         <setProperty name="entity-id">
                             <jsonpath>$.model.uuid</jsonpath>
                         </setProperty>
+
+                        <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
                     </when>
                     <otherwise>
                         <setProperty name="entity-payload">
@@ -57,6 +60,8 @@
                         <setProperty name="entity-id">
                             <simple>${body.trim().split(":")[2]}</simple>
                         </setProperty>
+
+                        <log message="Deleted Entity: ${exchangeProperty.entity-table}, identifier=${exchangeProperty.entity-id}" />
                     </otherwise>
                 </choice>
 
