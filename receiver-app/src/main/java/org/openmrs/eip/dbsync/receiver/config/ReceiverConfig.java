@@ -19,6 +19,13 @@ public class ReceiverConfig {
 		return builder;
 	}
 	
+	@Bean("receiverShutdownErrorHandler")
+	public DeadLetterChannelBuilder receiverShutdownErrorHandler() {
+		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-shutdown");
+		builder.setUseOriginalMessage(true);
+		return builder;
+	}
+	
 	@Bean("activeMqConnFactory")
 	public ConnectionFactory getConnectionFactory(Environment env) {
 		ActiveMQConnectionFactory cf = new ActiveMQConnectionFactory();
