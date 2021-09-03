@@ -1,7 +1,10 @@
 package org.openmrs.eip.dbsync.receiver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openmrs.eip.dbsync.SyncContext;
@@ -10,9 +13,16 @@ import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
+import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 public class Utils {
+	
+	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
+	
+	private static Map<String, String> classAndSimpleNameMap = null;
 	
 	/**
 	 * Gets comma-separated list of model class names surrounded with apostrophes that are subclasses or
@@ -56,6 +66,39 @@ public class Utils {
 	 */
 	public static String getProperty(String propertyName) {
 		return SyncContext.getBean(Environment.class).getProperty(propertyName);
+	}
+	
+	private static Map<String, String> getClassAndSimpleNameMap() {
+		if (classAndSimpleNameMap == null) {
+			synchronized (Utils.class) {
+				if (classAndSimpleNameMap == null) {
+					log.info("Initializing class to simple name mappings...");
+					
+					classAndSimpleNameMap = new HashMap(TableToSyncEnum.values().length);
+					Arrays.stream(TableToSyncEnum.values()).forEach(e -> {
+						classAndSimpleNameMap.put(e.getModelClass().getName(),
+						    e.getEntityClass().getSimpleName().toLowerCase());
+					});
+					
+					if (log.isDebugEnabled()) {
+						log.debug("Class to simple name mappings: " + classAndSimpleNameMap);
+					}
+					
+					log.info("Successfully initialized class to simple name mappings");
+				}
+			}
+		}
+		
+		return classAndSimpleNameMap;
+	}
+	
+	/**
+	 * Gets the simple entity class name that matches the specified fully qualified model class name
+	 *
+	 * @return simple entity class name
+	 */
+	public static String getSimpleName(String modelClassName) {
+		return getClassAndSimpleNameMap().get(modelClassName);
 	}
 	
 }

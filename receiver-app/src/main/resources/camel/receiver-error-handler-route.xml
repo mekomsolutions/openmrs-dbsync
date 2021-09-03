@@ -2,7 +2,7 @@
     Route to process exceptions and log them in the receiver_retry_queue table in the management DB.
  -->
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="receiver-error-handler">
+    <route id="receiver-error-handler" errorHandlerRef="receiverShutdownErrorHandler">
         <from uri="direct:receiver-error-handler" />
 
         <when>

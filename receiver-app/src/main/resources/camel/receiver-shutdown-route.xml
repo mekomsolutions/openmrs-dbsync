@@ -1,0 +1,21 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="receiver-shutdown">
+        <from uri="direct:receiver-shutdown" />
+
+        <choice>
+            <when>
+                <method beanType="org.openmrs.eip.dbsync.receiver.ReceiverContext" method="isStopSignalReceived()" />
+                <log message="The application is already shutting down" />
+            </when>
+            <otherwise>
+                <log loggingLevel="ERROR" message="An error occurred, cause: ${exception.message}" />
+                <log message="Shutting down the application..." />
+
+                <script>
+                    <method beanType="org.openmrs.eip.Utils" method="shutdown()" />
+                </script>
+            </otherwise>
+        </choice>
+        
+    </route>
+</routes>
