@@ -18,9 +18,25 @@ public class PatientLight extends PersonLight {
     @Column(name = "allergy_status")
     private String allergyStatus;
 
+    @NotNull
     @Column(name = "creator")
     private Long patientCreator;
 
+    @NotNull
     @Column(name = "date_created")
     private LocalDateTime patientDateCreated;
+
+    @NotNull
+    @Column(name = "voided")
+    private boolean patientVoided;
+
+    @Column(name = "voided_by")
+    private Long patientVoidedBy;
+
+    @Column(name = "date_voided")
+    private LocalDateTime patientDateVoided;
+
+    @Column(name = "void_reason")
+    private String patientVoidReason;
+    
 }

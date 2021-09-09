@@ -50,4 +50,20 @@ public class AbstractLightServiceIntegrationTest extends BaseDbDrivenTest {
 		Assert.assertEquals(initialCount + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "patient"));
 	}
 	
+	@Test
+	public void getOrInit_shouldCreateAVoidedPatientPlaceHolder() throws Exception {
+		final String patientUuid = "patient-uuid";
+		Assert.assertNull(patientRepo.findByUuid(patientUuid));
+		
+		patientService.getOrInitEntity(patientUuid);
+		
+		printPatients();
+		PatientLight patientLight = patientRepo.findByUuid(patientUuid);
+		Assert.assertNotNull(patientLight);
+		Assert.assertTrue(patientLight.isPatientVoided());
+		Assert.assertEquals(AbstractLightService.DEFAULT_USER_ID, patientLight.getPatientVoidedBy().longValue());
+		Assert.assertEquals(AbstractLightService.DEFAULT_VOID_REASON, patientLight.getPatientVoidReason());
+		Assert.assertEquals(AbstractLightService.DEFAULT_DATE, patientLight.getPatientDateVoided());
+	}
+	
 }

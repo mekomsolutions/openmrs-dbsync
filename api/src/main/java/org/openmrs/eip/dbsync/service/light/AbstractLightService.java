@@ -22,7 +22,7 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 	
 	public static final String DEFAULT_STRING = "[Default]";
 	
-	protected static final LocalDateTime DEFAULT_DATE = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0);
+	public static final LocalDateTime DEFAULT_DATE = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0);
 	
 	public static final long DEFAULT_USER_ID = 1L;
 	
@@ -106,5 +106,12 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 		entity.setMuteReason(DEFAULT_VOID_REASON);
 		entity.setDateMuted(DEFAULT_DATE);
 		entity.setMutedBy(DEFAULT_USER_ID);
+		if (entity instanceof PatientLight) {
+			PatientLight patientLight = (PatientLight) entity;
+			patientLight.setPatientVoided(true);
+			patientLight.setPatientVoidedBy(DEFAULT_USER_ID);
+			patientLight.setPatientDateVoided(DEFAULT_DATE);
+			patientLight.setPatientVoidReason(DEFAULT_VOID_REASON);
+		}
 	}
 }
