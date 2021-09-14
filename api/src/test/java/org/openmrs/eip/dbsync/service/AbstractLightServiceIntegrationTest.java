@@ -57,7 +57,6 @@ public class AbstractLightServiceIntegrationTest extends BaseDbDrivenTest {
 		
 		patientService.getOrInitEntity(patientUuid);
 		
-		printPatients();
 		PatientLight patientLight = patientRepo.findByUuid(patientUuid);
 		Assert.assertNotNull(patientLight);
 		Assert.assertTrue(patientLight.isPatientVoided());
