@@ -29,6 +29,7 @@ import org.openmrs.eip.dbsync.entity.PersonName;
 import org.openmrs.eip.dbsync.entity.ProviderAttribute;
 import org.openmrs.eip.dbsync.entity.Relationship;
 import org.openmrs.eip.dbsync.entity.TestOrder;
+import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.Visit;
 import org.openmrs.eip.dbsync.entity.VisitAttribute;
 import org.openmrs.eip.dbsync.exception.SyncException;
@@ -57,6 +58,7 @@ import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.PersonNameModel;
 import org.openmrs.eip.dbsync.model.RelationshipModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
+import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.model.VisitAttributeModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
 
@@ -114,7 +116,9 @@ public enum TableToSyncEnum {
 	
 	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class),
 	
-	PATIENT_PROGRAM_ATTRIBUTE(PatientProgramAttribute.class, PatientProgramAttributeModel.class);
+	PATIENT_PROGRAM_ATTRIBUTE(PatientProgramAttribute.class, PatientProgramAttributeModel.class),
+	
+	USERS(User.class, UserModel.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	
