@@ -30,42 +30,17 @@
             <otherwise>
                 <log loggingLevel="DEBUG" message="Received entity-payload: ${body}" />
 
-                <choice>
-                    <when>
-                        <!-- If this not a record for a deleted entity -->
-                        <simple>${body} is 'byte[]'</simple>
-                        <setProperty name="entity-payload">
-                            <simple>${body}</simple>
-                        </setProperty>
-                        <setProperty name="model-class">
-                            <jsonpath>$.tableToSyncModelClass</jsonpath>
-                        </setProperty>
-                        <setProperty name="entity-id">
-                            <jsonpath>$.model.uuid</jsonpath>
-                        </setProperty>
+                <setProperty name="entity-payload">
+                    <simple>${body}</simple>
+                </setProperty>
+                <setProperty name="model-class">
+                    <jsonpath>$.tableToSyncModelClass</jsonpath>
+                </setProperty>
+                <setProperty name="entity-id">
+                    <jsonpath>$.model.uuid</jsonpath>
+                </setProperty>
 
-                        <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
-                    </when>
-                    <otherwise>
-                        <setProperty name="entity-payload">
-                            <simple>${body}</simple>
-                        </setProperty>
-                        <setProperty name="entity-table">
-                            <simple>${body.trim().split(":")[1]}</simple>
-                        </setProperty>
-                        <setProperty name="table-to-sync-enum">
-                            <method beanType="org.openmrs.eip.dbsync.service.TableToSyncEnum" method="getTableToSyncEnum(${exchangeProperty.entity-table})" />
-                        </setProperty>
-                        <setProperty name="model-class">
-                            <simple>${exchangeProperty.table-to-sync-enum.getModelClass().getName()}</simple>
-                        </setProperty>
-                        <setProperty name="entity-id">
-                            <simple>${body.trim().split(":")[2]}</simple>
-                        </setProperty>
-
-                        <log message="Deleted Entity: ${exchangeProperty.entity-table}, identifier=${exchangeProperty.entity-id}" />
-                    </otherwise>
-                </choice>
+                <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
 
                 <setProperty name="messageToSave">
                     <spel>
@@ -76,7 +51,7 @@
                     <spel>
                         #{getProperty('messageToSave').setIdentifier(getProperty('entity-id'))}
                         #{getProperty('messageToSave').setModelClassName(getProperty('model-class'))}
-                        #{getProperty('messageToSave').setEntityPayload(new String(getProperty('entity-payload'), 'UTF-8'))}
+                        #{getProperty('messageToSave').setEntityPayload(getProperty('entity-payload'))}
                         #{getProperty('messageToSave').setDateCreated(new java.util.Date())}
                     </spel>
                 </script>

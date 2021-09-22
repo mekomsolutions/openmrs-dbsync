@@ -1,8 +1,6 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="receiver-db-sync" errorHandlerRef="receiverErrorHandler">
         <from uri="direct:receiver-db-sync" />
-        
-        <convertBodyTo type="java.lang.String" />
 
         <log loggingLevel="DEBUG" message="Start: ${routeId}" />
 
@@ -23,65 +21,56 @@
             </when>
             <otherwise>
                 <setBody>
-                    <simple>${exchangeProperty.original-msg-body}</simple>
+                    <method beanType="org.openmrs.eip.dbsync.utils.JsonUtils" method="unmarshalSyncModel(${exchangeProperty.original-msg-body})" />
                 </setBody>
-                <when>
-                    <!-- If this not a record for a deleted entity -->
-                    <simple>${body.indexOf('DELETE:')} != 0</simple>
-                    <choice>
-                        <when>
-                            <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PersonNameModel')]
-                            </jsonpath>
-                            <setProperty name="rebuild-search-index">
-                                <constant>true</constant>
-                            </setProperty>
-                            <setProperty name="resource">
-                                <constant>person</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource">
-                                <constant>name</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource-uuid">
-                                <jsonpath>$.model.uuid</jsonpath>
-                            </setProperty>
-                        </when>
-                        <when>
-                            <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PatientIdentifierModel')]
-                            </jsonpath>
-                            <setProperty name="rebuild-search-index">
-                                <constant>true</constant>
-                            </setProperty>
-                            <setProperty name="resource">
-                                <constant>patient</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource">
-                                <constant>identifier</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource-uuid">
-                                <jsonpath>$.model.uuid</jsonpath>
-                            </setProperty>
-                        </when>
-                        <when>
-                            <jsonpath>
-                                $.[?(@.tableToSyncModelClass=='org.openmrs.eip.dbsync.model.PersonAttributeModel')]
-                            </jsonpath>
-                            <setProperty name="rebuild-search-index">
-                                <constant>true</constant>
-                            </setProperty>
-                            <setProperty name="resource">
-                                <constant>person</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource">
-                                <constant>attribute</constant>
-                            </setProperty>
-                            <setProperty name="sub-resource-uuid">
-                                <jsonpath>$.model.uuid</jsonpath>
-                            </setProperty>
-                        </when>
-                    </choice>
-                </when>
+
+                <choice>
+                    <when>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PersonNameModel'</simple>
+                        <setProperty name="rebuild-search-index">
+                            <constant>true</constant>
+                        </setProperty>
+                        <setProperty name="resource">
+                            <constant>person</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource">
+                            <constant>name</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource-uuid">
+                            <jsonpath>$.model.uuid</jsonpath>
+                        </setProperty>
+                    </when>
+                    <when>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PatientIdentifierModel'</simple>
+                        <setProperty name="rebuild-search-index">
+                            <constant>true</constant>
+                        </setProperty>
+                        <setProperty name="resource">
+                            <constant>patient</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource">
+                            <constant>identifier</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource-uuid">
+                            <jsonpath>$.model.uuid</jsonpath>
+                        </setProperty>
+                    </when>
+                    <when>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PersonAttributeModel'</simple>
+                        <setProperty name="rebuild-search-index">
+                            <constant>true</constant>
+                        </setProperty>
+                        <setProperty name="resource">
+                            <constant>person</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource">
+                            <constant>attribute</constant>
+                        </setProperty>
+                        <setProperty name="sub-resource-uuid">
+                            <jsonpath>$.model.uuid</jsonpath>
+                        </setProperty>
+                    </when>
+                </choice>
 
                 <doTry>
                     <to uri="openmrs:load" />

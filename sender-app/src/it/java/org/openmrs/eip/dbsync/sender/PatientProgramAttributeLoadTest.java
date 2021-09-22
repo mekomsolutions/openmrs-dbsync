@@ -11,7 +11,9 @@ import org.openmrs.eip.dbsync.entity.light.PatientProgramAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.PatientProgramLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PatientProgramAttributeModel;
+import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
+import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest {
@@ -24,7 +26,7 @@ public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest {
 	@Test
 	public void load() {
 		Exchange exchange = new DefaultExchange(camelContext);
-		exchange.getIn().setBody(getJson());
+		exchange.getIn().setBody(getModel());
 		assertNull(repository.findByUuid(UUID));
 		
 		template.send(exchange);
@@ -32,14 +34,14 @@ public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest {
 		assertNotNull(repository.findByUuid(UUID));
 	}
 	
-	private String getJson() {
-		return "{\"tableToSyncModelClass\":\"" + PatientProgramAttributeModel.class.getName() + "\"," + "\"model\":{"
-		        + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
-		        + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
-		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
-		        + "\"referencedEntityUuid\":\"" + PatientProgramLight.class.getName()
+	private SyncModel getModel() {
+		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + PatientProgramAttributeModel.class.getName()
+		        + "\"," + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
+		        + "(1)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\"," + "\"changedByUuid\":null,"
+		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
+		        + "\"voidReason\":null," + "\"referencedEntityUuid\":\"" + PatientProgramLight.class.getName()
 		        + "(1a819794-31e9-11e9-9cf7-0452ac1c177f)\"," + "\"attributeTypeUuid\":\""
 		        + PatientProgramAttributeTypeLight.class.getName() + "(1)\","
-		        + "\"valueReference\":\"2019-05-28T13:42:31+00:00\"}}";
+		        + "\"valueReference\":\"2019-05-28T13:42:31+00:00\"}, \"metadata\":{\"operation\":\"c\"}}");
 	}
 }

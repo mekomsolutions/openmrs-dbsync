@@ -1,8 +1,5 @@
 package org.openmrs.eip.dbsync.sender;
 
-import static java.time.LocalDateTime.of;
-import static java.time.ZoneId.systemDefault;
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -33,14 +30,12 @@ public class RelationshipExtractTest extends OpenmrsExtractEndpointITest {
 	private String getExpectedJson() {
 		return "{\"tableToSyncModelClass\":\"" + RelationshipModel.class.getName() + "\"," + "\"model\":{"
 		        + "\"uuid\":\"1e279794-76e9-11e9-8cf7-0242ac1c122d\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
-		        + "(user_uuid)\"," + "\"dateCreated\":\""
-		        + of(2021, 6, 22, 0, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\","
-		        + "\"changedByUuid\":null," + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null,"
-		        + "\"dateVoided\":null," + "\"voidReason\":null," + "\"personaUuid\":\"" + PatientLight.class.getName()
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-22T00:00:00\"," + "\"changedByUuid\":null,"
+		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
+		        + "\"voidReason\":null," + "\"personaUuid\":\"" + PatientLight.class.getName()
 		        + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\"," + "\"personbUuid\":\"" + PersonLight.class.getName()
 		        + "(dd279794-76e9-11e9-8cd9-0242ac1c000b)\"," + "\"relationshipTypeUuid\":\""
-		        + RelationshipTypeLight.class.getName() + "(1d279794-76e9-11e9-8cd8-0242ac1c111e)\"," + "\"startDate\":\""
-		        + of(2021, 6, 22, 1, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\"," + "\"endDate\":\""
-		        + of(2021, 6, 22, 2, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\"}}";
+		        + RelationshipTypeLight.class.getName() + "(1d279794-76e9-11e9-8cd8-0242ac1c111e)\","
+		        + "\"startDate\":\"2021-06-22T01:00:00\"," + "\"endDate\":\"2021-06-22T02:00:00\"}}";
 	}
 }

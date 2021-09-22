@@ -1,8 +1,5 @@
 package org.openmrs.eip.dbsync.sender;
 
-import static java.time.LocalDateTime.of;
-import static java.time.ZoneId.systemDefault;
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -33,10 +30,9 @@ public class EncounterProviderExtractTest extends OpenmrsExtractEndpointITest {
 	private String getExpectedJson() {
 		return "{\"tableToSyncModelClass\":\"" + EncounterProviderModel.class.getName() + "\"," + "\"model\":{"
 		        + "\"uuid\":\"1e319794-31e9-11e9-8cf7-0242ac1c177d\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
-		        + "(user_uuid)\"," + "\"dateCreated\":\""
-		        + of(2021, 6, 23, 0, 0, 0).atZone(systemDefault()).format(ISO_OFFSET_DATE_TIME) + "\","
-		        + "\"changedByUuid\":null," + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null,"
-		        + "\"dateVoided\":null," + "\"voidReason\":null," + "\"encounterUuid\":\"" + EncounterLight.class.getName()
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-23T00:00:00\"," + "\"changedByUuid\":null,"
+		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
+		        + "\"voidReason\":null," + "\"encounterUuid\":\"" + EncounterLight.class.getName()
 		        + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\"," + "\"providerUuid\":\"" + ProviderLight.class.getName()
 		        + "(1f659794-76e9-11e9-8cf7-0242ac1c122e)\"," + "\"encounterRoleUuid\":\""
 		        + EncounterRoleLight.class.getName() + "(1a789794-31e9-11e9-8cf7-0242ac1c177f)\"}}";

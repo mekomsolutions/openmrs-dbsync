@@ -12,7 +12,9 @@ import org.openmrs.eip.dbsync.entity.light.EncounterRoleLight;
 import org.openmrs.eip.dbsync.entity.light.ProviderLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.EncounterProviderModel;
+import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
+import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest {
@@ -25,7 +27,7 @@ public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest {
 	@Test
 	public void load() {
 		Exchange exchange = new DefaultExchange(camelContext);
-		exchange.getIn().setBody(getEncounterProviderJson());
+		exchange.getIn().setBody(getEncounterProviderModel());
 		assertNull(repository.findByUuid(UUID));
 		
 		template.send(exchange);
@@ -33,13 +35,13 @@ public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest {
 		assertNotNull(repository.findByUuid(UUID));
 	}
 	
-	private String getEncounterProviderJson() {
-		return "{\"tableToSyncModelClass\":\"" + EncounterProviderModel.class.getName() + "\"," + "\"model\":{"
-		        + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
+	private SyncModel getEncounterProviderModel() {
+		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + EncounterProviderModel.class.getName() + "\","
+		        + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
 		        + "\"dateCreated\":\"2021-06-23T00:00:00+00:00\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
 		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
 		        + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
 		        + "\"providerUuid\":\"" + ProviderLight.class.getName() + "(1)\"," + "\"encounterRoleUuid\":\""
-		        + EncounterRoleLight.class.getName() + "(1)\"}}";
+		        + EncounterRoleLight.class.getName() + "(1)\"}, \"metadata\":{\"operation\":\"c\"}}");
 	}
 }

@@ -12,7 +12,9 @@ import org.openmrs.eip.dbsync.entity.light.OrderSetLight;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.OrderGroupModel;
+import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
+import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class OrderGroupLoadTest extends OpenmrsLoadEndpointITest {
@@ -25,7 +27,7 @@ public class OrderGroupLoadTest extends OpenmrsLoadEndpointITest {
 	@Test
 	public void load() {
 		Exchange exchange = new DefaultExchange(camelContext);
-		exchange.getIn().setBody(getOrderGroupJson());
+		exchange.getIn().setBody(getOrderGroupModel());
 		assertNull(repository.findByUuid(UUID));
 		
 		template.send(exchange);
@@ -33,13 +35,13 @@ public class OrderGroupLoadTest extends OpenmrsLoadEndpointITest {
 		assertNotNull(repository.findByUuid(UUID));
 	}
 	
-	private String getOrderGroupJson() {
-		return "{\"tableToSyncModelClass\":\"" + OrderGroupModel.class.getName() + "\"," + "\"model\":{" + "\"uuid\":\""
-		        + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
+	private SyncModel getOrderGroupModel() {
+		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + OrderGroupModel.class.getName() + "\","
+		        + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
 		        + "\"dateCreated\":\"2021-06-23T00:00:00+00:00\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
 		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
 		        + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
 		        + "\"patientUuid\":\"" + PatientLight.class.getName() + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\","
-		        + "\"orderSetUuid\":\"" + OrderSetLight.class.getName() + "(1)\"}}";
+		        + "\"orderSetUuid\":\"" + OrderSetLight.class.getName() + "(1)\"}, \"metadata\":{\"operation\":\"c\"}}");
 	}
 }
