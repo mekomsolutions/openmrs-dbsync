@@ -32,22 +32,4 @@ public class User extends BaseChangeableMetaDataEntity {
 	@Column(name = "username")
 	private String username;
 	
-	@Column(name = "password")
-	private String password;
-	
-	@Column(name = "salt")
-	private String salt;
-	
-	@Column(name = "secret_question")
-	private String secretQuestion;
-	
-	@Column(name = "secret_answer")
-	private String secretAnswer;
-	
-	@Column(name = "activation_key")
-	private String activationKey;
-	
-	@Column(name = "email")
-	private String email;
-	
 }
