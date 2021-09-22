@@ -13,16 +13,4 @@ public class UserModel extends BaseChangeableMetadataModel {
 	
 	private String username;
 	
-	private String password;
-	
-	private String salt;
-	
-	private String secretQuestion;
-	
-	private String secretAnswer;
-	
-	private String activationKey;
-	
-	private String email;
-	
 }

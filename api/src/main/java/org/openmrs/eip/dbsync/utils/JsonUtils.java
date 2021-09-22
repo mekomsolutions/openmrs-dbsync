@@ -1,19 +1,22 @@
 package org.openmrs.eip.dbsync.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.openmrs.eip.dbsync.exception.SyncException;
-import org.openmrs.eip.dbsync.model.BaseModel;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.openmrs.eip.dbsync.exception.SyncException;
+import org.openmrs.eip.dbsync.model.BaseModel;
+import org.openmrs.eip.dbsync.model.SyncModel;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class JsonUtils {
@@ -133,4 +136,15 @@ public final class JsonUtils {
 		}
 		return propertyValue;
 	}
+	
+	/**
+	 * Utility method to unmarshal a JSON string representing a SyncModel object
+	 *
+	 * @param json
+	 * @return the SyncModel object
+	 */
+	public static SyncModel unmarshalSyncModel(String json) {
+		return unmarshal(json, SyncModel.class);
+	}
+	
 }
