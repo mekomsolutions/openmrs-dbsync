@@ -8,4 +8,6 @@ public class SyncConstants {
 	
 	public static final String USERNAME_SITE_SEPARATOR = "|";
 	
+	public static final String DEFAULT_RETIRE_REASON = "Retired because it was deleted in the site of origin";
+	
 }
