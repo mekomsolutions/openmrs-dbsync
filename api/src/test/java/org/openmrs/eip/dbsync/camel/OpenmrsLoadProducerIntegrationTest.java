@@ -10,11 +10,12 @@ import static org.openmrs.eip.dbsync.SyncConstants.USERNAME_SITE_SEPARATOR;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.SyncConstants;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.Provider;
 import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -41,9 +42,13 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Before
 	public void init() {
-		MockitoAnnotations.initMocks(this);
 		exchange = new DefaultExchange(new DefaultCamelContext());
 		producer = new OpenmrsLoadProducer(null, applicationContext, null);
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		SyncContext.setUser(null);
 	}
 	
 	@Test
@@ -125,13 +130,17 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		metadata.setOperation("d");
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
 		exchange.getIn().setBody(syncModel);
+		UserLight user = new UserLight();
+		final String appUserUuid = "test-user-uuid";
+		user.setUuid(appUserUuid);
+		SyncContext.setUser(user);
 		
 		producer.process(exchange);
 		
 		existingUser = userService.getModel(userUuid);
 		assertNotNull(existingUser);
 		assertTrue(existingUser.isRetired());
-		assertEquals(UserLight.class.getName() + "(1)", existingUser.getRetiredByUuid());
+		assertEquals(UserLight.class.getName() + "(" + appUserUuid + ")", existingUser.getRetiredByUuid());
 		assertEquals(SyncConstants.DEFAULT_RETIRE_REASON, existingUser.getRetireReason());
 		assertNotNull(existingUser.getDateRetired());
 	}
@@ -154,13 +163,17 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		metadata.setOperation("d");
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
 		exchange.getIn().setBody(syncModel);
+		UserLight user = new UserLight();
+		final String appUserUuid = "test-user";
+		user.setUuid(appUserUuid);
+		SyncContext.setUser(user);
 		
 		producer.process(exchange);
 		
 		existingProvider = providerService.getModel(providerUuid);
 		assertNotNull(existingProvider);
 		assertTrue(existingProvider.isRetired());
-		assertEquals(UserLight.class.getName() + "(1)", existingProvider.getRetiredByUuid());
+		assertEquals(UserLight.class.getName() + "(" + appUserUuid + ")", existingProvider.getRetiredByUuid());
 		assertEquals(SyncConstants.DEFAULT_RETIRE_REASON, existingProvider.getRetireReason());
 		assertNotNull(existingProvider.getDateRetired());
 	}

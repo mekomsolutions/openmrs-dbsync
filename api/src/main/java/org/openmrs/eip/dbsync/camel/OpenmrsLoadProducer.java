@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.apache.camel.Exchange;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.BaseMetadataModel;
 import org.openmrs.eip.dbsync.model.ProviderModel;
@@ -59,8 +60,7 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 				log.info("Entity was deleted in remote site, marking it as deleted");
 				BaseMetadataModel metadataModel = (BaseMetadataModel) syncModel.getModel();
 				metadataModel.setRetired(true);
-				//TODO use configured user for the receiver
-				metadataModel.setRetiredByUuid(UserLight.class.getName() + "(1)");
+				metadataModel.setRetiredByUuid(UserLight.class.getName() + "(" + SyncContext.getUser().getUuid() + ")");
 				metadataModel.setDateRetired(LocalDateTime.now());
 				metadataModel.setRetireReason(SyncConstants.DEFAULT_RETIRE_REASON);
 			}
