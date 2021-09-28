@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.model.DrugOrderModel;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
+import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,8 @@ public class Utils {
 	protected static final Logger log = LoggerFactory.getLogger(Utils.class);
 	
 	private static Map<String, String> classAndSimpleNameMap = null;
+	
+	private static Map<String, List<String>> typeAndIdsToExcludeMap = null;
 	
 	/**
 	 * Gets comma-separated list of model class names surrounded with apostrophes that are subclasses or
@@ -99,6 +104,47 @@ public class Utils {
 	 */
 	public static String getSimpleName(String modelClassName) {
 		return getClassAndSimpleNameMap().get(modelClassName);
+	}
+	
+	/**
+	 * Checks if the entity if the specified model class type and identifier should be skipped for
+	 * synchronization or not.
+	 * 
+	 * @param modelClass the model class name of the entity to be matched
+	 * @param identifier the identifier of the entity to be matched
+	 * @return true if the entity should not be skipped otherwise false
+	 */
+	public static boolean skipSync(String modelClass, String identifier) {
+		if (typeAndIdsToExcludeMap == null) {
+			synchronized (Utils.class) {
+				if (typeAndIdsToExcludeMap == null) {
+					typeAndIdsToExcludeMap = new HashMap();
+					typeAndIdsToExcludeMap.put(UserModel.class.getName(), new ArrayList());
+					typeAndIdsToExcludeMap.get(UserModel.class.getName()).add(SyncConstants.DAEMON_USER_UUID);
+					String value = SyncContext.getBean(Environment.class).getProperty(SyncConstants.PROP_SYNC_EXCLUDE);
+					if (StringUtils.isNotBlank(value)) {
+						String[] tableAndUuids = value.split(",");
+						for (String tableAndUuidStr : tableAndUuids) {
+							String[] tableNameAndUuid = tableAndUuidStr.trim().split(":");
+							String tableName = tableNameAndUuid[0].trim();
+							String clazz = TableToSyncEnum.getTableToSyncEnum(tableName).getModelClass().getName();
+							if (typeAndIdsToExcludeMap.get(clazz) == null) {
+								typeAndIdsToExcludeMap.put(clazz, new ArrayList());
+								
+							}
+							
+							typeAndIdsToExcludeMap.get(clazz).add(tableNameAndUuid[1].trim());
+						}
+					}
+				}
+			}
+		}
+		
+		if (!typeAndIdsToExcludeMap.containsKey(modelClass)) {
+			return false;
+		}
+		
+		return typeAndIdsToExcludeMap.get(modelClass).contains(identifier);
 	}
 	
 }

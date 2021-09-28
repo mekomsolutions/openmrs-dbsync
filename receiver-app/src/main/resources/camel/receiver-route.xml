@@ -42,28 +42,36 @@
 
                 <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
 
-                <setProperty name="messageToSave">
-                    <spel>
-                        #{new org.openmrs.eip.dbsync.receiver.management.entity.SyncMessage()}
-                    </spel>
-                </setProperty>
-                <script>
-                    <spel>
-                        #{getProperty('messageToSave').setIdentifier(getProperty('entity-id'))}
-                        #{getProperty('messageToSave').setModelClassName(getProperty('model-class'))}
-                        #{getProperty('messageToSave').setEntityPayload(getProperty('entity-payload'))}
-                        #{getProperty('messageToSave').setDateCreated(new java.util.Date())}
-                    </spel>
-                </script>
-                <setBody>
-                    <simple>${exchangeProperty.messageToSave}</simple>
-                </setBody>
+                <choice>
+                    <when>
+                        <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="skipSync(${exchangeProperty.model-class}, ${exchangeProperty.entity-id})"></method>
+                        <log message="Skipping sync of entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
+                    </when>
+                    <otherwise>
+                        <setProperty name="messageToSave">
+                            <spel>
+                                #{new org.openmrs.eip.dbsync.receiver.management.entity.SyncMessage()}
+                            </spel>
+                        </setProperty>
+                        <script>
+                            <spel>
+                                #{getProperty('messageToSave').setIdentifier(getProperty('entity-id'))}
+                                #{getProperty('messageToSave').setModelClassName(getProperty('model-class'))}
+                                #{getProperty('messageToSave').setEntityPayload(getProperty('entity-payload'))}
+                                #{getProperty('messageToSave').setDateCreated(new java.util.Date())}
+                            </spel>
+                        </script>
+                        <setBody>
+                            <simple>${exchangeProperty.messageToSave}</simple>
+                        </setBody>
 
-                <log loggingLevel="DEBUG" message="Saving received message" />
+                        <log loggingLevel="DEBUG" message="Saving received message" />
 
-                <to uri="jpa:SyncMessage?usePersist=true" />
+                        <to uri="jpa:SyncMessage?usePersist=true" />
 
-                <log message="Successfully saved received message" />
+                        <log message="Successfully saved received message" />
+                    </otherwise>
+                </choice>
             </otherwise>
         </choice>
 

@@ -35,6 +35,7 @@
         <jsonVersion>20190722</jsonVersion>
         <guavaVersion>29.0-jre</guavaVersion>
         <micrometerVersion>1.7.2</micrometerVersion>
+        <powerMockVersion>2.0.9</powerMockVersion>
     </properties>
 
     <dependencyManagement>
@@ -122,6 +123,18 @@
                 <artifactId>mysql</artifactId>
                 <version>${testContainersVersion}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <scope>test</scope>
+                <version>${powerMockVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito2</artifactId>
+                <scope>test</scope>
+                <version>${powerMockVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
