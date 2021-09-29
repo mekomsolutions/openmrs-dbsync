@@ -14,11 +14,11 @@ public abstract class BaseCreatableEntity extends BaseEntity {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "creator")
+    @JoinColumn(name = "creator", nullable = false)
     private UserLight creator;
 
     @NotNull
-    @Column(name = "date_created")
+    @Column(name = "date_created", nullable = false)
     private LocalDateTime dateCreated;
 
     /**

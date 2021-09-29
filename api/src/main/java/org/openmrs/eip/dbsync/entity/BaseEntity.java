@@ -15,7 +15,7 @@ public abstract class BaseEntity {
     private Long id;
 
     @NotNull
-    @Column(name = "uuid", unique = true)
+    @Column(name = "uuid", unique = true, nullable = false)
     private String uuid;
 
     /**

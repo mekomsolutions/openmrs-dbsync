@@ -27,8 +27,12 @@ import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
+
 @Sql(scripts = "classpath:test_data.sql")
 public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
+	
+	private String creator = UserLight.class.getName() + "(1a3b12d1-5c4f-415f-871b-b98a22137605)";
 	
 	private Exchange exchange;
 	
@@ -59,6 +63,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		UserModel model = new UserModel();
 		model.setUuid(userUuid);
 		model.setUsername(username);
+		model.setCreatorUuid(creator);
+        model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -80,6 +86,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		ProviderModel model = new ProviderModel();
 		model.setUuid(providerUuid);
 		model.setIdentifier(identifier);
+		model.setCreatorUuid(creator);
+        model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -99,6 +107,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String siteId = "some-site-uuid";
 		ProviderModel model = new ProviderModel();
 		model.setUuid(providerUuid);
+        model.setCreatorUuid(creator);
+        model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -125,6 +135,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		UserModel model = new UserModel();
 		model.setUuid(userUuid);
 		model.setUsername(existingUser.getUsername());
+		model.setCreatorUuid(creator);
+        model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
@@ -158,6 +170,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		ProviderModel model = new ProviderModel();
 		model.setUuid(providerUuid);
 		model.setIdentifier(existingProvider.getIdentifier());
+		model.setCreatorUuid(creator);
+        model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
