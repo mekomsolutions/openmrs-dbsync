@@ -1,18 +1,20 @@
 package org.openmrs.eip.dbsync.service;
 
+import java.time.LocalDateTime;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PatientModel;
+import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.impl.PatientService;
 import org.openmrs.eip.dbsync.service.impl.PersonService;
+import org.openmrs.eip.dbsync.service.impl.UserService;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Sql(scripts = "classpath:test_data.sql")
 public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
@@ -21,10 +23,13 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 	
 	private AbstractEntityService patientService;
 	
+	private AbstractEntityService userService;
+	
 	@Before
 	public void setup() {
 		personService = applicationContext.getBean(PersonService.class);
 		patientService = applicationContext.getBean(PatientService.class);
+		userService = applicationContext.getBean(UserService.class);
 	}
 	
 	/**
@@ -47,6 +52,23 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		
 		Assert.assertNotNull(patientService.getModel(uuid));
 		Assert.assertEquals(initialCount + 1, patientService.getAllModels().size());
+	}
+	
+	@Test
+	public void save_shouldSaveAUserWhereTheCreatorAndTheUserAreTheSame() {
+		final String uuid = "ee3b12d2-5c4f-415f-871b-b98a22137605";
+		Assert.assertNull(userService.getModel(uuid));
+		final int initialCount = userService.getAllModels().size();
+		UserModel user = new UserModel();
+		user.setUsername("testing-user");
+		user.setCreatorUuid(UserLight.class.getName() + "(" + uuid + ")");
+		user.setDateCreated(LocalDateTime.now());
+		user.setUuid(uuid);
+		
+		userService.save(user);
+		
+		Assert.assertNotNull(userService.getModel(uuid));
+		Assert.assertEquals(initialCount + 1, userService.getAllModels().size());
 	}
 	
 }

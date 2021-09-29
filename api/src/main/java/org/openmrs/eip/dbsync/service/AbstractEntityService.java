@@ -9,17 +9,21 @@ import java.util.stream.Collectors;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseDataEntity;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
+import org.openmrs.eip.dbsync.entity.BaseMetaDataEntity;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
+import org.openmrs.eip.dbsync.mapper.operations.DecomposedUuid;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
+import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.repository.PersonRepository;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.repository.light.UserLightRepository;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
+import org.openmrs.eip.dbsync.utils.ModelUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,13 +73,28 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				
 				ety.setId(id);
 			}
+		} else if (etyInDb == null && model instanceof UserModel) {
+			Optional<DecomposedUuid> decomposedCreatorUuid = ModelUtils.decomposeUuid(model.getCreatorUuid());
+			if (decomposedCreatorUuid.isPresent() && decomposedCreatorUuid.get().getUuid().equals(model.getUuid())) {
+				//The creator of the first admin account created in an OpenMRS database is a reference back to itself.
+				//When we're creating it for the first time, it means a placeholder row has already been created, load 
+				//the placeholder and update it with this entity's payload otherwise we duplicate it including it's uuid 
+				log.info("Creator is the same as the user being synced");
+				
+				etyInDb = repository.findByUuid(model.getUuid());
+			}
 		}
 		
 		M modelToReturn = model;
 		boolean isEtyInDbPlaceHolder = false;
-		if (etyInDb != null && etyInDb instanceof BaseDataEntity) {
-			BaseDataEntity bde = (BaseDataEntity) etyInDb;
-			isEtyInDbPlaceHolder = bde.isVoided() && DEFAULT_VOID_REASON.equals(bde.getVoidReason());
+		if (etyInDb != null) {
+			if (etyInDb instanceof BaseDataEntity) {
+				BaseDataEntity bde = (BaseDataEntity) etyInDb;
+				isEtyInDbPlaceHolder = bde.isVoided() && DEFAULT_VOID_REASON.equals(bde.getVoidReason());
+			} else if (etyInDb instanceof BaseMetaDataEntity) {
+				BaseMetaDataEntity bmde = (BaseMetaDataEntity) etyInDb;
+				isEtyInDbPlaceHolder = bmde.isRetired() && DEFAULT_VOID_REASON.equals(bmde.getRetireReason());
+			}
 		}
 		
 		if (etyInDb == null) {
