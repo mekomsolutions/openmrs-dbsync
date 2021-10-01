@@ -26,7 +26,7 @@
 
                 <choice>
                     <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PersonNameModel'</simple>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonNameModel'</simple>
                         <setProperty name="rebuild-search-index">
                             <constant>true</constant>
                         </setProperty>
@@ -41,7 +41,7 @@
                         </setProperty>
                     </when>
                     <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PatientIdentifierModel'</simple>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientIdentifierModel'</simple>
                         <setProperty name="rebuild-search-index">
                             <constant>true</constant>
                         </setProperty>
@@ -56,7 +56,7 @@
                         </setProperty>
                     </when>
                     <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.component.model.PersonAttributeModel'</simple>
+                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonAttributeModel'</simple>
                         <setProperty name="rebuild-search-index">
                             <constant>true</constant>
                         </setProperty>
