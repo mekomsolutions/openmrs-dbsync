@@ -11,6 +11,8 @@ services:
     volumes:
       - ./central-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
+      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs_common_config.sql
+      - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs_central_config.sql
 
   mysql-remote:
     image: mysql:5.6
@@ -22,6 +24,8 @@ services:
     volumes:
       - ./remote-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
+      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs_common_config.sql
+      - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs_remote_config.sql
 
   artemis:
     image: cnocorch/activemq-artemis
@@ -74,6 +78,8 @@ services:
   openmrs-remote:
     image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-remote
+    environment:
+      TZ: "America/Chicago"
     depends_on:
       - mysql-remote
       - artemis
