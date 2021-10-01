@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.camel;
 
-import static org.openmrs.eip.dbsync.SyncConstants.USERNAME_SITE_SEPARATOR;
+import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
 
 import java.time.LocalDateTime;
 
@@ -47,11 +47,12 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 			String siteId = syncModel.getMetadata().getSourceIdentifier();
 			if (isUser) {
 				UserModel userModel = (UserModel) syncModel.getModel();
-				userModel.setUsername(userModel.getUsername() + USERNAME_SITE_SEPARATOR + siteId);
+				userModel.setUsername(userModel.getUsername() + VALUE_SITE_SEPARATOR + siteId);
+				userModel.setSystemId(userModel.getSystemId() + VALUE_SITE_SEPARATOR + siteId);
 			} else if (isProvider) {
 				ProviderModel providerModel = (ProviderModel) syncModel.getModel();
 				if (StringUtils.isNotBlank(providerModel.getIdentifier())) {
-					providerModel.setIdentifier(providerModel.getIdentifier() + USERNAME_SITE_SEPARATOR + siteId);
+					providerModel.setIdentifier(providerModel.getIdentifier() + VALUE_SITE_SEPARATOR + siteId);
 				}
 			}
 			

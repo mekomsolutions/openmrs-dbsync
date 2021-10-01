@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.openmrs.eip.dbsync.SyncConstants.USERNAME_SITE_SEPARATOR;
+import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -56,15 +56,17 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	}
 	
 	@Test
-	public void process_shouldPreProcessUserToUpdateUsernamePropertyToIncludeTheSendingSiteId() {
+	public void process_shouldPreProcessUserToUpdateUsernameAndSystemIdPropertiesToIncludeTheSendingSiteId() {
 		final String userUuid = "user-uuid";
 		final String username = "jdoe@eip.org";
+		final String systemId = "123";
 		final String siteId = "some-site-uuid";
 		UserModel model = new UserModel();
 		model.setUuid(userUuid);
 		model.setUsername(username);
+		model.setSystemId(systemId);
 		model.setCreatorUuid(creator);
-        model.setDateCreated(LocalDateTime.now());
+		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -75,7 +77,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		
 		UserModel savedUser = userService.getModel(userUuid);
 		assertNotNull(savedUser);
-		assertEquals(username + USERNAME_SITE_SEPARATOR + siteId, savedUser.getUsername());
+		assertEquals(username + VALUE_SITE_SEPARATOR + siteId, savedUser.getUsername());
+		assertEquals(systemId + VALUE_SITE_SEPARATOR + siteId, savedUser.getSystemId());
 	}
 	
 	@Test
@@ -87,7 +90,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		model.setUuid(providerUuid);
 		model.setIdentifier(identifier);
 		model.setCreatorUuid(creator);
-        model.setDateCreated(LocalDateTime.now());
+		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -98,7 +101,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		
 		ProviderModel savedProvider = providerService.getModel(providerUuid);
 		assertNotNull(savedProvider);
-		assertEquals(identifier + USERNAME_SITE_SEPARATOR + siteId, savedProvider.getIdentifier());
+		assertEquals(identifier + VALUE_SITE_SEPARATOR + siteId, savedProvider.getIdentifier());
 	}
 	
 	@Test
@@ -107,8 +110,8 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String siteId = "some-site-uuid";
 		ProviderModel model = new ProviderModel();
 		model.setUuid(providerUuid);
-        model.setCreatorUuid(creator);
-        model.setDateCreated(LocalDateTime.now());
+		model.setCreatorUuid(creator);
+		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
@@ -136,7 +139,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		model.setUuid(userUuid);
 		model.setUsername(existingUser.getUsername());
 		model.setCreatorUuid(creator);
-        model.setDateCreated(LocalDateTime.now());
+		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
@@ -171,7 +174,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		model.setUuid(providerUuid);
 		model.setIdentifier(existingProvider.getIdentifier());
 		model.setCreatorUuid(creator);
-        model.setDateCreated(LocalDateTime.now());
+		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
