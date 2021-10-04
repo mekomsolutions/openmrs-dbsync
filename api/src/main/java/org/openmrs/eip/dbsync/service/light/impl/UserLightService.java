@@ -17,7 +17,7 @@ public class UserLightService extends AbstractLightService<UserLight> {
         UserLight user = new UserLight();
         user.setCreator(DEFAULT_USER_ID);
         user.setDateCreated(DEFAULT_DATE);
-        user.setSystemId("admin");
+        user.setSystemId(DEFAULT_STRING);
         user.setPersonId(1L);
         return user;
     }

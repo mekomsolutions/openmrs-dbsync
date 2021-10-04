@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openmrs.eip.dbsync.service.light.AbstractLightService;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -42,7 +43,7 @@ public class UserLightServiceTest {
         UserLight user = new UserLight();
         user.setCreator(1L);
         user.setDateCreated(LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0));
-        user.setSystemId("admin");
+        user.setSystemId(AbstractLightService.DEFAULT_STRING);
         user.setPersonId(1L);
         return user;
     }
