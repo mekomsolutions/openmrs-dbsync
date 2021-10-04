@@ -1,5 +1,7 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import static org.openmrs.eip.dbsync.SyncConstants.DAEMON_USER_UUID;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,7 +122,7 @@ public class Utils {
 				if (typeAndIdsToExcludeMap == null) {
 					typeAndIdsToExcludeMap = new HashMap();
 					typeAndIdsToExcludeMap.put(UserModel.class.getName(), new ArrayList());
-					typeAndIdsToExcludeMap.get(UserModel.class.getName()).add(SyncConstants.DAEMON_USER_UUID);
+					typeAndIdsToExcludeMap.get(UserModel.class.getName()).add(DAEMON_USER_UUID.toLowerCase());
 					String value = SyncContext.getBean(Environment.class).getProperty(SyncConstants.PROP_SYNC_EXCLUDE);
 					if (StringUtils.isNotBlank(value)) {
 						String[] tableAndUuids = value.split(",");
@@ -133,7 +135,7 @@ public class Utils {
 								
 							}
 							
-							typeAndIdsToExcludeMap.get(clazz).add(tableNameAndUuid[1].trim());
+							typeAndIdsToExcludeMap.get(clazz).add(tableNameAndUuid[1].trim().toLowerCase());
 						}
 					}
 				}
@@ -144,7 +146,7 @@ public class Utils {
 			return false;
 		}
 		
-		return typeAndIdsToExcludeMap.get(modelClass).contains(identifier);
+		return typeAndIdsToExcludeMap.get(modelClass).contains(identifier.toLowerCase());
 	}
 	
 }

@@ -142,4 +142,16 @@ public class UtilsTest {
 		assertTrue(Utils.skipSync(PersonNameModel.class.getName(), id3));
 	}
 	
+	@Test
+	public void skipSync_shouldReturnTrueForAnExcludedEntityIgnoringCase() {
+		Environment mockEnv = Mockito.mock(Environment.class);
+		PowerMockito.mockStatic(SyncContext.class);
+		when(SyncContext.getBean(Environment.class)).thenReturn(mockEnv);
+		final String id1 = "entity-uuid-1";
+		final String toExclude = "person:" + id1;
+		when(mockEnv.getProperty(PROP_SYNC_EXCLUDE)).thenReturn(toExclude);
+		assertTrue(Utils.skipSync(UserModel.class.getName(), SyncConstants.DAEMON_USER_UUID.toLowerCase()));
+		assertTrue(Utils.skipSync(PersonModel.class.getName(), id1.toUpperCase()));
+	}
+	
 }
