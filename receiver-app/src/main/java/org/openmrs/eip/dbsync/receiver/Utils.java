@@ -2,13 +2,16 @@ package org.openmrs.eip.dbsync.receiver;
 
 import static org.openmrs.eip.dbsync.SyncConstants.DAEMON_USER_UUID;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
@@ -19,6 +22,8 @@ import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.openmrs.eip.dbsync.utils.JsonUtils;
+import org.openmrs.eip.dbsync.utils.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -147,6 +152,38 @@ public class Utils {
 		}
 		
 		return typeAndIdsToExcludeMap.get(modelClass).contains(identifier.toLowerCase());
+	}
+	
+	/**
+	 * Computes a hash of the entity state, the logic is such that it removes null values, extracts
+	 * uuids for all light entity fields, sorts the values by field names, Stringifies the values, trims
+	 * the values and concatenates all values into a single string which is then hashed, this
+	 * implementation has implications below,
+	 * 
+	 * <pre>
+	 * - It is case sensitive
+	 * - Field value changes from null to an empty string or what space characters and vice versa are ignored
+	 * </pre>
+	 * 
+	 * @param payload
+	 * @return
+	 */
+	public static String computeHash(String payload) {
+		Map<String, Object> data = (Map<String, Object>) JsonUtils.unmarshal(payload, Map.class).get("model");
+		//Remove null values, extract uuids for all light entity fields, sort values, Stringify values, trim values and
+		//concatenate all value into a single string to be hashed
+		data = data.entrySet().stream().filter(e -> e.getValue() != null)
+		        .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+			        if (!entry.getKey().endsWith("Uuid")) {
+				        return entry.getValue();
+			        } else {
+				        return ModelUtils.decomposeUuid(entry.getValue().toString()).get().getUuid();
+			        }
+		        }));
+		
+		String val = new TreeMap<>(data).values().stream().map(o -> o.toString().trim()).collect(Collectors.joining());
+		
+		return DigestUtils.md5Hex(val.getBytes(StandardCharsets.UTF_8));
 	}
 	
 }
