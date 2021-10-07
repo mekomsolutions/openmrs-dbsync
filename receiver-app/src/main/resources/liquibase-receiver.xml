@@ -110,7 +110,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -142,7 +142,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -174,7 +174,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -206,7 +206,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -238,7 +238,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -270,7 +270,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -302,7 +302,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -334,7 +334,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -366,7 +366,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -398,7 +398,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -430,7 +430,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -462,7 +462,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -494,7 +494,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -526,7 +526,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -558,7 +558,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -590,7 +590,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -622,7 +622,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -654,7 +654,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -686,7 +686,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -718,7 +718,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -750,7 +750,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -782,7 +782,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -814,7 +814,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
@@ -846,7 +846,7 @@
                 <constraints nullable="false" primaryKey="true" />
             </column>
             <column name="identifier" type="VARCHAR(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="hash" type="varchar(32)">
                 <constraints nullable="false"/>
