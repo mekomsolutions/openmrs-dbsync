@@ -1,5 +1,8 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import static java.time.ZoneId.systemDefault;
+import static java.time.ZonedDateTime.parse;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.util.Arrays.stream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,10 +10,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.openmrs.eip.dbsync.SyncConstants.PROP_SYNC_EXCLUDE;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +40,13 @@ import org.springframework.core.env.Environment;
 @PrepareForTest(SyncContext.class)
 public class UtilsTest {
 	
-	private final String EXPECTED_HASH = "d53c179f29c40224d63bfa4b29356b26";
+	private final String EXPECTED_HASH = "05558ccafade5c5194e6849f87dfad95";
+	
+	private final String CREATOR = UserLight.class.getName() + "(1cc6880e-4d46-11e4-9138-a6c5e4d20fb8)";
+	
+	private final String GENDER = "F";
+	
+	private final String UUID = "818b4ee6-8d68-4849-975d-80ab98016677";
 	
 	@Before
 	public void setup() {
@@ -171,27 +181,53 @@ public class UtilsTest {
 	
 	@Test
 	public void computeHash_shouldReturnTheMd5HashOfTheEntityPayload() {
-		Assert.assertEquals(EXPECTED_HASH, Utils.computeHash(getTestEntityPayLoad(null)));
+		PersonModel model = new PersonModel();
+		model.setGender(GENDER);
+		model.setCreatorUuid(CREATOR);
+		model.setUuid(UUID);
+		
+		assertEquals(EXPECTED_HASH, Utils.computeHash(model));
 	}
 	
 	@Test
 	public void computeHash_shouldReturnTheMd5HashOfTheEntityPayloadIgnoringWhitespacesInValues() {
-		Assert.assertEquals(EXPECTED_HASH, Utils.computeHash(getTestEntityPayLoad("\" \"")));
+		PersonModel model = new PersonModel();
+		model.setGender(GENDER);
+		model.setCreatorUuid(CREATOR);
+		model.setUuid(UUID);
+		model.setVoidReason(" ");
+		
+		assertEquals(EXPECTED_HASH, Utils.computeHash(model));
 	}
 	
 	@Test
-	public void computeHash_shouldReturnTheMd5HashOfTheEntityPayloadIgnoringKeyOrdering() {
-		//In this test we swap the positions of the dead and deathdateEstimated fields 
-		String data = "{" + "\"tableToSyncModelClass\":\"" + PersonModel.class.getName() + "\"," + "\"model\":{"
-		        + "\"uuid\":\"818b4ee6-8d68-4849-975d-80ab98016677\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
-		        + "(1cc6880e-4d46-11e4-9138-a6c5e4d20fb8)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\","
-		        + "\"changedByUuid\":null," + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null,"
-		        + "\"dateVoided\":null," + "\"voidReason\":\"\"," + "\"gender\":\"F\"," + "\"birthdate\":\"1982-01-06\","
-		        + "\"birthdateEstimated\":false," + "\"deathdateEstimated\":false," + "\"deathDate\":null,"
-		        + "\"causeOfDeathUuid\":null," + "\"dead\":false," + "\"birthtime\":null"
-		        + "},\"metadata\":{\"operation\":\"c\"}" + "}";
+	public void getDatetimePropertyNames_shouldReturnTheListOfAllDatetimePropertyNamesOnTheModelClass() {
+		Set<String> dateProps = Utils.getDatetimePropertyNames(PersonModel.class);
+		assertEquals(3, dateProps.size());
+		assertTrue(dateProps.contains("dateCreated"));
+		assertTrue(dateProps.contains("dateVoided"));
+		assertTrue(dateProps.contains("dateChanged"));
 		
-		Assert.assertEquals(EXPECTED_HASH, Utils.computeHash(data));
+		dateProps = Utils.getDatetimePropertyNames(VisitModel.class);
+		assertEquals(5, dateProps.size());
+		assertTrue(dateProps.contains("dateCreated"));
+		assertTrue(dateProps.contains("dateVoided"));
+		assertTrue(dateProps.contains("dateChanged"));
+		assertTrue(dateProps.contains("dateStarted"));
+		assertTrue(dateProps.contains("dateStopped"));
+	}
+	
+	@Test
+	public void computeHash_shouldNormalizeDatetimeFieldsToMillisecondsSinceTheEpoch() {
+		PersonModel model = new PersonModel();
+		model.setGender(GENDER);
+		model.setCreatorUuid(CREATOR);
+		model.setUuid(UUID);
+		LocalDateTime dateVoided = parse("2021-10-06T08:00:00-02:00", ISO_OFFSET_DATE_TIME)
+		        .withZoneSameInstant(systemDefault()).toLocalDateTime();
+		model.setDateVoided(dateVoided);
+		
+		assertEquals("93c36578eb50437b9a856a57e12c05cc", Utils.computeHash(model));
 	}
 	
 }
