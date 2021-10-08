@@ -1,4 +1,4 @@
-package org.openmrs.eip.dbsync.receiver.management.entity.hash;
+package org.openmrs.eip.dbsync.management.hash.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
