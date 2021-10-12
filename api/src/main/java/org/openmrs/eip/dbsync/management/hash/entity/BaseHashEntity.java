@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.management.hash.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -26,9 +26,9 @@ public abstract class BaseHashEntity implements Serializable {
 	private String hash;
 	
 	@Column(name = "date_created", nullable = false, updatable = false)
-	private Date dateCreated;
+	private LocalDateTime dateCreated;
 	
 	@Column(name = "date_Changed")
-	private Date dateChanged;
+	private LocalDateTime dateChanged;
 	
 }
