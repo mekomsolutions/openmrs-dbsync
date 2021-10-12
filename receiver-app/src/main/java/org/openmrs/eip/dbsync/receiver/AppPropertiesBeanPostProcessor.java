@@ -19,6 +19,8 @@ public class AppPropertiesBeanPostProcessor implements BeanPostProcessor {
 	
 	public static final String REC_ENTITY_PKG = "org.openmrs.eip.dbsync.receiver.management.entity";
 	
+	public static final String REC_HASH_ENTITY_PKG = "org.openmrs.eip.dbsync.management.hash.entity";
+	
 	final private SyncMode mode;
 	
 	@Autowired
@@ -34,12 +36,13 @@ public class AppPropertiesBeanPostProcessor implements BeanPostProcessor {
 			//for sender.
 			MapPropertySource propSource = (MapPropertySource) bean;
 			if (mode == SyncMode.RECEIVER) {
-				propSource.getSource().put(Constants.PROP_PACKAGES_TO_SCAN, REC_ENTITY_PKG);
+				propSource.getSource().put(Constants.PROP_PACKAGES_TO_SCAN,
+				    new String[] { REC_ENTITY_PKG, REC_HASH_ENTITY_PKG });
 			} else {
 				//This is 2-way sync, we need to include the sender persistent classes
 				propSource.getSource().put(Constants.PROP_PACKAGES_TO_SCAN,
 				    new String[] { "org.openmrs.eip.mysql.watcher.management.entity",
-				            "org.apache.camel.processor.idempotent.jpa", REC_ENTITY_PKG });
+				            "org.apache.camel.processor.idempotent.jpa", REC_ENTITY_PKG, REC_HASH_ENTITY_PKG });
 			}
 		} else if (Constants.LIQUIBASE_BEAN_NAME.equals(beanName)) {
 			if (mode == SyncMode.RECEIVER) {

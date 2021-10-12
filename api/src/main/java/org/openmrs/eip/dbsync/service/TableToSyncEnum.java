@@ -34,6 +34,31 @@ import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.Visit;
 import org.openmrs.eip.dbsync.entity.VisitAttribute;
 import org.openmrs.eip.dbsync.exception.SyncException;
+import org.openmrs.eip.dbsync.management.hash.entity.AllergyHash;
+import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
+import org.openmrs.eip.dbsync.management.hash.entity.ConditionHash;
+import org.openmrs.eip.dbsync.management.hash.entity.DrugOrderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.EncounterDiagnosisHash;
+import org.openmrs.eip.dbsync.management.hash.entity.EncounterHash;
+import org.openmrs.eip.dbsync.management.hash.entity.EncounterProviderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.ObsHash;
+import org.openmrs.eip.dbsync.management.hash.entity.OrderGroupHash;
+import org.openmrs.eip.dbsync.management.hash.entity.OrderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PatientHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PatientIdentifierHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PatientProgramAttributeHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PatientProgramHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PatientStateHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PersonAddressHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PersonAttributeHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PersonHash;
+import org.openmrs.eip.dbsync.management.hash.entity.PersonNameHash;
+import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.RelationshipHash;
+import org.openmrs.eip.dbsync.management.hash.entity.TestOrderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
+import org.openmrs.eip.dbsync.management.hash.entity.VisitAttributeHash;
+import org.openmrs.eip.dbsync.management.hash.entity.VisitHash;
 import org.openmrs.eip.dbsync.model.AllergyModel;
 import org.openmrs.eip.dbsync.model.AttributeModel;
 import org.openmrs.eip.dbsync.model.BaseModel;
@@ -66,71 +91,76 @@ import org.openmrs.eip.dbsync.model.VisitModel;
 
 public enum TableToSyncEnum {
 	
-	PERSON(Person.class, PersonModel.class),
+	PERSON(Person.class, PersonModel.class, PersonHash.class),
 	
-	PATIENT(Patient.class, PatientModel.class),
+	PATIENT(Patient.class, PatientModel.class, PatientHash.class),
 	
-	VISIT(Visit.class, VisitModel.class),
+	VISIT(Visit.class, VisitModel.class, VisitHash.class),
 	
-	ENCOUNTER(Encounter.class, EncounterModel.class),
+	ENCOUNTER(Encounter.class, EncounterModel.class, EncounterHash.class),
 	
-	OBS(Observation.class, ObservationModel.class),
+	OBS(Observation.class, ObservationModel.class, ObsHash.class),
 	
-	PERSON_ATTRIBUTE(PersonAttribute.class, PersonAttributeModel.class),
+	PERSON_ATTRIBUTE(PersonAttribute.class, PersonAttributeModel.class, PersonAttributeHash.class),
 	
-	PATIENT_PROGRAM(PatientProgram.class, PatientProgramModel.class),
+	PATIENT_PROGRAM(PatientProgram.class, PatientProgramModel.class, PatientProgramHash.class),
 	
-	PATIENT_STATE(PatientState.class, PatientStateModel.class),
+	PATIENT_STATE(PatientState.class, PatientStateModel.class, PatientStateHash.class),
 	
-	CONCEPT_ATTRIBUTE(ConceptAttribute.class, ConceptAttributeModel.class),
+	CONCEPT_ATTRIBUTE(ConceptAttribute.class, ConceptAttributeModel.class, null),
 	
-	LOCATION_ATTRIBUTE(LocationAttribute.class, AttributeModel.class),
+	LOCATION_ATTRIBUTE(LocationAttribute.class, AttributeModel.class, null),
 	
-	PROVIDER_ATTRIBUTE(ProviderAttribute.class, AttributeModel.class),
+	PROVIDER_ATTRIBUTE(ProviderAttribute.class, AttributeModel.class, null),
 	
-	VISIT_ATTRIBUTE(VisitAttribute.class, VisitAttributeModel.class),
+	VISIT_ATTRIBUTE(VisitAttribute.class, VisitAttributeModel.class, VisitAttributeHash.class),
 	
-	CONCEPT(Concept.class, ConceptModel.class),
+	CONCEPT(Concept.class, ConceptModel.class, null),
 	
-	LOCATION(Location.class, LocationModel.class),
+	LOCATION(Location.class, LocationModel.class, null),
 	
-	ENCOUNTER_DIAGNOSIS(EncounterDiagnosis.class, EncounterDiagnosisModel.class),
+	ENCOUNTER_DIAGNOSIS(EncounterDiagnosis.class, EncounterDiagnosisModel.class, EncounterDiagnosisHash.class),
 	
-	CONDITION(Condition.class, ConditionModel.class),
+	CONDITION(Condition.class, ConditionModel.class, ConditionHash.class),
 	
-	PERSON_NAME(PersonName.class, PersonNameModel.class),
+	PERSON_NAME(PersonName.class, PersonNameModel.class, PersonNameHash.class),
 	
-	ALLERGY(Allergy.class, AllergyModel.class),
+	ALLERGY(Allergy.class, AllergyModel.class, AllergyHash.class),
 	
-	PERSON_ADDRESS(PersonAddress.class, PersonAddressModel.class),
+	PERSON_ADDRESS(PersonAddress.class, PersonAddressModel.class, PersonAddressHash.class),
 	
-	PATIENT_IDENTIFIER(PatientIdentifier.class, PatientIdentifierModel.class),
+	PATIENT_IDENTIFIER(PatientIdentifier.class, PatientIdentifierModel.class, PatientIdentifierHash.class),
 	
-	ORDERS(Order.class, OrderModel.class),
+	ORDERS(Order.class, OrderModel.class, OrderHash.class),
 	
-	DRUG_ORDER(DrugOrder.class, DrugOrderModel.class),
+	DRUG_ORDER(DrugOrder.class, DrugOrderModel.class, DrugOrderHash.class),
 	
-	TEST_ORDER(TestOrder.class, TestOrderModel.class),
+	TEST_ORDER(TestOrder.class, TestOrderModel.class, TestOrderHash.class),
 	
-	RELATIONSHIP(Relationship.class, RelationshipModel.class),
+	RELATIONSHIP(Relationship.class, RelationshipModel.class, RelationshipHash.class),
 	
-	ENCOUNTER_PROVIDER(EncounterProvider.class, EncounterProviderModel.class),
+	ENCOUNTER_PROVIDER(EncounterProvider.class, EncounterProviderModel.class, EncounterProviderHash.class),
 	
-	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class),
+	ORDER_GROUP(OrderGroup.class, OrderGroupModel.class, OrderGroupHash.class),
 	
-	PATIENT_PROGRAM_ATTRIBUTE(PatientProgramAttribute.class, PatientProgramAttributeModel.class),
+	PATIENT_PROGRAM_ATTRIBUTE(PatientProgramAttribute.class, PatientProgramAttributeModel.class,
+	        PatientProgramAttributeHash.class),
 	
-	USERS(User.class, UserModel.class),
-    
-    PROVIDER(Provider.class, ProviderModel.class);
+	USERS(User.class, UserModel.class, UserHash.class),
+	
+	PROVIDER(Provider.class, ProviderModel.class, ProviderHash.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	
 	private Class<? extends BaseModel> modelClass;
 	
-	TableToSyncEnum(final Class<? extends BaseEntity> entityClass, final Class<? extends BaseModel> modelClass) {
+	private Class<? extends BaseHashEntity> hashClass;
+	
+	TableToSyncEnum(final Class<? extends BaseEntity> entityClass, final Class<? extends BaseModel> modelClass,
+	    Class<? extends BaseHashEntity> hashClass) {
 		this.entityClass = entityClass;
 		this.modelClass = modelClass;
+		this.hashClass = hashClass;
 	}
 	
 	public Class<? extends BaseEntity> getEntityClass() {
@@ -139,6 +169,10 @@ public enum TableToSyncEnum {
 	
 	public Class<? extends BaseModel> getModelClass() {
 		return modelClass;
+	}
+	
+	public Class<? extends BaseHashEntity> getHashClass() {
+		return hashClass;
 	}
 	
 	public static TableToSyncEnum getTableToSyncEnum(final String tableToSync) {
@@ -160,5 +194,11 @@ public enum TableToSyncEnum {
 		return Stream.of(values()).filter(e -> e.getModelClass().equals(model.getClass())).findFirst()
 		        .map(TableToSyncEnum::getEntityClass).orElseThrow(
 		            () -> new SyncException("No entity class found corresponding to model class " + model.getClass()));
+	}
+	
+	public static Class<? extends BaseHashEntity> getHashClass(BaseModel model) {
+		return Stream.of(values()).filter(e -> e.getModelClass().equals(model.getClass())).findFirst()
+		        .map(TableToSyncEnum::getHashClass)
+		        .orElseThrow(() -> new SyncException("No hash class found corresponding to has class " + model.getClass()));
 	}
 }

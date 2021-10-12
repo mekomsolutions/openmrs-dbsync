@@ -2,10 +2,12 @@ package org.openmrs.eip.dbsync.service;
 
 import static org.openmrs.eip.dbsync.service.light.AbstractLightService.DEFAULT_VOID_REASON;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.camel.ProducerTemplate;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseDataEntity;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
@@ -13,6 +15,8 @@ import org.openmrs.eip.dbsync.entity.BaseMetaDataEntity;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
+import org.openmrs.eip.dbsync.exception.SyncException;
+import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
 import org.openmrs.eip.dbsync.mapper.operations.DecomposedUuid;
@@ -23,12 +27,14 @@ import org.openmrs.eip.dbsync.repository.PersonRepository;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.repository.light.UserLightRepository;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
+import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.openmrs.eip.dbsync.utils.ModelUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public abstract class AbstractEntityService<E extends BaseEntity, M extends BaseModel> implements EntityService<M> {
+	
+	protected Logger log = LoggerFactory.getLogger(getClass());
 	
 	protected SyncEntityRepository<E> repository;
 	
@@ -97,13 +103,71 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			}
 		}
 		
+		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
+		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
+		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody("jpa:" + hashClass.getSimpleName()
+		        + "?query=SELECT h from " + hashClass.getSimpleName() + " h WHERE h.identifier='" + model.getUuid() + "'",
+		    null, List.class);
+		
+		BaseHashEntity hash = null;
+		if (hashes != null && hashes.size() == 1) {
+			hash = hashes.get(0);
+		}
+		
 		if (etyInDb == null) {
+			if (hash == null) {
+				try {
+					hash = hashClass.newInstance();
+				}
+				catch (Exception e) {
+					throw new SyncException("Failed to create an instance of " + hashClass, e);
+				}
+				
+				hash.setIdentifier(model.getUuid());
+				hash.setDateCreated(LocalDateTime.now());
+			} else {
+				if (log.isDebugEnabled()) {
+					log.debug("Found existing hash for the entity, this could be a retry item for insert a new entity");
+				}
+				
+				hash.setDateChanged(LocalDateTime.now());
+			}
+			
+			hash.setHash(HashUtils.computeHash(model));
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Saving hash for the incoming entity state");
+			}
+			
+			producerTemplate.sendBody("jpa:" + hashClass.getSimpleName(), hash);
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Successfully saved the hash for the incoming entity state");
+			}
+			
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
 		} else if (isEtyInDbPlaceHolder || !etyInDb.wasModifiedAfter(ety)) {
+			if (hash == null) {
+				throw new SyncException("Failed to find the existing hash for an existing entity");
+			}
+			
 			ety.setId(etyInDb.getId());
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " updated"));
+			
+			hash.setHash(HashUtils.computeHash(model));
+			hash.setDateChanged(LocalDateTime.now());
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Updating hash for the incoming entity state");
+			}
+			
+			producerTemplate.sendBody("jpa:" + hashClass.getSimpleName(), hash);
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Successfully updated the hash for the incoming entity state");
+			}
 		} else {
 			throw new ConflictsFoundException();
 		}

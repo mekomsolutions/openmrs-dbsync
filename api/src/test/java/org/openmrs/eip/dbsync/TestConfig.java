@@ -4,6 +4,7 @@ import javax.jms.ConnectionFactory;
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -29,6 +30,11 @@ public class TestConfig {
 	@Bean("CamelContext")
 	public CamelContext getCamelContext() {
 		return Mockito.mock(CamelContext.class);
+	}
+	
+	@Bean("producerTemplate")
+	public ProducerTemplate getProducerTemplate() {
+		return Mockito.mock(ProducerTemplate.class);
 	}
 	
 }
