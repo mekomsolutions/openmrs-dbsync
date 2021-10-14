@@ -1,24 +1,35 @@
 package org.openmrs.eip.dbsync.camel;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
+import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_CLASS;
+import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_UUID;
+import static org.openmrs.eip.dbsync.service.AbstractEntityService.QUERY_GET_HASH;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.Provider;
 import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
+import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
 import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
@@ -26,8 +37,6 @@ import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.time.LocalDateTime;
 
 @Sql(scripts = "classpath:test_data.sql")
 public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
@@ -43,6 +52,9 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Autowired
 	private AbstractEntityService<Provider, ProviderModel> providerService;
+	
+	@Autowired
+	private ProducerTemplate producerTemplate;
 	
 	@Before
 	public void init() {
@@ -149,6 +161,9 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String appUserUuid = "test-user-uuid";
 		user.setUuid(appUserUuid);
 		SyncContext.setUser(user);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, UserHash.class.getSimpleName())
+		        .replace(PLACEHOLDER_UUID, userUuid);
+		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(new UserHash()));
 		
 		producer.process(exchange);
 		
@@ -184,6 +199,9 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String appUserUuid = "test-user";
 		user.setUuid(appUserUuid);
 		SyncContext.setUser(user);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, ProviderHash.class.getSimpleName())
+		        .replace(PLACEHOLDER_UUID, providerUuid);
+		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(new ProviderHash()));
 		
 		producer.process(exchange);
 		
