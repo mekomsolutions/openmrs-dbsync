@@ -42,6 +42,15 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 	
 	protected ModelToEntityMapper<M, E> modelToEntityMapper;
 	
+	public static final String PLACEHOLDER_CLASS = "[class]";
+	
+	public static final String PLACEHOLDER_UUID = "[uuid]";
+	
+	public static final String QUERY_GET_HASH = "jpa:" + PLACEHOLDER_CLASS + "?query=SELECT h from " + PLACEHOLDER_CLASS
+	        + " h WHERE h.identifier='" + PLACEHOLDER_UUID + "'";
+	
+	public static final String QUERY_SAVE_HASH = "jpa:" + PLACEHOLDER_CLASS;
+	
 	public AbstractEntityService(final SyncEntityRepository<E> repository,
 	    final EntityToModelMapper<E, M> entityToModelMapper, final ModelToEntityMapper<M, E> modelToEntityMapper) {
 		this.repository = repository;
@@ -105,9 +114,9 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody("jpa:" + hashClass.getSimpleName()
-		        + "?query=SELECT h from " + hashClass.getSimpleName() + " h WHERE h.identifier='" + model.getUuid() + "'",
-		    null, List.class);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()).replace(PLACEHOLDER_UUID,
+		    model.getUuid());
+		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
 		
 		BaseHashEntity hash = null;
 		if (hashes != null && hashes.size() == 1) {
@@ -116,8 +125,12 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		if (etyInDb == null) {
 			if (hash == null) {
+				if (log.isDebugEnabled()) {
+					log.debug("Inserting new hash for the incoming entity state");
+				}
+				
 				try {
-					hash = hashClass.newInstance();
+					hash = HashUtils.instantiateHashEntity(hashClass);
 				}
 				catch (Exception e) {
 					throw new SyncException("Failed to create an instance of " + hashClass, e);
@@ -126,10 +139,7 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				hash.setIdentifier(model.getUuid());
 				hash.setDateCreated(LocalDateTime.now());
 			} else {
-				if (log.isDebugEnabled()) {
-					log.debug("Found existing hash for the entity, this could be a retry item for insert a new entity");
-				}
-				
+				log.info("Found existing hash for the entity, this could be a retry item for insert a new entity");
 				hash.setDateChanged(LocalDateTime.now());
 			}
 			
@@ -139,7 +149,7 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				log.debug("Saving hash for the incoming entity state");
 			}
 			
-			producerTemplate.sendBody("jpa:" + hashClass.getSimpleName(), hash);
+			producerTemplate.sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()), hash);
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Successfully saved the hash for the incoming entity state");

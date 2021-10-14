@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
@@ -93,4 +94,19 @@ public class HashUtils {
 		
 		return modelClassDatetimePropsMap.get(modelClass);
 	}
+	
+	/**
+	 * Creates a new instance of the specified hash entity class
+	 * 
+	 * @param hashClass the hash entity class to instantiate
+	 * @return an instance of the hash entity class
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	public static BaseHashEntity instantiateHashEntity(Class<? extends BaseHashEntity> hashClass)
+	    throws IllegalAccessException, InstantiationException {
+		
+		return hashClass.newInstance();
+	}
+	
 }
