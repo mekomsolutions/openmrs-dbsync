@@ -106,14 +106,7 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		final String query = SyncConstants.QUERY_GET_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName())
-		        .replace(SyncConstants.PLACEHOLDER_UUID, model.getUuid());
-		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
-		
-		BaseHashEntity hash = null;
-		if (hashes != null && hashes.size() == 1) {
-			hash = hashes.get(0);
-		}
+		BaseHashEntity hash = HashUtils.getHash(model, hashClass, producerTemplate);
 		
 		if (etyInDb == null) {
 			if (hash == null) {

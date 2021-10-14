@@ -78,6 +78,7 @@ public class AbstractEntityServiceTest {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		PowerMockito.mockStatic(SyncContext.class);
+		PowerMockito.spy(HashUtils.class);
 		PowerMockito.mockStatic(HashUtils.class);
 		PowerMockito.mockStatic(TableToSyncEnum.class);
 		when(SyncContext.getBean(ProducerTemplate.class)).thenReturn(mockProducerTemplate);
@@ -88,6 +89,7 @@ public class AbstractEntityServiceTest {
 		OngoingStubbing<Class<? extends BaseHashEntity>> hashClassStub = when(
 		    TableToSyncEnum.getHashClass(any(BaseModel.class)));
 		hashClassStub.thenReturn(HASH_CLASS);
+		when(HashUtils.getHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class))).thenCallRealMethod();
 	}
 	
 	@Test

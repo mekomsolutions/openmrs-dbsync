@@ -6,13 +6,16 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -107,6 +110,27 @@ public class HashUtils {
 	    throws IllegalAccessException, InstantiationException {
 		
 		return hashClass.newInstance();
+	}
+	
+	/**
+	 * Looks up the hash for the specified model entity from the management DB
+	 * 
+	 * @param model the model for which to look up the hash
+	 * @return the saved hash entity object otherwise null
+	 */
+	public static BaseHashEntity getHash(BaseModel model, Class<? extends BaseHashEntity> hashClass,
+	                                     ProducerTemplate producerTemplate) {
+		
+		final String query = SyncConstants.QUERY_GET_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName())
+		        .replace(SyncConstants.PLACEHOLDER_UUID, model.getUuid());
+		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
+		
+		BaseHashEntity hash = null;
+		if (hashes != null && hashes.size() == 1) {
+			hash = hashes.get(0);
+		}
+		
+		return hash;
 	}
 	
 }
