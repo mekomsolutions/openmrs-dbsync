@@ -157,9 +157,17 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
-		} else if (isEtyInDbPlaceHolder || !etyInDb.wasModifiedAfter(ety)) {
+		} else {
 			if (hash == null) {
 				throw new SyncException("Failed to find the existing hash for an existing entity");
+			}
+			
+			if (!isEtyInDbPlaceHolder) {
+				M dbModel = entityToModelMapper.apply(etyInDb);
+				String dbEntityHash = HashUtils.computeHash(dbModel);
+				if (!dbEntityHash.equals(hash.getHash())) {
+					throw new ConflictsFoundException();
+				}
 			}
 			
 			ety.setId(etyInDb.getId());
@@ -178,8 +186,6 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			if (log.isDebugEnabled()) {
 				log.debug("Successfully updated the hash for the incoming entity state");
 			}
-		} else {
-			throw new ConflictsFoundException();
 		}
 		
 		return modelToReturn;

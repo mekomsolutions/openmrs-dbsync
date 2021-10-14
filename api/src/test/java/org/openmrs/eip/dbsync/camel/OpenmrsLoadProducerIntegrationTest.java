@@ -30,11 +30,13 @@ import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
+import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
+import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -55,6 +57,9 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Autowired
 	private ProducerTemplate producerTemplate;
+	
+	@Autowired
+	private EntityToModelMapper<User, UserModel> entityToModelMapper;
 	
 	@Before
 	public void init() {
@@ -149,9 +154,6 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String siteId = "some-site-uuid";
 		UserModel model = new UserModel();
 		model.setUuid(userUuid);
-		model.setUsername(existingUser.getUsername());
-		model.setCreatorUuid(creator);
-		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
@@ -161,9 +163,11 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String appUserUuid = "test-user-uuid";
 		user.setUuid(appUserUuid);
 		SyncContext.setUser(user);
+		UserHash existingHash = new UserHash();
+		existingHash.setHash(HashUtils.computeHash(existingUser));
 		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, UserHash.class.getSimpleName())
 		        .replace(PLACEHOLDER_UUID, userUuid);
-		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(new UserHash()));
+		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
 		
 		producer.process(exchange);
 		
@@ -187,9 +191,6 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String siteId = "some-site-uuid";
 		ProviderModel model = new ProviderModel();
 		model.setUuid(providerUuid);
-		model.setIdentifier(existingProvider.getIdentifier());
-		model.setCreatorUuid(creator);
-		model.setDateCreated(LocalDateTime.now());
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
@@ -199,9 +200,11 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		final String appUserUuid = "test-user";
 		user.setUuid(appUserUuid);
 		SyncContext.setUser(user);
+		ProviderHash existingHash = new ProviderHash();
+		existingHash.setHash(HashUtils.computeHash(existingProvider));
 		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, ProviderHash.class.getSimpleName())
 		        .replace(PLACEHOLDER_UUID, providerUuid);
-		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(new ProviderHash()));
+		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
 		
 		producer.process(exchange);
 		

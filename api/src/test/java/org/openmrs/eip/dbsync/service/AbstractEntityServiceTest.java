@@ -89,19 +89,23 @@ public class AbstractEntityServiceTest {
 		MockedModel mockedModel = new MockedModel("uuid");
 		MockedEntity mockedEntity = new MockedEntity(null, "uuid");
 		MockedEntity mockedEntityInDb = new MockedEntity(1L, "uuid");
+		MockedEntity mockSavedEntityInDb = new MockedEntity(null, "uuid");
 		when(repository.findByUuid("uuid")).thenReturn(mockedEntityInDb);
-		when(repository.save(mockedEntityInDb)).thenReturn(mockedEntity);
+		when(repository.save(mockedEntityInDb)).thenReturn(mockSavedEntityInDb);
 		when(modelToEntityMapper.apply(mockedModel)).thenReturn(mockedEntity);
-		when(entityToModelMapper.apply(mockedEntityInDb)).thenReturn(mockedModel);
+		MockedModel dbModel = new MockedModel("db-uuid");
+		when(entityToModelMapper.apply(mockedEntityInDb)).thenReturn(dbModel);
+		final String currentHash = "current-hash";
 		PersonHash existingHash = new PersonHash();
-		assertNull(existingHash.getHash());
-		assertNull(existingHash.getDateChanged());
+		existingHash.setHash(currentHash);
 		final String expectedNewHash = "tester";
-		when(HashUtils.computeHash(mockedModel)).thenReturn(expectedNewHash);
+		when(HashUtils.computeHash(dbModel)).thenReturn(currentHash);
 		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()).replace(PLACEHOLDER_UUID,
 		    mockedModel.getUuid());
 		when(mockProducerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
+		when(HashUtils.computeHash(mockedModel)).thenReturn(expectedNewHash);
+		when(entityToModelMapper.apply(mockSavedEntityInDb)).thenReturn(mockedModel);
 		
 		// When
 		MockedModel result = mockedEntityService.save(mockedModel);
@@ -155,15 +159,23 @@ public class AbstractEntityServiceTest {
 	}
 	
 	@Test(expected = ConflictsFoundException.class)
-	public void save_ShouldFailITheExistingEntityFromTheDbHasLaterModifications() {
+	public void save_ShouldFailIfTheExistingEntityFromTheDbHasADifferentHashFromTheStoredOne() {
 		// Given
 		MockedModel mockedModel = new MockedModel("uuid");
 		MockedEntity mockedEntity = new MockedEntity(null, "uuid");
-		mockedEntity.setDateChanged(LocalDateTime.of(2019, 6, 1, 0, 0));
 		MockedEntity mockedEntityInDb = new MockedEntity(null, "uuid");
-		mockedEntityInDb.setDateChanged(LocalDateTime.of(2019, 6, 2, 0, 0));
 		when(repository.findByUuid("uuid")).thenReturn(mockedEntityInDb);
 		when(modelToEntityMapper.apply(mockedModel)).thenReturn(mockedEntity);
+		final String expectedNewHash = "tester";
+		when(HashUtils.computeHash(mockedModel)).thenReturn(expectedNewHash);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()).replace(PLACEHOLDER_UUID,
+		    mockedModel.getUuid());
+		PersonHash existingHash = new PersonHash();
+		existingHash.setHash("old-hash");
+		when(mockProducerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		MockedModel dbModel = new MockedModel();
+		when(entityToModelMapper.apply(mockedEntityInDb)).thenReturn(dbModel);
+		when(HashUtils.computeHash(dbModel)).thenReturn("new-hash");
 		
 		mockedEntityService.save(mockedModel);
 	}
@@ -226,7 +238,7 @@ public class AbstractEntityServiceTest {
 	}
 	
 	@Test
-	public void getModel_shoulReturnNullIfNoMatchIsFound() {
+	public void getModel_shouldReturnNullIfNoMatchIsFound() {
 		assertNull(mockedEntityService.getModel("uuid"));
 		verify(entityToModelMapper, never()).apply(any());
 	}
