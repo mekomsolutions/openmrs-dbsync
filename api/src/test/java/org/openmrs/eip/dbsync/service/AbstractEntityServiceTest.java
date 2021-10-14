@@ -332,7 +332,8 @@ public class AbstractEntityServiceTest {
 		verify(repository).save(mockedEntity);
 		verify(mockProducerTemplate).sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()),
 		    existingHash);
-		verify(mockLogger).info("Found existing hash for a new entity, this could be a retry item to insert a new entity");
+		verify(mockLogger).info(
+		    "Found existing hash for a new entity, this could be a retry item to insert a new entity where the hash was created but the insert previously failed");
 		verify(mockLogger).debug("Updating hash for the incoming entity state");
 		assertEquals(expectedNewHash, existingHash.getHash());
 		assertNotNull(existingHash.getDateChanged());
@@ -355,6 +356,34 @@ public class AbstractEntityServiceTest {
 		expectedException.expectMessage(CoreMatchers.equalTo("Failed to find the existing hash for an existing entity"));
 		
 		mockedEntityService.save(mockedModel);
+	}
+	
+	@Test
+	public void save_ShouldPassIfTheExistingEntityFromTheDbHasADifferentHashFromTheStoredOneButMatchesThatOfTheIncomingPayload() {
+		// Given
+		MockedModel mockedModel = new MockedModel("uuid");
+		MockedEntity mockedEntity = new MockedEntity(null, "uuid");
+		MockedEntity mockedEntityInDb = new MockedEntity(null, "uuid");
+		when(repository.findByUuid("uuid")).thenReturn(mockedEntityInDb);
+		when(modelToEntityMapper.apply(mockedModel)).thenReturn(mockedEntity);
+		final String expectedNewHash = "new-hash";
+		when(HashUtils.computeHash(mockedModel)).thenReturn(expectedNewHash);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()).replace(PLACEHOLDER_UUID,
+		    mockedModel.getUuid());
+		PersonHash existingHash = new PersonHash();
+		existingHash.setHash("old-hash");
+		when(mockProducerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		MockedModel dbModel = new MockedModel();
+		when(entityToModelMapper.apply(mockedEntityInDb)).thenReturn(dbModel);
+		when(HashUtils.computeHash(dbModel)).thenReturn(expectedNewHash);
+        when(mockLogger.isDebugEnabled()).thenReturn(true);
+		
+		mockedEntityService.save(mockedModel);
+		verify(mockProducerTemplate).sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()),
+		    existingHash);
+		verify(mockLogger).debug("Updating hash for the incoming entity state");
+		assertEquals(expectedNewHash, existingHash.getHash());
+		assertNotNull(existingHash.getDateChanged());
 	}
 	
 }

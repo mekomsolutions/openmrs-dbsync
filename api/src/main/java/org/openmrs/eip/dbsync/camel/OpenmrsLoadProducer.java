@@ -70,7 +70,10 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 			
 			if (dbModel != null || storedHash != null) {
 				if (dbModel == null) {
-					log.info("Found existing hash for a missing entity, this could be a retry item to delete an entity");
+					//This will typically happen if we deleted the entity but something went wrong before or during 
+					//update of the hash and the event comes back as a retry item
+					log.info("Found existing hash for a missing entity, this could be a retry item to delete an entity "
+					        + "but the hash was never updated to the terminal value");
 				}
 				
 				storedHash.setHash(HASH_DELETED);

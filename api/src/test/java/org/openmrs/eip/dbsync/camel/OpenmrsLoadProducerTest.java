@@ -199,7 +199,8 @@ public class OpenmrsLoadProducerTest {
 		verify(serviceFacade).delete(TableToSyncEnum.PERSON, personUuid);
 		verify(mockProducerTemplate).sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, PersonHash.class.getSimpleName()),
 		    storedHash);
-		verify(mockLogger).info("Found existing hash for a missing entity, this could be a retry item to delete an entity");
+		verify(mockLogger).info(
+		    "Found existing hash for a missing entity, this could be a retry item to delete an entity but the hash was never updated to the terminal value");
 		verify(mockLogger).debug("Updating hash for the deleted entity");
 		assertEquals(HASH_DELETED, storedHash.getHash());
 		assertNotNull(storedHash.getDateChanged());

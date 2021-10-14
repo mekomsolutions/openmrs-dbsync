@@ -106,40 +106,44 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		BaseHashEntity hash = HashUtils.getStoredHash(model, hashClass, producerTemplate);
+		BaseHashEntity storedHash = HashUtils.getStoredHash(model, hashClass, producerTemplate);
 		
 		if (etyInDb == null) {
-			if (hash == null) {
+			if (storedHash == null) {
 				if (log.isDebugEnabled()) {
 					log.debug("Inserting new hash for the incoming entity state");
 				}
 				
 				try {
-					hash = HashUtils.instantiateHashEntity(hashClass);
+					storedHash = HashUtils.instantiateHashEntity(hashClass);
 				}
 				catch (Exception e) {
 					throw new SyncException("Failed to create an instance of " + hashClass, e);
 				}
 				
-				hash.setIdentifier(model.getUuid());
-				hash.setDateCreated(LocalDateTime.now());
+				storedHash.setIdentifier(model.getUuid());
+				storedHash.setDateCreated(LocalDateTime.now());
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Saving hash for the incoming entity state");
 				}
 			} else {
-				log.info("Found existing hash for a new entity, this could be a retry item to insert a new entity");
-				hash.setDateChanged(LocalDateTime.now());
+				//This will typically happen if we inserted the hash but something went wrong before or during 
+				//insert of the entity and the event comes back as a retry item
+				log.info("Found existing hash for a new entity, this could be a retry item to insert a new entity "
+				        + "where the hash was created but the insert previously failed");
+				storedHash.setDateChanged(LocalDateTime.now());
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Updating hash for the incoming entity state");
 				}
 			}
 			
-			hash.setHash(HashUtils.computeHash(model));
+			storedHash.setHash(HashUtils.computeHash(model));
 			
 			producerTemplate.sendBody(
-			    SyncConstants.QUERY_SAVE_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName()), hash);
+			    SyncConstants.QUERY_SAVE_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName()),
+			    storedHash);
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Successfully saved the hash for the incoming entity state");
@@ -148,17 +152,24 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
 		} else {
-			if (hash == null) {
+			if (storedHash == null) {
 				//TODO Don't fail if hashes of the db and incoming payloads match
 				throw new SyncException("Failed to find the existing hash for an existing entity");
 			}
 			
+			String newHash = HashUtils.computeHash(model);
 			if (!isEtyInDbPlaceHolder) {
 				M dbModel = entityToModelMapper.apply(etyInDb);
 				String dbEntityHash = HashUtils.computeHash(dbModel);
-				//Don't fail if hashes of the db and incoming payloads match
-				if (!dbEntityHash.equals(hash.getHash())) {
-					throw new ConflictsFoundException();
+				if (!dbEntityHash.equals(storedHash.getHash())) {
+					if (dbEntityHash.equals(newHash)) {
+						//This will typically happen if we update the entity but something goes wrong before or during
+						//update of the hash and the event comes back as a retry item
+						log.info("Stored hash differs from that of the state in the DB, ignoring this because the incoming "
+						        + "and DB states match");
+					} else {
+						throw new ConflictsFoundException();
+					}
 				}
 			}
 			
@@ -166,14 +177,14 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " updated"));
 			
-			hash.setHash(HashUtils.computeHash(model));
-			hash.setDateChanged(LocalDateTime.now());
+			storedHash.setHash(newHash);
+			storedHash.setDateChanged(LocalDateTime.now());
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Updating hash for the incoming entity state");
 			}
 			
-			producerTemplate.sendBody("jpa:" + hashClass.getSimpleName(), hash);
+			producerTemplate.sendBody("jpa:" + hashClass.getSimpleName(), storedHash);
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Successfully updated the hash for the incoming entity state");
