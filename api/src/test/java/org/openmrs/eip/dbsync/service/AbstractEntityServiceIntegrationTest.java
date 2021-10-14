@@ -1,27 +1,17 @@
 package org.openmrs.eip.dbsync.service;
 
-import static java.util.Collections.singletonList;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
-
 import java.time.LocalDateTime;
-import java.util.List;
 
-import org.apache.camel.ProducerTemplate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
-import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.impl.PatientService;
 import org.openmrs.eip.dbsync.service.impl.PersonService;
 import org.openmrs.eip.dbsync.service.impl.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,9 +24,6 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 	private AbstractEntityService patientService;
 	
 	private AbstractEntityService userService;
-	
-	@Autowired
-	private ProducerTemplate producerTemplate;
 	
 	@Before
 	public void setup() {
@@ -77,9 +64,6 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		user.setCreatorUuid(UserLight.class.getName() + "(" + uuid + ")");
 		user.setDateCreated(LocalDateTime.now());
 		user.setUuid(uuid);
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, UserHash.class.getSimpleName())
-		        .replace(PLACEHOLDER_UUID, uuid);
-		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(new UserHash()));
 		
 		userService.save(user);
 		
