@@ -113,13 +113,15 @@ public class HashUtils {
 	}
 	
 	/**
-	 * Looks up the hash for the specified model entity from the management DB
+	 * Looks up the stored hash for the specified model entity from the management DB
 	 * 
 	 * @param model the model for which to look up the hash
+	 * @param hashClass entity hash class
+	 * @param producerTemplate ProducerTemplate object
 	 * @return the saved hash entity object otherwise null
 	 */
-	public static BaseHashEntity getHash(BaseModel model, Class<? extends BaseHashEntity> hashClass,
-	                                     ProducerTemplate producerTemplate) {
+	public static BaseHashEntity getStoredHash(BaseModel model, Class<? extends BaseHashEntity> hashClass,
+	                                           ProducerTemplate producerTemplate) {
 		
 		final String query = SyncConstants.QUERY_GET_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName())
 		        .replace(SyncConstants.PLACEHOLDER_UUID, model.getUuid());

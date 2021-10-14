@@ -89,7 +89,8 @@ public class AbstractEntityServiceTest {
 		OngoingStubbing<Class<? extends BaseHashEntity>> hashClassStub = when(
 		    TableToSyncEnum.getHashClass(any(BaseModel.class)));
 		hashClassStub.thenReturn(HASH_CLASS);
-		when(HashUtils.getHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class))).thenCallRealMethod();
+		when(HashUtils.getStoredHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class)))
+		        .thenCallRealMethod();
 	}
 	
 	@Test
@@ -107,6 +108,7 @@ public class AbstractEntityServiceTest {
 		final String currentHash = "current-hash";
 		PersonHash existingHash = new PersonHash();
 		existingHash.setHash(currentHash);
+		assertNull(existingHash.getDateChanged());
 		final String expectedNewHash = "tester";
 		when(HashUtils.computeHash(dbModel)).thenReturn(currentHash);
 		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()).replace(PLACEHOLDER_UUID,
@@ -320,6 +322,7 @@ public class AbstractEntityServiceTest {
 		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()).replace(PLACEHOLDER_UUID,
 		    mockedModel.getUuid());
 		when(mockProducerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
 		MockedModel result = mockedEntityService.save(mockedModel);
@@ -329,7 +332,8 @@ public class AbstractEntityServiceTest {
 		verify(repository).save(mockedEntity);
 		verify(mockProducerTemplate).sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, HASH_CLASS.getSimpleName()),
 		    existingHash);
-		verify(mockLogger).info("Found existing hash for the entity, this could be a retry item for insert a new entity");
+		verify(mockLogger).info("Found existing hash for a new entity, this could be a retry item to insert a new entity");
+		verify(mockLogger).debug("Updating hash for the incoming entity state");
 		assertEquals(expectedNewHash, existingHash.getHash());
 		assertNotNull(existingHash.getDateChanged());
 		

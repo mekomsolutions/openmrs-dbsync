@@ -106,7 +106,7 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		BaseHashEntity hash = HashUtils.getHash(model, hashClass, producerTemplate);
+		BaseHashEntity hash = HashUtils.getStoredHash(model, hashClass, producerTemplate);
 		
 		if (etyInDb == null) {
 			if (hash == null) {
@@ -123,16 +123,20 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				
 				hash.setIdentifier(model.getUuid());
 				hash.setDateCreated(LocalDateTime.now());
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Saving hash for the incoming entity state");
+				}
 			} else {
-				log.info("Found existing hash for the entity, this could be a retry item for insert a new entity");
+				log.info("Found existing hash for a new entity, this could be a retry item to insert a new entity");
 				hash.setDateChanged(LocalDateTime.now());
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Updating hash for the incoming entity state");
+				}
 			}
 			
 			hash.setHash(HashUtils.computeHash(model));
-			
-			if (log.isDebugEnabled()) {
-				log.debug("Saving hash for the incoming entity state");
-			}
 			
 			producerTemplate.sendBody(
 			    SyncConstants.QUERY_SAVE_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName()), hash);
@@ -145,12 +149,14 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
 		} else {
 			if (hash == null) {
+				//TODO Don't fail if hashes of the db and incoming payloads match
 				throw new SyncException("Failed to find the existing hash for an existing entity");
 			}
 			
 			if (!isEtyInDbPlaceHolder) {
 				M dbModel = entityToModelMapper.apply(etyInDb);
 				String dbEntityHash = HashUtils.computeHash(dbModel);
+				//Don't fail if hashes of the db and incoming payloads match
 				if (!dbEntityHash.equals(hash.getHash())) {
 					throw new ConflictsFoundException();
 				}

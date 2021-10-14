@@ -24,4 +24,7 @@ public class SyncConstants {
 	
 	public static final String QUERY_GET_HASH = "jpa:" + PLACEHOLDER_CLASS + "?query=SELECT h from " + PLACEHOLDER_CLASS
 	        + " h WHERE h.identifier='" + PLACEHOLDER_UUID + "'";
+	
+	public static final String HASH_DELETED = "DELETED";
+	
 }
