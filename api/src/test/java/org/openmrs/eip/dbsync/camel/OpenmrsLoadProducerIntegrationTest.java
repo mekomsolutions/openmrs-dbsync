@@ -30,7 +30,6 @@ import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
-import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
@@ -57,9 +56,6 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Autowired
 	private ProducerTemplate producerTemplate;
-	
-	@Autowired
-	private EntityToModelMapper<User, UserModel> entityToModelMapper;
 	
 	@Before
 	public void init() {
