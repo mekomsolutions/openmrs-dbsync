@@ -9,10 +9,10 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.QUERY_GET_HASH;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.QUERY_SAVE_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_SAVE_HASH;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.ProducerTemplate;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +33,7 @@ import org.openmrs.eip.dbsync.MockedModel;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
+import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.management.hash.entity.PersonHash;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
@@ -66,6 +70,9 @@ public class AbstractEntityServiceTest {
 	private Logger mockLogger;
 	
 	private static final Class<? extends BaseHashEntity> HASH_CLASS = PersonHash.class;
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Before
 	public void init() {
@@ -324,6 +331,24 @@ public class AbstractEntityServiceTest {
 		assertEquals(expectedNewHash, existingHash.getHash());
 		assertNotNull(existingHash.getDateChanged());
 		
+	}
+	
+	@Test
+	public void save_shouldFailIfNoHashIsFoundForAnExistingEntity() {
+		// Given
+		MockedModel mockedModel = new MockedModel("uuid");
+		MockedEntity mockedEntity = new MockedEntity(null, "uuid");
+		MockedEntity mockedEntityInDb = new MockedEntity(1L, "uuid");
+		MockedEntity mockSavedEntityInDb = new MockedEntity(null, "uuid");
+		when(repository.findByUuid("uuid")).thenReturn(mockedEntityInDb);
+		when(repository.save(mockedEntityInDb)).thenReturn(mockSavedEntityInDb);
+		when(modelToEntityMapper.apply(mockedModel)).thenReturn(mockedEntity);
+		MockedModel dbModel = new MockedModel("db-uuid");
+		when(entityToModelMapper.apply(mockedEntityInDb)).thenReturn(dbModel);
+		expectedException.expect(SyncException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo("Failed to find the existing hash for an existing entity"));
+		
+		mockedEntityService.save(mockedModel);
 	}
 	
 }

@@ -1,9 +1,9 @@
 package org.openmrs.eip.dbsync.service;
 
 import static java.util.Collections.singletonList;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.QUERY_GET_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 
 import java.time.LocalDateTime;
 import java.util.List;

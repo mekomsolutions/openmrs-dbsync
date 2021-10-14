@@ -7,9 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.service.AbstractEntityService.QUERY_GET_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 
 import java.time.LocalDateTime;
 import java.util.List;

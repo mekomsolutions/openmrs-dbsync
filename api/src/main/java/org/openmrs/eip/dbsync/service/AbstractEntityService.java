@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.camel.ProducerTemplate;
+import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseDataEntity;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
@@ -41,15 +42,6 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 	protected EntityToModelMapper<E, M> entityToModelMapper;
 	
 	protected ModelToEntityMapper<M, E> modelToEntityMapper;
-	
-	public static final String PLACEHOLDER_CLASS = "[class]";
-	
-	public static final String PLACEHOLDER_UUID = "[uuid]";
-	
-	public static final String QUERY_GET_HASH = "jpa:" + PLACEHOLDER_CLASS + "?query=SELECT h from " + PLACEHOLDER_CLASS
-	        + " h WHERE h.identifier='" + PLACEHOLDER_UUID + "'";
-	
-	public static final String QUERY_SAVE_HASH = "jpa:" + PLACEHOLDER_CLASS;
 	
 	public AbstractEntityService(final SyncEntityRepository<E> repository,
 	    final EntityToModelMapper<E, M> entityToModelMapper, final ModelToEntityMapper<M, E> modelToEntityMapper) {
@@ -114,8 +106,8 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(model);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()).replace(PLACEHOLDER_UUID,
-		    model.getUuid());
+		final String query = SyncConstants.QUERY_GET_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName())
+		        .replace(SyncConstants.PLACEHOLDER_UUID, model.getUuid());
 		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
 		
 		BaseHashEntity hash = null;
@@ -149,7 +141,8 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				log.debug("Saving hash for the incoming entity state");
 			}
 			
-			producerTemplate.sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()), hash);
+			producerTemplate.sendBody(
+			    SyncConstants.QUERY_SAVE_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName()), hash);
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Successfully saved the hash for the incoming entity state");
