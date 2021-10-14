@@ -10,6 +10,7 @@ import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.BaseMetadataModel;
+import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.UserModel;
@@ -44,29 +45,31 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 			
 			entityServiceFacade.delete(tableToSyncEnum, syncModel.getModel().getUuid());
 		} else {
+			BaseModel modelToSave = syncModel.getModel();
 			String siteId = syncModel.getMetadata().getSourceIdentifier();
-			if (isUser) {
-				UserModel userModel = (UserModel) syncModel.getModel();
-				userModel.setUsername(userModel.getUsername() + VALUE_SITE_SEPARATOR + siteId);
-				userModel.setSystemId(userModel.getSystemId() + VALUE_SITE_SEPARATOR + siteId);
-			} else if (isProvider) {
-				ProviderModel providerModel = (ProviderModel) syncModel.getModel();
-				if (StringUtils.isNotBlank(providerModel.getIdentifier())) {
-					providerModel.setIdentifier(providerModel.getIdentifier() + VALUE_SITE_SEPARATOR + siteId);
+			if (!isDeleteOperation) {
+				if (isUser) {
+					UserModel userModel = (UserModel) modelToSave;
+					userModel.setUsername(userModel.getUsername() + VALUE_SITE_SEPARATOR + siteId);
+					userModel.setSystemId(userModel.getSystemId() + VALUE_SITE_SEPARATOR + siteId);
+				} else if (isProvider) {
+					ProviderModel providerModel = (ProviderModel) syncModel.getModel();
+					if (StringUtils.isNotBlank(providerModel.getIdentifier())) {
+						providerModel.setIdentifier(providerModel.getIdentifier() + VALUE_SITE_SEPARATOR + siteId);
+					}
 				}
-			}
-			
-			if (isDeleteOperation) {
+			} else {
 				//This is a user or provider entity that was deleted
-				log.info("Entity was deleted in remote site, marking it as deleted");
-				BaseMetadataModel metadataModel = (BaseMetadataModel) syncModel.getModel();
-				metadataModel.setRetired(true);
-				metadataModel.setRetiredByUuid(UserLight.class.getName() + "(" + SyncContext.getUser().getUuid() + ")");
-				metadataModel.setDateRetired(LocalDateTime.now());
-				metadataModel.setRetireReason(SyncConstants.DEFAULT_RETIRE_REASON);
+				log.info("Entity was deleted in remote site, marking it as retired");
+				BaseMetadataModel existing = entityServiceFacade.getModel(tableToSyncEnum, syncModel.getModel().getUuid());
+				existing.setRetired(true);
+				existing.setRetiredByUuid(UserLight.class.getName() + "(" + SyncContext.getUser().getUuid() + ")");
+				existing.setDateRetired(LocalDateTime.now());
+				existing.setRetireReason(SyncConstants.DEFAULT_RETIRE_REASON);
+				modelToSave = existing;
 			}
 			
-			entityServiceFacade.saveModel(tableToSyncEnum, syncModel.getModel());
+			entityServiceFacade.saveModel(tableToSyncEnum, modelToSave);
 		}
 	}
 	
