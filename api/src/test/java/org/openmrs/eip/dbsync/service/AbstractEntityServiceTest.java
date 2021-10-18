@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.MockedModel;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
-import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
 import org.openmrs.eip.dbsync.repository.MockedOpenmrsRepository;
@@ -81,20 +80,6 @@ public class AbstractEntityServiceTest {
 		// Then
 		assertEquals(mockedModel, result);
 		verify(repository).save(mockedEntity);
-	}
-	
-	@Test(expected = ConflictsFoundException.class)
-	public void save_ShouldFailITheExistingEntityFromTheDbHasLaterModifications() {
-		// Given
-		MockedModel mockedModel = new MockedModel("uuid");
-		MockedEntity mockedEntity = new MockedEntity(null, "uuid");
-		mockedEntity.setDateChanged(LocalDateTime.of(2019, 6, 1, 0, 0));
-		MockedEntity mockedEntityInDb = new MockedEntity(null, "uuid");
-		mockedEntityInDb.setDateChanged(LocalDateTime.of(2019, 6, 2, 0, 0));
-		when(repository.findByUuid("uuid")).thenReturn(mockedEntityInDb);
-		when(modelToEntityMapper.apply(mockedModel)).thenReturn(mockedEntity);
-		
-		mockedEntityService.save(mockedModel);
 	}
 	
 	@Test

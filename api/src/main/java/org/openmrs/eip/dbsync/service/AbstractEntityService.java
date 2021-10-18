@@ -1,18 +1,13 @@
 package org.openmrs.eip.dbsync.service;
 
-import static org.openmrs.eip.dbsync.service.light.AbstractLightService.DEFAULT_VOID_REASON;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.openmrs.eip.dbsync.SyncContext;
-import org.openmrs.eip.dbsync.entity.BaseDataEntity;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
-import org.openmrs.eip.dbsync.entity.BaseMetaDataEntity;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
-import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
 import org.openmrs.eip.dbsync.mapper.operations.DecomposedUuid;
@@ -85,27 +80,14 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			}
 		}
 		
-		M modelToReturn = model;
-		boolean isEtyInDbPlaceHolder = false;
-		if (etyInDb != null) {
-			if (etyInDb instanceof BaseDataEntity) {
-				BaseDataEntity bde = (BaseDataEntity) etyInDb;
-				isEtyInDbPlaceHolder = bde.isVoided() && DEFAULT_VOID_REASON.equals(bde.getVoidReason());
-			} else if (etyInDb instanceof BaseMetaDataEntity) {
-				BaseMetaDataEntity bmde = (BaseMetaDataEntity) etyInDb;
-				isEtyInDbPlaceHolder = bmde.isRetired() && DEFAULT_VOID_REASON.equals(bmde.getRetireReason());
-			}
-		}
-		
+		M modelToReturn;
 		if (etyInDb == null) {
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " inserted"));
-		} else if (isEtyInDbPlaceHolder || !etyInDb.wasModifiedAfter(ety)) {
+		} else {
 			ety.setId(etyInDb.getId());
 			modelToReturn = saveEntity(ety);
 			log.info(getMsg(ety, model.getUuid(), " updated"));
-		} else {
-			throw new ConflictsFoundException();
 		}
 		
 		return modelToReturn;

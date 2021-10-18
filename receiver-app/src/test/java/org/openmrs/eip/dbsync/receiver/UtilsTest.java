@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.DrugOrderModel;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
@@ -37,6 +38,17 @@ public class UtilsTest {
 	@Before
 	public void setup() {
 		Whitebox.setInternalState(Utils.class, "typeAndIdsToExcludeMap", (Object) null);
+	}
+	
+	public String getTestEntityPayLoad(String voidReason) {
+		return "{" + "\"tableToSyncModelClass\":\"" + PersonModel.class.getName() + "\"," + "\"model\":{"
+		        + "\"uuid\":\"818b4ee6-8d68-4849-975d-80ab98016677\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
+		        + "(1cc6880e-4d46-11e4-9138-a6c5e4d20fb8)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\","
+		        + "\"changedByUuid\":null," + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null,"
+		        + "\"dateVoided\":null," + "\"voidReason\":" + voidReason + "," + "\"gender\":\"F\","
+		        + "\"birthdate\":\"1982-01-06\"," + "\"birthdateEstimated\":false," + "\"dead\":false,"
+		        + "\"deathDate\":null," + "\"causeOfDeathUuid\":null," + "\"deathdateEstimated\":false,"
+		        + "\"birthtime\":null" + "},\"metadata\":{\"operation\":\"c\"}" + "}";
 	}
 	
 	@Test

@@ -1,6 +1,9 @@
 package org.openmrs.eip.dbsync.sender.config;
 
+import org.apache.camel.ProducerTemplate;
+import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.SyncConstants;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.config.ReceiverEncryptionProperties;
 import org.openmrs.eip.dbsync.config.SenderEncryptionProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,59 +28,59 @@ import java.util.Map;
 
 @Configuration
 @EnableAutoConfiguration(exclude = ArtemisAutoConfiguration.class)
-@EnableJpaRepositories(
-        entityManagerFactoryRef = "entityManager",
-        basePackages = {"org.openmrs.eip.dbsync.repository"}
-)
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManager", basePackages = { "org.openmrs.eip.dbsync.repository" })
 @EntityScan("org.openmrs.eip.dbsync.entity")
-@ComponentScan({
-        "org.openmrs.eip.dbsync.service",
-        "org.openmrs.eip.dbsync.mapper",
-        "org.openmrs.eip.dbsync.camel"
-})
+@ComponentScan({ "org.openmrs.eip.dbsync.service", "org.openmrs.eip.dbsync.mapper", "org.openmrs.eip.dbsync.camel", })
 public class TestConfig {
-
-    @Value("${spring.datasource.dialect}")
-    private String hibernateDialect;
-
-    @Value("${spring.datasource.ddlAuto}")
-    private String ddlAuto;
-
-    @Bean(SyncConstants.OPENMRS_DATASOURCE_NAME)
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "pgp.receiver")
-    public ReceiverEncryptionProperties receiverEncryptionProperties() {
-        return new ReceiverEncryptionProperties();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "pgp.sender")
-    public SenderEncryptionProperties senderProperties() {
-        return new SenderEncryptionProperties();
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
-        return new JpaTransactionManager(entityManagerFactory);
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
-                                                                final DataSource dataSource) {
-        Map<String, String> props = new HashMap<>();
-        props.put("hibernate.dialect", hibernateDialect);
-        props.put("hibernate.hbm2ddl.auto", ddlAuto);
-
-        return builder
-                .dataSource(dataSource)
-                .packages("org.openmrs.eip.dbsync.entity")
-                .persistenceUnit("openmrs")
-                .properties(props)
-                .build();
-    }
+	
+	@Value("${spring.datasource.dialect}")
+	private String hibernateDialect;
+	
+	@Value("${spring.datasource.ddlAuto}")
+	private String ddlAuto;
+	
+	@Bean(SyncConstants.OPENMRS_DATASOURCE_NAME)
+	@ConfigurationProperties(prefix = "spring.datasource")
+	public DataSource dataSource() {
+		return DataSourceBuilder.create().build();
+	}
+	
+	@Bean
+	@ConfigurationProperties(prefix = "pgp.receiver")
+	public ReceiverEncryptionProperties receiverEncryptionProperties() {
+		return new ReceiverEncryptionProperties();
+	}
+	
+	@Bean
+	@ConfigurationProperties(prefix = "pgp.sender")
+	public SenderEncryptionProperties senderProperties() {
+		return new SenderEncryptionProperties();
+	}
+	
+	@Bean
+	public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
+	}
+	
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
+	                                                            final DataSource dataSource) {
+		Map<String, String> props = new HashMap<>();
+		props.put("hibernate.dialect", hibernateDialect);
+		props.put("hibernate.hbm2ddl.auto", ddlAuto);
+		
+		return builder.dataSource(dataSource).packages("org.openmrs.eip.dbsync.entity").persistenceUnit("openmrs")
+		        .properties(props).build();
+	}
+	
+	@Bean("producerTemplate")
+	public ProducerTemplate getProducerTemplate() {
+		return Mockito.mock(ProducerTemplate.class);
+	}
+	
+	@Bean("syncContext")
+	public SyncContext getSyncContext() {
+		return new SyncContext();
+	}
+	
 }
