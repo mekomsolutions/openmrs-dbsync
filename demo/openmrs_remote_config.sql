@@ -5,9 +5,6 @@ UPDATE users SET uuid = 'b59b8633-d5f2-4af5-b6b6-bb2a4be832b1' WHERE user_id = 1
 UPDATE person SET uuid = 'f730a566-3e8d-4cd6-aa8b-2583c3fbe1e4', creator = 1 WHERE person_id = 1;
 UPDATE person_name SET uuid = 'c57c5353-e7b1-41bc-904a-a9b649ee3de8' WHERE person_name_id = 1;
 
-INSERT INTO global_property(property,property_value)
-VALUES ('datafilter_locationFilter.disabled', 'true');
-
 INSERT INTO person(person_id,gender,creator,date_created,birthdate,voided,uuid)
 VALUES(2, 'F', 1, now(), now(), 0, 'ab56b97d-c334-55d8-aac5-73d61e05f4d4');
 
@@ -30,5 +27,8 @@ VALUES ('Nurse', 'View Navigation Menu'),
 
 INSERT INTO user_role(user_id, role)
 VALUES(3, 'Nurse');
+
+INSERT INTO datafilter_entity_basis_map(entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
+VALUES ('4', 'org.openmrs.Patient', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-2');
 
 

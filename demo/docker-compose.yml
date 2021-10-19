@@ -26,6 +26,7 @@ services:
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
       - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs_common_config.sql
       - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs_remote_config.sql
+      - ./patients.sql:/docker-entrypoint-initdb.d/patients.sql
 
   artemis:
     image: cnocorch/activemq-artemis
