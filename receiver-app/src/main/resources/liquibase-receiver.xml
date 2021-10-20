@@ -865,4 +865,36 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="wluyima" id="20211020-1400">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="datafilter_entity_basis_map_hash" />
+            </not>
+        </preConditions>
+        <comment>Adding datafilter_entity_basis_map_hash table</comment>
+
+        <createTable tableName="datafilter_entity_basis_map_hash">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="identifier" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="hash" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="TIMESTAMP(3)">
+                <constraints nullable="false" />
+            </column>
+            <column name="date_changed" type="TIMESTAMP(3)" />
+        </createTable>
+
+        <createIndex indexName="datafilter_entity_basis_map_hash_identifier" tableName="datafilter_entity_basis_map_hash" unique="false">
+            <column name="identifier" />
+        </createIndex>
+        <createIndex indexName="datafilter_entity_basis_map_hash" tableName="datafilter_entity_basis_map_hash" unique="false">
+            <column name="hash" />
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
