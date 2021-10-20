@@ -865,6 +865,7 @@
         </createIndex>
     </changeSet>
 
+    <!-- TODO Add precondition to ensure we only add this hashmap if the module is installed -->
     <changeSet author="wluyima" id="20211020-1400">
         <preConditions onFail="MARK_RAN">
             <not>
