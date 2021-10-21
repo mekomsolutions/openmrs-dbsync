@@ -11,6 +11,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.entity.light.LightEntity;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.exception.SyncException;
@@ -21,6 +22,7 @@ import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.UserModel;
+import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.service.facade.EntityServiceFacade;
 import org.openmrs.eip.dbsync.utils.HashUtils;
@@ -103,6 +105,9 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 					if (StringUtils.isNotBlank(providerModel.getIdentifier())) {
 						providerModel.setIdentifier(providerModel.getIdentifier() + VALUE_SITE_SEPARATOR + siteId);
 					}
+				} else if (modelToSave instanceof EntityBasisMapModel) {
+					//We need to replace the entity and basis identifiers with local database ids 
+					replaceUuidsWithIds((EntityBasisMapModel) modelToSave);
 				}
 			} else {
 				//This is a user or provider entity that was deleted
@@ -209,6 +214,19 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Replaces the entity and basis identifiers with database primary keys
+	 * 
+	 * @param model the BaseModel object
+	 */
+	private void replaceUuidsWithIds(EntityBasisMapModel model) {
+		LightEntity entity = getEntityLightRepository(model.getEntityType()).findByUuid(model.getEntityIdentifier());
+		model.setEntityIdentifier(entity.getId().toString());
+		LightEntity basis = getEntityLightRepository(model.getBasisType()).findByUuid(model.getBasisIdentifier());
+		model.setEntityIdentifier(entity.getId().toString());
+		model.setBasisIdentifier(basis.getId().toString());
 	}
 	
 }
