@@ -1,4 +1,4 @@
-package org.openmrs.eip.dbsync.entity.module;
+package org.openmrs.eip.dbsync.entity.module.datafilter;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;

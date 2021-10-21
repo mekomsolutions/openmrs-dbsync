@@ -1,9 +1,9 @@
-package org.openmrs.eip.dbsync.service.impl;
+package org.openmrs.eip.dbsync.service.impl.module.datafilter;
 
-import org.openmrs.eip.dbsync.entity.module.EntityBasisMap;
+import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
-import org.openmrs.eip.dbsync.model.EntityBasisMapModel;
+import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;

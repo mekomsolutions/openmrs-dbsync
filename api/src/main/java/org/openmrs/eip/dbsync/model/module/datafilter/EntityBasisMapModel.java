@@ -1,7 +1,8 @@
-package org.openmrs.eip.dbsync.model;
+package org.openmrs.eip.dbsync.model.module.datafilter;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.openmrs.eip.dbsync.model.BaseModel;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
