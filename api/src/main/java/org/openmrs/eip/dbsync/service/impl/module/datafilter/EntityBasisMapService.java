@@ -20,7 +20,7 @@ public class EntityBasisMapService extends AbstractEntityService<EntityBasisMap,
 	
 	@Override
 	public TableToSyncEnum getTableToSync() {
-		return TableToSyncEnum.ENTITY_BASIS_MAP;
+		return TableToSyncEnum.DATAFILTER_ENTITY_BASIS_MAP;
 	}
 	
 }

@@ -71,7 +71,6 @@ import org.openmrs.eip.dbsync.model.DrugOrderModel;
 import org.openmrs.eip.dbsync.model.EncounterDiagnosisModel;
 import org.openmrs.eip.dbsync.model.EncounterModel;
 import org.openmrs.eip.dbsync.model.EncounterProviderModel;
-import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.model.LocationModel;
 import org.openmrs.eip.dbsync.model.ObservationModel;
 import org.openmrs.eip.dbsync.model.OrderGroupModel;
@@ -91,6 +90,7 @@ import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.model.VisitAttributeModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
+import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 
 public enum TableToSyncEnum {
 	
@@ -154,7 +154,7 @@ public enum TableToSyncEnum {
 	PROVIDER(Provider.class, ProviderModel.class, ProviderHash.class),
 	
     //Module tables
-	ENTITY_BASIS_MAP(EntityBasisMap.class, EntityBasisMapModel.class, EntityBasisMapHash.class);
+	DATAFILTER_ENTITY_BASIS_MAP(EntityBasisMap.class, EntityBasisMapModel.class, EntityBasisMapHash.class);
 	
 	private Class<? extends BaseEntity> entityClass;
 	

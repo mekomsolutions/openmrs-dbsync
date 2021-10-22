@@ -106,7 +106,7 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 						providerModel.setIdentifier(providerModel.getIdentifier() + VALUE_SITE_SEPARATOR + siteId);
 					}
 				} else if (modelToSave instanceof EntityBasisMapModel) {
-					//We need to replace the entity and basis identifiers with local database ids 
+					//We need to replace the entity and basis identifiers with local database ids
 					replaceUuidsWithIds((EntityBasisMapModel) modelToSave);
 				}
 			} else {
@@ -217,13 +217,17 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 	}
 	
 	/**
-	 * Replaces the entity and basis identifiers with database primary keys
+	 * Replaces the entity and basis identifiers with database ids
 	 * 
 	 * @param model the BaseModel object
 	 */
 	private void replaceUuidsWithIds(EntityBasisMapModel model) {
 		LightEntity entity = getEntityLightRepository(model.getEntityType()).findByUuid(model.getEntityIdentifier());
-		model.setEntityIdentifier(entity.getId().toString());
+		if (entity == null) {
+			throw new SyncException(
+			        "No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier());
+		}
+		
 		LightEntity basis = getEntityLightRepository(model.getBasisType()).findByUuid(model.getBasisIdentifier());
 		model.setEntityIdentifier(entity.getId().toString());
 		model.setBasisIdentifier(basis.getId().toString());

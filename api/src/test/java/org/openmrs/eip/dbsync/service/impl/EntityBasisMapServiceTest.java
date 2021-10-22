@@ -35,7 +35,7 @@ public class EntityBasisMapServiceTest {
 	
 	@Test
 	public void getTableToSync() {
-		Assert.assertEquals(TableToSyncEnum.ENTITY_BASIS_MAP, service.getTableToSync());
+		Assert.assertEquals(TableToSyncEnum.DATAFILTER_ENTITY_BASIS_MAP, service.getTableToSync());
 	}
 	
 }

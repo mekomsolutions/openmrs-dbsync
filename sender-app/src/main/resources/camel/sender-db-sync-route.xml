@@ -36,6 +36,7 @@
                             <jsonpath>$[0]</jsonpath>
                         </setBody>
                     </when>
+                    <!-- TODO fail if multiple entities are found -->
                     <otherwise>
                         <setBody>
                             <simple>${null}</simple>
