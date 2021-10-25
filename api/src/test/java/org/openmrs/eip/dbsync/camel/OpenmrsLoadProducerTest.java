@@ -15,6 +15,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.hamcrest.CoreMatchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.PersonHash;
@@ -30,6 +32,8 @@ import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
+import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
+import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.service.facade.EntityServiceFacade;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
@@ -40,6 +44,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ SyncContext.class, HashUtils.class })
@@ -63,6 +68,9 @@ public class OpenmrsLoadProducerTest {
 	
 	@Mock
 	private Logger mockLogger;
+	
+	@Mock
+	private OpenmrsRepository<EntityBasisMap> mockEntityBasisMapRepo;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -392,6 +400,31 @@ public class OpenmrsLoadProducerTest {
 		verify(mockLogger).debug("Updating hash for the incoming entity state");
 		assertEquals(expectedNewHash, storedHash.getHash());
 		assertNotNull(storedHash.getDateChanged());
+	}
+	
+	@Test
+	public void extract_shouldFailIfTheEntityDoesNotExistInTheDatabase() throws JSONException {
+		EntityBasisMapModel model = new EntityBasisMapModel();
+		model.setEntityIdentifier("0");
+		model.setEntityType("org.openmrs.Patient");
+		model.setBasisIdentifier("1");
+		model.setBasisType("org.openmrs.Location");
+		SyncMetadata metadata = new SyncMetadata();
+		metadata.setOperation("u");
+		SyncModel syncModel = new SyncModel(PersonModel.class, model, metadata);
+		exchange.getIn().setBody(syncModel);
+		when(applicationContext.getBean("entityServiceFacade")).thenReturn(serviceFacade);
+		PersonModel dbModel = new PersonModel();
+		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
+		final String beanName = "testRepo";
+		when(applicationContext.getBeanNamesForType(any(ResolvableType.class))).thenReturn(new String[] { beanName });
+		when(applicationContext.getBean(beanName)).thenReturn(mockEntityBasisMapRepo);
+		
+		expectedException.expect(SyncException.class);
+		expectedException.expectMessage(CoreMatchers
+		        .equalTo("No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier()));
+		
+		producer.process(exchange);
 	}
 	
 }

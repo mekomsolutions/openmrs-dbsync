@@ -6,16 +6,10 @@ import static org.openmrs.eip.dbsync.service.TableToSyncEnum.DATAFILTER_ENTITY_B
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
-import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -28,9 +22,6 @@ public class EntityBasisMapExtractTest extends OpenmrsExtractEndpointITest {
 	@Autowired
 	private OpenmrsRepository<EntityBasisMap> repo;
 	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
 	@Test
 	public void extract_shouldReadAndSerializeAnEntityFromTheDatabase() throws JSONException {
 		CamelInitObect camelInitObect = CamelInitObect.builder().tableToSync(DATAFILTER_ENTITY_BASIS_MAP.name()).build();
@@ -40,20 +31,6 @@ public class EntityBasisMapExtractTest extends OpenmrsExtractEndpointITest {
 		List<Exchange> result = resultEndpoint.getExchanges();
 		assertEquals(1, result.size());
 		JSONAssert.assertEquals(getExpectedJson(), (String) result.get(0).getIn().getBody(), false);
-	}
-	
-	@Test
-	@Ignore
-	public void extract_shouldFailIfTheEntityDoesNotExistInTheDatabase() throws JSONException {
-		CamelInitObect camelInitObect = CamelInitObect.builder().tableToSync(DATAFILTER_ENTITY_BASIS_MAP.name()).build();
-		EntityBasisMap map = repo.findByUuid(UUID);
-		map.setEntityIdentifier("0");
-		repo.save(map);
-		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(CoreMatchers
-		        .equalTo("No entity of type " + map.getEntityType() + " found with id " + map.getEntityIdentifier()));
-		
-		template.sendBody(camelInitObect);
 	}
 	
 	private String getExpectedJson() {
