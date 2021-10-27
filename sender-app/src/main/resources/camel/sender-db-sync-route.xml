@@ -49,33 +49,54 @@
         <choice>
             <when>
                 <simple>${body} != null</simple>
-                <script>
-                    <spel>
-                        #{body.metadata.setSourceIdentifier('{{db-sync.senderId}}')}
-                        #{body.metadata.setDateSent(T(java.time.LocalDateTime).now())}
-                        #{body.metadata.setOperation(getProperty('event').operation)}
-                    </spel>
-                </script>
-                <setBody>
-                    <method beanType="org.openmrs.eip.dbsync.utils.JsonUtils" method="marshall(${body})" />
-                </setBody>
+                <setProperty name="shouldProcess">
+                    <constant>true</constant>
+                </setProperty>
 
-                <log loggingLevel="DEBUG" message="Sync payload -> ${body}" />
-                
+                <!-- TODO Change this check after we start saving previous and new row state as part of the sender
+                retry item to use the states instead of the loaded entity from the DB -->
                 <when>
-                    <simple>{{openmrs.eip.dbsync.encryption.enabled}} == true</simple>
-                    <log message="Encrypting entity payload.." />
-                    
-                    <process ref="pgpEncryptService" />
-
-                    <log message="Encrypted entity payload -> ${body}" loggingLevel="TRACE" />
+                    <simple>${exchangeProperty.event.tableName} == 'datafilter_entity_basis_map' &amp;&amp; ${exchangeProperty.event.operation} != 'd'</simple>
+                    <setProperty name="shouldProcess">
+                        <method beanType="org.openmrs.eip.dbsync.sender.SenderUtils" method="isEntitySynced(${body.model})" />
+                    </setProperty>
                 </when>
-                
-                <log message="Sending entity payload to sync destination: {{camel.output.endpoint}}" />
 
-                <toD uri="{{camel.output.endpoint}}" />
+                <choice>
+                    <when>
+                        <simple>${exchangeProperty.shouldProcess} == true</simple>
+                        <script>
+                            <spel>
+                                #{body.metadata.setSourceIdentifier('{{db-sync.senderId}}')}
+                                #{body.metadata.setDateSent(T(java.time.LocalDateTime).now())}
+                                #{body.metadata.setOperation(getProperty('event').operation)}
+                            </spel>
+                        </script>
+                        <setBody>
+                            <method beanType="org.openmrs.eip.dbsync.utils.JsonUtils" method="marshall(${body})" />
+                        </setBody>
 
-                <log message="Entity payload sent" />
+                        <log loggingLevel="DEBUG" message="Sync payload -> ${body}" />
+
+                        <when>
+                            <simple>{{openmrs.eip.dbsync.encryption.enabled}} == true</simple>
+                            <log message="Encrypting entity payload.." />
+
+                            <process ref="pgpEncryptService" />
+
+                            <log message="Encrypted entity payload -> ${body}" loggingLevel="TRACE" />
+                        </when>
+
+                        <log message="Sending entity payload to sync destination: {{camel.output.endpoint}}" />
+
+                        <toD uri="{{camel.output.endpoint}}" />
+
+                        <log message="Entity payload sent" />
+                    </when>
+                    <otherwise>
+                        <log message="Skipping EntityBasisMap event for an entity of a type that is not synced" />
+                    </otherwise>
+                </choice>
             </when>
             <otherwise>
                 <!-- TODO Log to a special failures log file or DB -->
