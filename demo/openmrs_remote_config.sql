@@ -29,6 +29,6 @@ INSERT INTO user_role(user_id, role)
 VALUES(3, 'Nurse');
 
 INSERT INTO datafilter_entity_basis_map(entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
-VALUES ('4', 'org.openmrs.Patient', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-2');
+VALUES ('3', 'org.openmrs.Patient', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-2');
 
 
