@@ -11,8 +11,8 @@ services:
     volumes:
       - ./central-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
-      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs_common_config.sql
-      - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs_central_config.sql
+      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
+      - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
 
   mysql-remote:
     image: mysql:5.6
@@ -24,9 +24,9 @@ services:
     volumes:
       - ./remote-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
-      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs_common_config.sql
-      - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs_remote_config.sql
-      - ./patients.sql:/docker-entrypoint-initdb.d/patients.sql
+      - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
+      - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
+      - ./patients.sql:/docker-entrypoint-initdb.d/openmrs3.sql
 
   artemis:
     image: cnocorch/activemq-artemis

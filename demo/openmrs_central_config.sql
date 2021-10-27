@@ -24,3 +24,6 @@ VALUES ('Nurse', 'View Navigation Menu'),
 INSERT INTO user_role(user_id, role)
 VALUES(3, 'Nurse');
 
+insert into datafilter_entity_basis_map(entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
+values ('3', 'org.openmrs.User', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-central');
+

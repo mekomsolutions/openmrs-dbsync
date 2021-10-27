@@ -163,12 +163,6 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 				
 				entityServiceFacade.saveModel(tableToSyncEnum, modelToSave);
 			} else {
-				if (storedHash == null) {
-					//TODO Don't fail if hashes of the db and incoming payloads match
-					throw new SyncException("Failed to find the existing hash for an existing entity");
-				}
-				
-				String newHash = HashUtils.computeHash(syncModel.getModel());
 				boolean isEtyInDbPlaceHolder = false;
 				if (dbModel instanceof BaseDataModel) {
 					BaseDataModel dataModel = (BaseDataModel) dbModel;
@@ -179,6 +173,30 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 					        && DEFAULT_VOID_REASON.equals(metadataModel.getRetireReason());
 				}
 				
+				boolean isNewHashInstance = false;
+				if (storedHash == null) {
+					if (!isEtyInDbPlaceHolder) {
+						//TODO Don't fail if hashes of the db and incoming payloads match
+						throw new SyncException("Failed to find the existing hash for an existing entity");
+					}
+					
+					if (log.isDebugEnabled()) {
+						log.debug("Inserting new hash for existing placeholder entity");
+					}
+					
+					try {
+						storedHash = HashUtils.instantiateHashEntity(hashClass);
+						isNewHashInstance = true;
+					}
+					catch (Exception e) {
+						throw new SyncException("Failed to create an instance of " + hashClass, e);
+					}
+					
+					storedHash.setIdentifier(syncModel.getModel().getUuid());
+					storedHash.setDateCreated(LocalDateTime.now());
+				}
+				
+				String newHash = HashUtils.computeHash(syncModel.getModel());
 				if (!isEtyInDbPlaceHolder) {
 					String dbEntityHash = HashUtils.computeHash(dbModel);
 					if (!dbEntityHash.equals(storedHash.getHash())) {
@@ -201,7 +219,9 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 				entityServiceFacade.saveModel(tableToSyncEnum, modelToSave);
 				
 				storedHash.setHash(newHash);
-				storedHash.setDateChanged(LocalDateTime.now());
+				if (!isNewHashInstance) {
+					storedHash.setDateChanged(LocalDateTime.now());
+				}
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Updating hash for the incoming entity state");

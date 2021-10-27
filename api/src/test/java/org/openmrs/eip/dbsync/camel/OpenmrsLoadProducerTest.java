@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.openmrs.eip.dbsync.SyncConstants.HASH_DELETED;
 import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
 import static org.openmrs.eip.dbsync.SyncConstants.QUERY_SAVE_HASH;
+import static org.openmrs.eip.dbsync.service.light.AbstractLightService.DEFAULT_VOID_REASON;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -370,6 +371,41 @@ public class OpenmrsLoadProducerTest {
 		expectedException.expectMessage(CoreMatchers.equalTo("Failed to find the existing hash for an existing entity"));
 		
 		producer.process(exchange);
+	}
+	
+	@Test
+	public void process_shouldNotFailIfNoHashIsFoundForAnExistingPlaceHolderEntity() throws Exception {
+		// Given
+		PersonModel model = new PersonModel();
+		model.setUuid("uuid");
+		SyncMetadata metadata = new SyncMetadata();
+		metadata.setOperation("u");
+		SyncModel syncModel = new SyncModel(PersonModel.class, model, metadata);
+		exchange.getIn().setBody(syncModel);
+		when(applicationContext.getBean("entityServiceFacade")).thenReturn(serviceFacade);
+		PersonModel dbModel = new PersonModel();
+		dbModel.setVoided(true);
+		dbModel.setVoidReason(DEFAULT_VOID_REASON);
+		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
+		PersonHash personHash = new PersonHash();
+		assertNull(personHash.getIdentifier());
+		assertNull(personHash.getHash());
+		assertNull(personHash.getDateCreated());
+		assertNull(personHash.getDateChanged());
+		final String expectedHash = "testing";
+		when(HashUtils.computeHash(model)).thenReturn(expectedHash);
+		when(HashUtils.instantiateHashEntity(PersonHash.class)).thenReturn(personHash);
+		when(mockLogger.isDebugEnabled()).thenReturn(true);
+		
+		producer.process(exchange);
+		
+		verify(mockProducerTemplate).sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, PersonHash.class.getSimpleName()),
+		    personHash);
+		verify(mockLogger).debug("Inserting new hash for existing placeholder entity");
+		assertEquals(model.getUuid(), personHash.getIdentifier());
+		assertEquals(expectedHash, personHash.getHash());
+		assertNotNull(personHash.getDateCreated());
+		assertNull(personHash.getDateChanged());
 	}
 	
 	@Test

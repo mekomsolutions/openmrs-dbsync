@@ -102,12 +102,4 @@ public class OpenmrsExtractProducerTest {
 		producer.process(exchange);
 	}
 	
-	private String expectedJson(final String uuid) {
-		return "{" + "\"tableToSyncModelClass\":\"" + PersonModel.class.getName() + "\"," + "\"model\": {" + "\"uuid\":\""
-		        + uuid + "\"," + "\"creatorUuid\":null," + "\"dateCreated\":null," + "\"changedByUuid\":null,"
-		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
-		        + "\"voidReason\":null," + "\"gender\":null," + "\"birthdate\":null," + "\"birthdateEstimated\":false,"
-		        + "\"dead\":false," + "\"deathDate\":null," + "\"causeOfDeathUuid\":null," + "\"deathdateEstimated\":false,"
-		        + "\"birthtime\":null" + "}" + "}";
-	}
 }
