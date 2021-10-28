@@ -1,6 +1,9 @@
 package org.openmrs.eip.dbsync.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -15,12 +18,15 @@ import java.util.stream.Collectors;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 public class HashUtils {
 	
@@ -29,7 +35,7 @@ public class HashUtils {
 	private static Map<Class<? extends BaseModel>, Set<String>> modelClassDatetimePropsMap = null;
 	
 	/**
-	 * Computes a hash of the specified model, the logic is such that it removes null values, extracts
+	 * Computes the hash of the specified model, the logic is such that it removes null values, extracts
 	 * uuids for all light entity fields, converts datetime fields to milliseconds since the epoch,
 	 * sorts the values by field names, Stringifies the values, trims the values and concatenates all
 	 * values into a single string which is then hashed, this implementation has implications below,
@@ -133,6 +139,53 @@ public class HashUtils {
 		}
 		
 		return hash;
+	}
+	
+	/**
+	 * Gets the complex obs file with the specified name
+	 * 
+	 * @param filename the complex obs filename
+	 * @return md5 hash
+	 */
+	public static File getComplexObsFile(String filename) {
+		Environment env = SyncContext.getBean(Environment.class);
+		String complexObsDir = env.getProperty(SyncConstants.PROP_COMPLEX_OBS_DIR);
+		File file = Paths.get(complexObsDir, filename).toFile();
+		if (file.exists() && file.isFile()) {
+			if (log.isDebugEnabled()) {
+				log.debug("Found complex obs file " + file);
+			}
+			
+			return file;
+		}
+		
+		if (log.isDebugEnabled()) {
+			log.debug("No complex obs file found at " + file);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Computes the hash of the contents of the specified file
+	 * 
+	 * @param file the file object
+	 * @return md5 hash
+	 * @throws IOException
+	 */
+	public static String computeHashForFile(File file) throws IOException {
+		return DigestUtils.md5Hex(FileUtils.readFileToByteArray(file));
+	}
+	
+	/**
+	 * Computes the hash of the contents of the specified bytes
+	 * 
+	 * @param data an array of bytes
+	 * @return md5 hash
+	 * @throws IOException
+	 */
+	public static String computeHashForBytes(byte[] data) throws IOException {
+		return DigestUtils.md5Hex(data);
 	}
 	
 }

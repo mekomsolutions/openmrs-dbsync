@@ -21,11 +21,11 @@
         <choice>
             <when>
                 <method ref="isFilePredicate" />
-                <log message="Received complex obs data file: ${headers.CamelFileName}" />
+                <log message="Received complex obs data file: ${headers.CamelFileNameOnly}" />
 
                 <to uri="direct:receiver-complex-obs-sync" />
 
-                <log message="Successfully saved complex obs file: ${headers.CamelFileName}" />
+                <log message="Successfully saved complex obs file: ${headers.CamelFileNameOnly}" />
             </when>
             <otherwise>
                 <log loggingLevel="DEBUG" message="Received entity-payload: ${body}" />

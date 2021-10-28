@@ -13,6 +13,8 @@ public class SyncConstants {
 	public static final String PROP_SYNC_EXCLUDE = "db-sync.excludedEntities";
 	
 	public static final String PROP_OPENMRS_USER = "openmrs.username";
+
+    public static final String PROP_COMPLEX_OBS_DIR = "openmrs.complex.obs.data.directory";
 	
 	public static final String DAEMON_USER_UUID = "A4F30A1B-5EB9-11DF-A648-37A07F9C90FB";
 	

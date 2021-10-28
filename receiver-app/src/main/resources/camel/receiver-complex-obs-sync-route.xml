@@ -2,7 +2,8 @@
     <route id="receiver-complex-obs-sync" errorHandlerRef="receiverShutdownErrorHandler">
         <from uri="direct:receiver-complex-obs-sync"/>
 
-        <log message="Processing inbound complex obs data file: ${headers.CamelFileName}" />
+        <log message="Processing inbound complex obs data file: ${headers.CamelFileNameOnly}" />
+
         <transform>
             <method ref="removeFileTagsExpression" />
         </transform>
@@ -10,7 +11,7 @@
             <base64/>
         </unmarshal>
 
-        <to uri="file:{{openmrs.complex.obs.data.directory}}" />
+        <process ref="complexObsProcessor" />
 
     </route>
 </routes>
