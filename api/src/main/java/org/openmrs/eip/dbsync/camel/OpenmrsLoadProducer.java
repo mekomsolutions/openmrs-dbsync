@@ -52,7 +52,7 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 		Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getHashClass(syncModel.getModel());
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
 		BaseModel dbModel = entityServiceFacade.getModel(tableToSyncEnum, syncModel.getModel().getUuid());
-		BaseHashEntity storedHash = HashUtils.getStoredHash(syncModel.getModel(), hashClass, producerTemplate);
+		BaseHashEntity storedHash = HashUtils.getStoredHash(syncModel.getModel().getUuid(), hashClass, producerTemplate);
 		//Delete any deleted entity type BUT for deleted users or providers we only proceed processing this as a delete 
 		//if they do not exist in the receiver to avoid creating them at all otherwise we retired the existing one.
 		if (delete || (isDeleteOperation && (isUser || isProvider) && dbModel == null)) {

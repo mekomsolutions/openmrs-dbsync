@@ -1,9 +1,11 @@
 package org.openmrs.eip.dbsync.camel;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openmrs.eip.dbsync.SyncConstants.HASH_DELETED;
@@ -140,7 +142,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "tester";
 		when(HashUtils.computeHash(dbModel)).thenReturn(currentHash);
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -149,7 +151,6 @@ public class OpenmrsLoadProducerTest {
 		// Then
 		verify(serviceFacade).saveModel(TableToSyncEnum.PERSON, model);
 		verify(mockLogger).debug("Updating hash for the incoming entity state");
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		assertEquals(expectedNewHash, storedHash.getHash());
 		assertNotNull(storedHash.getDateChanged());
 	}
@@ -172,8 +173,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class)))
-		        .thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn(storedHash.getHash());
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
@@ -202,13 +202,13 @@ public class OpenmrsLoadProducerTest {
 		when(applicationContext.getBean("entityServiceFacade")).thenReturn(serviceFacade);
 		when(serviceFacade.getModel(TableToSyncEnum.PERSON, personUuid)).thenReturn(model);
 		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(CoreMatchers.equalTo("Failed to find the existing hash for the deleted entity"));
+		expectedException.expectMessage(equalTo("Failed to find the existing hash for the deleted entity"));
 		
 		producer.process(exchange);
 	}
 	
 	@Test(expected = ConflictsFoundException.class)
-	public void process_ShouldFailIfTheExistingEntityFromTheDbForDeletedEntityHasADifferentHashFromTheStoredOne() {
+	public void process_ShouldFailIfTheExistingEntityFromTheDbForADeletedEntityHasADifferentHashFromTheStoredOne() {
 		final String personUuid = "some-uuid";
 		SyncModel syncModel = new SyncModel();
 		syncModel.setTableToSyncModelClass(PersonModel.class);
@@ -225,15 +225,14 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class)))
-		        .thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn("different-hash");
 		
 		producer.process(exchange);
 	}
 	
 	@Test
-	public void process_shouldUpdateTheStoredHashForDeleteAnEntityEvenWhenTheEntityIsAlreadyDeleted() {
+	public void process_shouldUpdateTheStoredHashForADeletedEntityEvenWhenTheEntityIsAlreadyDeleted() {
 		final String personUuid = "some-uuid";
 		SyncModel syncModel = new SyncModel();
 		syncModel.setTableToSyncModelClass(PersonModel.class);
@@ -249,8 +248,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(any(BaseModel.class), any(Class.class), any(ProducerTemplate.class)))
-		        .thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn(storedHash.getHash());
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
@@ -281,7 +279,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash("old-hash");
 		when(HashUtils.computeHash(dbModel)).thenReturn("new-hash");
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		
 		// When
 		producer.process(exchange);
@@ -305,7 +303,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(dbModel)).thenReturn("current-hash");
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -315,7 +313,7 @@ public class OpenmrsLoadProducerTest {
 		// Then
 		verify(serviceFacade).saveModel(TableToSyncEnum.PERSON, model);
 		verify(mockLogger).debug("Updating hash for the incoming entity state");
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		assertEquals(expectedNewHash, storedHash.getHash());
 		assertNotNull(storedHash.getDateChanged());
 	}
@@ -336,7 +334,7 @@ public class OpenmrsLoadProducerTest {
 		assertNull(storedHash.getDateChanged());
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -368,7 +366,7 @@ public class OpenmrsLoadProducerTest {
 		PersonModel dbModel = new PersonModel();
 		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
 		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(CoreMatchers.equalTo("Failed to find the existing hash for an existing entity"));
+		expectedException.expectMessage(equalTo("Failed to find the existing hash for an existing entity"));
 		
 		producer.process(exchange);
 	}
@@ -424,7 +422,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(dbModel)).thenReturn(expectedNewHash);
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model, PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		producer.process(exchange);
@@ -457,8 +455,8 @@ public class OpenmrsLoadProducerTest {
 		when(applicationContext.getBean(beanName)).thenReturn(mockEntityBasisMapRepo);
 		
 		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(CoreMatchers
-		        .equalTo("No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier()));
+		expectedException.expectMessage(
+		    equalTo("No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier()));
 		
 		producer.process(exchange);
 	}

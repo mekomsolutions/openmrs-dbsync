@@ -1,15 +1,12 @@
 package org.openmrs.eip.dbsync.receiver;
 
 import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 import static org.openmrs.eip.dbsync.SyncConstants.QUERY_SAVE_HASH;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,14 +35,7 @@ public class ComplexObsProcessor implements Processor {
 		String filename = exchange.getMessage().getHeader(Exchange.FILE_NAME_ONLY, String.class);
 		File complexObsFile = HashUtils.getComplexObsFile(filename);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, ComplexObsHash.class.getSimpleName())
-		        .replace(PLACEHOLDER_UUID, filename);
-		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
-		BaseHashEntity storedHash = null;
-		if (hashes != null && hashes.size() == 1) {
-			storedHash = hashes.get(0);
-		}
-		
+		BaseHashEntity storedHash = HashUtils.getStoredHash(filename, ComplexObsHash.class, producerTemplate);
 		Environment env = SyncContext.getBean(Environment.class);
 		String complexObsDir = env.getProperty(SyncConstants.PROP_COMPLEX_OBS_DIR);
 		
@@ -56,7 +46,7 @@ public class ComplexObsProcessor implements Processor {
 			
 			if (storedHash == null) {
 				if (log.isDebugEnabled()) {
-					log.debug("Inserting new hash for the incoming complex obs file state");
+					log.debug("Inserting new hash for the incoming complex obs file contents");
 				}
 				
 				try {
@@ -81,7 +71,7 @@ public class ComplexObsProcessor implements Processor {
 				storedHash.setDateChanged(LocalDateTime.now());
 				
 				if (log.isDebugEnabled()) {
-					log.debug("Updating hash for the incoming complex obs file state");
+					log.debug("Updating hash for the incoming complex obs file contents");
 				}
 			}
 			
@@ -92,7 +82,7 @@ public class ComplexObsProcessor implements Processor {
 			    storedHash);
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Successfully saved the hash for the incoming complex obs file state");
+				log.debug("Successfully saved the hash for the incoming complex obs file contents");
 			}
 			
 			log.info("Saving complex obs file: " + filename);
@@ -134,13 +124,13 @@ public class ComplexObsProcessor implements Processor {
 			storedHash.setDateChanged(LocalDateTime.now());
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Updating hash for the incoming entity state");
+				log.debug("Updating hash for the incoming complex obs file contents");
 			}
 			
 			producerTemplate.sendBody("jpa:" + ComplexObsHash.class.getSimpleName(), storedHash);
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Successfully updated the hash for the incoming complex obs file state");
+				log.debug("Successfully updated the hash for the incoming complex obs file contents");
 			}
 		}
 	}

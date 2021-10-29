@@ -1,20 +1,31 @@
 package org.openmrs.eip.dbsync.utils;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.ZoneId.systemDefault;
 import static java.time.ZonedDateTime.parse;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import org.junit.Before;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(FileUtils.class)
 public class HashUtilsTest {
 	
 	private final String EXPECTED_HASH = "05558ccafade5c5194e6849f87dfad95";
@@ -24,11 +35,6 @@ public class HashUtilsTest {
 	private final String GENDER = "F";
 	
 	private final String UUID = "818b4ee6-8d68-4849-975d-80ab98016677";
-	
-	@Before
-	public void setup() {
-		
-	}
 	
 	@Test
 	public void computeHash_shouldReturnTheMd5HashOfTheEntityPayload() {
@@ -79,6 +85,19 @@ public class HashUtilsTest {
 		model.setDateVoided(dateVoided);
 		
 		assertEquals("93c36578eb50437b9a856a57e12c05cc", HashUtils.computeHash(model));
+	}
+	
+	@Test
+	public void computeHashForFile_shouldCalculateTheHashForTheContentsOfTheSpecifiedFile() throws IOException {
+		PowerMockito.mockStatic(FileUtils.class);
+		File mockFile = Mockito.mock(File.class);
+		when(FileUtils.readFileToByteArray(mockFile)).thenReturn("test".getBytes(UTF_8));
+		assertEquals("098f6bcd4621d373cade4e832627b4f6", HashUtils.computeHashForFile(mockFile));
+	}
+	
+	@Test
+	public void computeHashForBytes_shouldCalculateTheHashForTheSpecifiedBytes() throws IOException {
+		assertEquals("098f6bcd4621d373cade4e832627b4f6", HashUtils.computeHashForBytes("test".getBytes(UTF_8)));
 	}
 	
 }
