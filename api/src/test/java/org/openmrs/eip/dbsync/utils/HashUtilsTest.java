@@ -60,10 +60,11 @@ public class HashUtilsTest {
 	@Test
 	public void getDatetimePropertyNames_shouldReturnTheListOfAllDatetimePropertyNamesOnTheModelClass() {
 		Set<String> dateProps = HashUtils.getDatetimePropertyNames(PersonModel.class);
-		assertEquals(3, dateProps.size());
+		assertEquals(4, dateProps.size());
 		assertTrue(dateProps.contains("dateCreated"));
 		assertTrue(dateProps.contains("dateVoided"));
 		assertTrue(dateProps.contains("dateChanged"));
+		assertTrue(dateProps.contains("deathDate"));
 		
 		dateProps = HashUtils.getDatetimePropertyNames(VisitModel.class);
 		assertEquals(5, dateProps.size());
