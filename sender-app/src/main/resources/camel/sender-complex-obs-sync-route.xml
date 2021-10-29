@@ -9,7 +9,9 @@
                 #{new java.util.Date(request.headers.CamelFileLastModified)}
             </spel>
         </setProperty>
-        <log message="Syncing file: ${headers.CamelFileName}, Last modified: ${exchangeProperty.file-last-modified}" />
+
+        <log message="Syncing file: ${headers.CamelFileNameOnly}, Last modified: ${exchangeProperty.file-last-modified}" />
+        
         <transform>
             <simple>&lt;FILE&gt;${body}&lt;/FILE&gt;</simple>
         </transform>
