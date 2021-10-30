@@ -1,6 +1,6 @@
 set foreign_key_checks = 0;
 insert into users(uuid, user_id, system_id, creator, date_created, person_id, retired)
-values ('user_uuid', 1, 'admin', '1', '2005-01-01 00:00:00', '1', false);
+values ('user_uuid', 1, 'admin', '1', '2005-01-01 00:00:00', 1, false);
 set foreign_key_checks = 1;
 
 insert into person(person_id, gender, birthdate, birthdate_estimated, dead, death_date, cause_of_death, creator, date_created, changed_by, date_changed, voided, voided_by, date_voided, void_reason, uuid, deathdate_estimated, birthtime)
