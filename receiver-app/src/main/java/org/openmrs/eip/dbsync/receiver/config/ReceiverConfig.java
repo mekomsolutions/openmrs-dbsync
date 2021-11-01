@@ -2,6 +2,7 @@ package org.openmrs.eip.dbsync.receiver.config;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 
 @Configuration
 public class ReceiverConfig {
+	
+	private static final long REDELIVERY_DELAY = 300000;
 	
 	@Bean("receiverErrorHandler")
 	public DeadLetterChannelBuilder getReceiverErrorHandler() {
@@ -33,6 +36,12 @@ public class ReceiverConfig {
 		cf.setUserName(env.getProperty("spring.artemis.user"));
 		cf.setPassword(env.getProperty("spring.artemis.password"));
 		cf.setClientID(env.getProperty("activemq.clientId"));
+		
+		RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+		redeliveryPolicy.setMaximumRedeliveries(RedeliveryPolicy.NO_MAXIMUM_REDELIVERIES);
+		redeliveryPolicy.setInitialRedeliveryDelay(REDELIVERY_DELAY);
+		redeliveryPolicy.setRedeliveryDelay(REDELIVERY_DELAY);
+		cf.setRedeliveryPolicy(redeliveryPolicy);
 		
 		return new CachingConnectionFactory(cf);
 	}
