@@ -170,7 +170,10 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
        accordingly, carefully read the in-inline documentation as you set each property value.
     5. It is highly recommended to set the value of the `eip.home` property in your properties file to match the path to
        your installation directory.
-    6. Launch the sender app by navigating to its installation directory from the terminal and run the command below.
+    6. In the sender OpenMRS database, update the row in the person table with person_id 1 to set the creator column 
+       value from null to 1, this will no longer be necessary after [TRUNK-6037](https://issues.openmrs.org/browse/TRUNK-6037) 
+       is resolved.
+    7. Launch the sender app by navigating to its installation directory from the terminal and run the command below.
     ```shell
     java -jar dbsync-sender-app-{VERSION}-exe.jar
     ```
