@@ -58,7 +58,7 @@
                 <when>
                     <simple>${exchangeProperty.event.tableName} == 'datafilter_entity_basis_map' &amp;&amp; ${exchangeProperty.event.operation} != 'd'</simple>
                     <setProperty name="shouldProcess">
-                        <method beanType="org.openmrs.eip.dbsync.sender.SenderUtils" method="isEntitySynced(${body.model})" />
+                        <method beanType="org.openmrs.eip.dbsync.utils.SyncUtils" method="isEntitySynced(${body.model})" />
                     </setProperty>
                 </when>
 

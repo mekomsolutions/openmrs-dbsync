@@ -29,16 +29,26 @@ public class EntityBasisMapExtractTest extends OpenmrsExtractEndpointITest {
 		template.sendBody(camelInitObect);
 		
 		List<Exchange> result = resultEndpoint.getExchanges();
-		assertEquals(1, result.size());
+		assertEquals(2, result.size());
 		JSONAssert.assertEquals(getExpectedJson(), (String) result.get(0).getIn().getBody(), false);
+		//should extract an EntityBasisMap referencing a role
+		JSONAssert.assertEquals(getExpectedRoleJson(), (String) result.get(1).getIn().getBody(), false);
 	}
 	
 	private String getExpectedJson() {
-		return "{\"tableToSyncModelClass\":\"" + EntityBasisMapModel.class.getName() + "\"," + "\"model\":{" + "\"uuid\":\""
-		        + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(user_uuid)\","
-		        + "\"dateCreated\":\"2021-06-23T00:00:00\","
+		return "{\"tableToSyncModelClass\":\"" + EntityBasisMapModel.class.getName() + "\"," + "\"model\":{"
+		        + "\"uuid\":\"0b2da012-e8fa-4491-8aab-66e4524552b4\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-23T00:00:00\","
 		        + "\"entityIdentifier\":\"ed279794-76e9-11e9-8cd9-0242ac1c000b\","
 		        + "\"entityType\":\"org.openmrs.Patient\"," + "\"basisIdentifier\":\"1f279794-31e9-11e9-8cf7-0242ac1c177e\","
+		        + "\"basisType\":\"org.openmrs.EncounterType\"}}";
+	}
+	
+	private String getExpectedRoleJson() {
+		return "{\"tableToSyncModelClass\":\"" + EntityBasisMapModel.class.getName() + "\"," + "\"model\":{"
+		        + "\"uuid\":\"1b2da012-e8fa-4491-8aab-66e4524552b4\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-23T00:00:00\"," + "\"entityIdentifier\":\"Nurse\","
+		        + "\"entityType\":\"org.openmrs.Role\"," + "\"basisIdentifier\":\"1f279794-31e9-11e9-8cf7-0242ac1c177e\","
 		        + "\"basisType\":\"org.openmrs.EncounterType\"}}";
 	}
 	

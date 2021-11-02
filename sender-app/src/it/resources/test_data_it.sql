@@ -62,4 +62,7 @@ insert into patient_program_attribute(patient_program_attribute_id,patient_progr
 values (1, 1, 1, 'Kampala', 1, '2021-06-23 00:00:00', 0, '1c816394-31e8-11e9-9cf7-0452ac1c177a');
 
 INSERT INTO datafilter_entity_basis_map(entity_basis_map_id,entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
-VALUES (1, '2', 'org.openmrs.Patient', 1, 'org.openmrs.EncounterType', 1, '2021-06-23 00:00:00', '0b2da012-e8fa-4491-8aab-66e4524552b4')
+VALUES (1, '2', 'org.openmrs.Patient', 1, 'org.openmrs.EncounterType', 1, '2021-06-23 00:00:00', '0b2da012-e8fa-4491-8aab-66e4524552b4');
+
+INSERT INTO datafilter_entity_basis_map(entity_basis_map_id,entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
+VALUES (2, 'Nurse', 'org.openmrs.Role', 1, 'org.openmrs.EncounterType', 1, '2021-06-23 00:00:00', '1b2da012-e8fa-4491-8aab-66e4524552b4');

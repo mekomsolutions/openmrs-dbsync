@@ -12,6 +12,7 @@ import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
+import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.springframework.context.ApplicationContext;
 
 public class OpenmrsExtractProducer extends AbstractOpenmrsProducer {
@@ -50,15 +51,18 @@ public class OpenmrsExtractProducer extends AbstractOpenmrsProducer {
 	 * @param model the BaseModel object
 	 */
 	private void replaceIdsWithUuids(EntityBasisMapModel model) {
-		Long entityId = Long.valueOf(model.getEntityIdentifier());
-		LightEntity entity = getEntityLightRepository(model.getEntityType()).findById(entityId).orElse(null);
-		if (entity == null) {
-			throw new SyncException("No entity of type " + model.getEntityType() + " found with id " + entityId);
+		if (SyncUtils.isEntitySynced(model)) {
+			Long entityId = Long.valueOf(model.getEntityIdentifier());
+			LightEntity entity = getEntityLightRepository(model.getEntityType()).findById(entityId).orElse(null);
+			if (entity == null) {
+				throw new SyncException("No entity of type " + model.getEntityType() + " found with id " + entityId);
+			}
+			
+			model.setEntityIdentifier(entity.getUuid());
 		}
 		
 		Long basisId = Long.valueOf(model.getBasisIdentifier());
 		LightEntity basis = getEntityLightRepository(model.getBasisType()).findById(basisId).get();
-		model.setEntityIdentifier(entity.getUuid());
 		model.setBasisIdentifier(basis.getUuid());
 	}
 	
