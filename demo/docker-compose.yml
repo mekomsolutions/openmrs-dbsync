@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   mysql-central:
-    image: mysql:5.6
+    image: mysql:5.7.31
     container_name: mysql-central
     env_file:
       - db.env
@@ -15,7 +15,7 @@ services:
       - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
 
   mysql-remote:
-    image: mysql:5.6
+    image: mysql:5.7.31
     container_name: mysql-remote
     env_file:
       - db.env
