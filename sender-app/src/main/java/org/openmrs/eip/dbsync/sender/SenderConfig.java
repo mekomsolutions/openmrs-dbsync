@@ -4,5 +4,5 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("sender-application.properties")
+@PropertySource("classpath:sender-application.properties")
 public class SenderConfig {}

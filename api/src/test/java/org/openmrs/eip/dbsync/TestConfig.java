@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 
 @EnableAutoConfiguration
 @ComponentScan
@@ -35,6 +36,11 @@ public class TestConfig {
 	@Bean("producerTemplate")
 	public ProducerTemplate getProducerTemplate() {
 		return Mockito.mock(ProducerTemplate.class);
+	}
+	
+	@Bean(name = SyncConstants.EIP_COMMON_PROPS_BEAN_NAME)
+	public PropertySource getCommonPropertySource() {
+		return Mockito.mock(PropertySource.class);
 	}
 	
 }
