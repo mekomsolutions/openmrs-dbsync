@@ -1,0 +1,41 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="receiver-update-search-index">
+        <from uri="direct:receiver-update-search-index" />
+
+        <log loggingLevel="DEBUG" message="Start: ${routeId}" />
+
+        <process ref="oauthProcessor" />
+
+        <log message="Rebuilding search Index for ${body}" />
+
+        <setHeader name="Content-Type">
+            <constant>application/json</constant>
+        </setHeader>
+        <setHeader name="CamelHttpMethod">
+            <constant>POST</constant>
+        </setHeader>
+
+        <choice>
+            <when>
+                <simple>${headers.Authorization} == null</simple>
+                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
+
+                <setProperty name="openmrsUser">
+                    <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.username')" />
+                </setProperty>
+                <setProperty name="openmrsPassword">
+                    <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.password')" />
+                </setProperty>
+
+                <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
+            </when>
+            <otherwise>
+                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with oauth token" />
+
+                <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
+            </otherwise>
+        </choice>
+
+        <log loggingLevel="DEBUG" message="End: ${routeId}" />
+    </route>
+</routes>

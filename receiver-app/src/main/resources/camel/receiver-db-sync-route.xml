@@ -23,110 +23,77 @@
                 <setBody>
                     <method beanType="org.openmrs.eip.dbsync.utils.JsonUtils" method="unmarshalSyncModel(${exchangeProperty.original-msg-body})" />
                 </setBody>
-
-                <choice>
-                    <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonNameModel'</simple>
-                        <setProperty name="rebuild-search-index">
-                            <constant>true</constant>
-                        </setProperty>
-                        <setProperty name="resource">
-                            <constant>person</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource">
-                            <constant>name</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource-uuid">
-                            <jsonpath>$.model.uuid</jsonpath>
-                        </setProperty>
-                    </when>
-                    <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientIdentifierModel'</simple>
-                        <setProperty name="rebuild-search-index">
-                            <constant>true</constant>
-                        </setProperty>
-                        <setProperty name="resource">
-                            <constant>patient</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource">
-                            <constant>identifier</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource-uuid">
-                            <jsonpath>$.model.uuid</jsonpath>
-                        </setProperty>
-                    </when>
-                    <when>
-                        <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonAttributeModel'</simple>
-                        <setProperty name="rebuild-search-index">
-                            <constant>true</constant>
-                        </setProperty>
-                        <setProperty name="resource">
-                            <constant>person</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource">
-                            <constant>attribute</constant>
-                        </setProperty>
-                        <setProperty name="sub-resource-uuid">
-                            <jsonpath>$.model.uuid</jsonpath>
-                        </setProperty>
-                    </when>
-                </choice>
-
+                
                 <doTry>
                     <to uri="openmrs:load" />
 
                     <choice>
                         <when>
-                            <simple>${exchangeProperty.rebuild-search-index} == true</simple>
-                            <setHeader name="Content-Type">
-                                <constant>application/json</constant>
-                            </setHeader>
-                            <choice>
-                                <when>
-                                    <simple>${exchangeProperty.sub-resource-uuid} == null</simple>
-                                    <setBody>
-                                        <simple>
-                                            {"resource": "${exchangeProperty.resource}", "subResource": "${exchangeProperty.sub-resource}"}
-                                        </simple>
-                                    </setBody>
-                                </when>
-                                <otherwise>
-                                    <setBody>
-                                        <simple>
-                                            {"resource": "${exchangeProperty.resource}", "subResource": "${exchangeProperty.sub-resource}", "uuid": "${exchangeProperty.sub-resource-uuid}"}
-                                        </simple>
-                                    </setBody>
-                                </otherwise>
-                            </choice>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonNameModel'</simple>
+                            <setProperty name="nameUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "name", "uuid": "${exchangeProperty.nameUuid}"}
+                                </simple>
+                            </setBody>
 
-                            <process ref="oauthProcessor" />
+                            <to uri="direct:receiver-update-search-index" />
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientIdentifierModel'</simple>
+                            <setProperty name="idUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "patient", "subResource": "identifier", "uuid": "${exchangeProperty.idUuid}"}
+                                </simple>
+                            </setBody>
 
-                            <log message="Rebuilding search Index..." />
+                            <to uri="direct:receiver-update-search-index" />
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonAttributeModel'</simple>
+                            <setProperty name="attribUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "attribute", "uuid": "${exchangeProperty.attribUuid}"}
+                                </simple>
+                            </setBody>
 
-                            <setHeader name="CamelHttpMethod">
-                                <constant>POST</constant>
-                            </setHeader>
+                            <to uri="direct:receiver-update-search-index" />
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonModel'</simple>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "name"}
+                                </simple>
+                            </setBody>
 
-                            <choice>
-                                <when>
-                                    <simple>${headers.Authorization} == null</simple>
-                                    <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
+                            <to uri="direct:receiver-update-search-index" />
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientModel'</simple>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "name"}
+                                </simple>
+                            </setBody>
 
-                                    <setProperty name="openmrsUser">
-                                        <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.username')" />
-                                    </setProperty>
-                                    <setProperty name="openmrsPassword">
-                                        <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.password')" />
-                                    </setProperty>
+                            <to uri="direct:receiver-update-search-index" />
+                            
+                            <setBody>
+                                <simple>
+                                    {"resource": "patient", "subResource": "identifier"}
+                                </simple>
+                            </setBody>
 
-                                    <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
-                                </when>
-                                <otherwise>
-                                    <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with oauth token" />
-
-                                    <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
-                                </otherwise>
-                            </choice>
+                            <to uri="direct:receiver-update-search-index" />
                         </when>
                     </choice>
 
