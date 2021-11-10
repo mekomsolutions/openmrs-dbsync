@@ -68,32 +68,41 @@
                             <to uri="direct:receiver-update-search-index" />
                         </when>
                         <when>
-                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonModel'</simple>
-                            <setBody>
-                                <simple>
-                                    {"resource": "person", "subResource": "name"}
-                                </simple>
-                            </setBody>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonModel' || ${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientModel'</simple>
+                            <setProperty name="personUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
 
-                            <to uri="direct:receiver-update-search-index" />
-                        </when>
-                        <when>
-                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PatientModel'</simple>
-                            <setBody>
-                                <simple>
-                                    {"resource": "person", "subResource": "name"}
-                                </simple>
-                            </setBody>
+                            <toD uri="sql:SELECT n.uuid FROM person p, person_name n WHERE p.person_id = n.person_id AND p.uuid = '${exchangeProperty.personUuid}'?dataSource=openmrsDataSource" />
 
-                            <to uri="direct:receiver-update-search-index" />
+                            <log loggingLevel="DEBUG" message="Updating search index for person names with uuids: ${body}" />
                             
-                            <setBody>
-                                <simple>
-                                    {"resource": "patient", "subResource": "identifier"}
-                                </simple>
-                            </setBody>
+                            <split parallelProcessing="false" stopOnException="true">
+                                <simple>${body}</simple>
+                                <log loggingLevel="DEBUG" message="Name -> ${body.get('uuid')}" />
+                                <setBody>
+                                    <simple>
+                                        {"resource": "person", "subResource": "name", "uuid": "${body.get('uuid')}"}
+                                    </simple>
+                                </setBody>
 
-                            <to uri="direct:receiver-update-search-index" />
+                                <to uri="direct:receiver-update-search-index" />
+                            </split>
+
+                            <toD uri="sql:SELECT i.uuid FROM person p, patient_identifier i WHERE p.person_id = i.patient_id AND p.uuid = '${exchangeProperty.personUuid}'?dataSource=openmrsDataSource" />
+
+                            <log loggingLevel="DEBUG" message="Updating search index for patient identifiers with uuids: ${body}" />
+
+                            <split parallelProcessing="false" stopOnException="true">
+                                <simple>${body}</simple>
+                                <setBody>
+                                    <simple>
+                                        {"resource": "patient", "subResource": "identifier", "uuid": "${body.get('uuid')}"}
+                                    </simple>
+                                </setBody>
+
+                                <to uri="direct:receiver-update-search-index" />
+                            </split>
                         </when>
                     </choice>
 
