@@ -27,5 +27,5 @@ VALUES(3, 'Nurse');
 insert into datafilter_entity_basis_map(entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
 values ('3', 'org.openmrs.User', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-central');
 
-UPDATE global_property SET property_value = 'org.openmrs.api:info,org.openmrs.module.webservices.rest.web.v1_0.controller.openmrs2_0.SearchIndexController2_0:debug' WHERE property = 'log.level';
+UPDATE global_property SET property_value = 'org.openmrs.api:info,org.openmrs.module.webservices.rest.web.v1_0.controller.openmrs2_0.SearchIndexController2_0:debug,org.openmrs.module.webservices.rest.web.v1_0.controller.openmrs2_0.ClearDbCacheController2_0:debug' WHERE property = 'log.level';
 

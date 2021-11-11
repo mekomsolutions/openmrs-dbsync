@@ -39,6 +39,14 @@
                                 </simple>
                             </setBody>
 
+                            <to uri="direct:receiver-clear-db-cache" />
+                            
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "name", "uuid": "${exchangeProperty.nameUuid}"}
+                                </simple>
+                            </setBody>
+
                             <to uri="direct:receiver-update-search-index" />
                         </when>
                         <when>
@@ -65,6 +73,13 @@
                                 </simple>
                             </setBody>
 
+                            <to uri="direct:receiver-clear-db-cache" />
+
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "attribute", "uuid": "${exchangeProperty.attribUuid}"}
+                                </simple>
+                            </setBody>
                             <to uri="direct:receiver-update-search-index" />
                         </when>
                         <when>
@@ -72,6 +87,13 @@
                             <setProperty name="personUuid">
                                 <jsonpath>$.model.uuid</jsonpath>
                             </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "uuid": "${exchangeProperty.personUuid}"}
+                                </simple>
+                            </setBody>
+
+                            <to uri="direct:receiver-clear-db-cache" />
 
                             <toD uri="sql:SELECT n.uuid FROM person p, person_name n WHERE p.person_id = n.person_id AND p.uuid = '${exchangeProperty.personUuid}'?dataSource=openmrsDataSource" />
 
@@ -103,6 +125,32 @@
 
                                 <to uri="direct:receiver-update-search-index" />
                             </split>
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.PersonAddressModel'</simple>
+                            <setProperty name="addressUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "person", "subResource": "address", "uuid": "${exchangeProperty.addressUuid}"}
+                                </simple>
+                            </setBody>
+
+                            <to uri="direct:receiver-clear-db-cache" />
+                        </when>
+                        <when>
+                            <simple>${body.tableToSyncModelClass} == 'org.openmrs.eip.dbsync.model.UserModel'</simple>
+                            <setProperty name="userUuid">
+                                <jsonpath>$.model.uuid</jsonpath>
+                            </setProperty>
+                            <setBody>
+                                <simple>
+                                    {"resource": "user", "${exchangeProperty.userUuid}"}
+                                </simple>
+                            </setBody>
+
+                            <to uri="direct:receiver-clear-db-cache" />
                         </when>
                     </choice>
 
