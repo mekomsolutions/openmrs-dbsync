@@ -146,7 +146,7 @@
                             </setProperty>
                             <setBody>
                                 <simple>
-                                    {"resource": "user", "${exchangeProperty.userUuid}"}
+                                    {"resource": "user", "uuid": "${exchangeProperty.userUuid}"}
                                 </simple>
                             </setBody>
 
