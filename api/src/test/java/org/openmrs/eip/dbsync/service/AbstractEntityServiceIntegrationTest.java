@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Sql(scripts = "classpath:test_data.sql")
 public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 	
+	private static final String EXISTING_USER_UUID = "1a3b12d1-5c4f-415f-871b-b98a22137605";
+	
 	private AbstractEntityService personService;
 	
 	private AbstractEntityService patientService;
@@ -63,6 +65,46 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		user.setUsername("testing-user");
 		user.setCreatorUuid(UserLight.class.getName() + "(" + uuid + ")");
 		user.setDateCreated(LocalDateTime.now());
+		user.setUuid(uuid);
+		
+		userService.save(user);
+		
+		Assert.assertNotNull(userService.getModel(uuid));
+		Assert.assertEquals(initialCount + 1, userService.getAllModels().size());
+	}
+	
+	@Test
+	public void save_shouldSaveAUserWhereTheRetiredByFieldAndTheUserAreTheSame() {
+		final String uuid = "fe3b12d2-5c4f-415f-871b-b98a22137606";
+		Assert.assertNull(userService.getModel(uuid));
+		final int initialCount = userService.getAllModels().size();
+		UserModel user = new UserModel();
+		user.setUsername("testing-user");
+		user.setCreatorUuid(UserLight.class.getName() + "(" + EXISTING_USER_UUID + ")");
+		user.setDateCreated(LocalDateTime.now());
+		user.setRetired(true);
+		user.setRetiredByUuid(UserLight.class.getName() + "(" + uuid + ")");
+		user.setDateRetired(LocalDateTime.now());
+		user.setRetireReason("Testing");
+		user.setUuid(uuid);
+		
+		userService.save(user);
+		
+		Assert.assertNotNull(userService.getModel(uuid));
+		Assert.assertEquals(initialCount + 1, userService.getAllModels().size());
+	}
+	
+	@Test
+	public void save_shouldSaveAUserWhereTheChangedByFieldAndTheUserAreTheSame() {
+		final String uuid = "de3b12d2-5c4f-415f-871b-b98a22137607";
+		Assert.assertNull(userService.getModel(uuid));
+		final int initialCount = userService.getAllModels().size();
+		UserModel user = new UserModel();
+		user.setUsername("testing-user");
+		user.setCreatorUuid(UserLight.class.getName() + "(" + EXISTING_USER_UUID + ")");
+		user.setDateCreated(LocalDateTime.now());
+		user.setChangedByUuid(UserLight.class.getName() + "(" + uuid + ")");
+		user.setDateChanged(LocalDateTime.now());
 		user.setUuid(uuid);
 		
 		userService.save(user);

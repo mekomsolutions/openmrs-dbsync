@@ -1,5 +1,7 @@
 package org.openmrs.eip.dbsync.service;
 
+import static org.openmrs.eip.dbsync.utils.ModelUtils.decomposeUuid;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +20,6 @@ import org.openmrs.eip.dbsync.repository.PersonRepository;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.repository.light.UserLightRepository;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
-import org.openmrs.eip.dbsync.utils.ModelUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,12 +70,29 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				ety.setId(id);
 			}
 		} else if (etyInDb == null && model instanceof UserModel) {
-			Optional<DecomposedUuid> decomposedCreatorUuid = ModelUtils.decomposeUuid(model.getCreatorUuid());
-			if (decomposedCreatorUuid.isPresent() && decomposedCreatorUuid.get().getUuid().equals(model.getUuid())) {
-				//The creator of the first admin account created in an OpenMRS database is a reference back to itself.
-				//When we're creating it for the first time, it means a placeholder row has already been created, load 
-				//the placeholder and update it with this entity's payload otherwise we duplicate it including it's uuid 
-				log.info("Creator is the same as the user being synced");
+			UserModel userModel = ((UserModel) model);
+			//The creator of the first admin account created in an OpenMRS database is a reference back to itself.
+			//It's also possible to have a user record where voided_by and changed_by are references back to itself.
+			//When we're creating it for the first time, it means a placeholder row has already been created, load 
+			//the placeholder and update it with this entity's payload otherwise we duplicate it including it's uuid 
+			boolean hasSelfReference = false;
+			Optional<DecomposedUuid> creatorUuid = decomposeUuid(userModel.getCreatorUuid());
+			if (creatorUuid.isPresent() && creatorUuid.get().getUuid().equals(userModel.getUuid())) {
+				hasSelfReference = true;
+			} else if (userModel.getRetiredByUuid() != null) {
+				Optional<DecomposedUuid> retireByUuid = decomposeUuid(userModel.getRetiredByUuid());
+				if (retireByUuid.isPresent() && retireByUuid.get().getUuid().equals(userModel.getUuid())) {
+					hasSelfReference = true;
+				}
+			} else if (userModel.getChangedByUuid() != null) {
+				Optional<DecomposedUuid> changedByUuid = decomposeUuid(userModel.getChangedByUuid());
+				if (changedByUuid.isPresent() && changedByUuid.get().getUuid().equals(userModel.getUuid())) {
+					hasSelfReference = true;
+				}
+			}
+			
+			if (hasSelfReference) {
+				log.info("CThe user entity being synced has a self reference");
 				
 				etyInDb = repository.findByUuid(model.getUuid());
 			}
