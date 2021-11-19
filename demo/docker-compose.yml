@@ -37,6 +37,7 @@ services:
     volumes:
       - ./artemis-roles.properties:/var/lib/artemis/etc/artemis-roles.properties
       - ./artemis-users.properties:/var/lib/artemis/etc/artemis-users.properties
+      - ./broker.xml:/var/lib/artemis/etc/broker.xml
 
   keycloak:
     image: jboss/keycloak
