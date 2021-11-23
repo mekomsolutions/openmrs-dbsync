@@ -1,7 +1,15 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import static org.openmrs.eip.dbsync.SyncTestConstants.ARTEMIS_ETC;
+import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
+
 import java.util.TimeZone;
 import java.util.stream.Stream;
+
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -9,6 +17,8 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.eip.BaseDbBackedCamelTest;
+import org.openmrs.eip.dbsync.SyncTestConstants;
+import org.openmrs.eip.dbsync.model.PersonModel;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -22,21 +32,11 @@ import org.testcontainers.utility.MountableFile;
 @SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
 public abstract class BaseReceiverTest extends BaseDbBackedCamelTest {
 	
-	protected static GenericContainer artemisContainer = new GenericContainer("cnocorch/activemq-artemis");
-	
-	protected static final String CREATOR_UUID = "2a3b12d1-5c4f-415f-871b-b98a22137606";
-	
-	protected static final String SOURCE_SITE_ID = "test";
-	
-	private static final String ARTEMIS_ETC = "/var/lib/artemis/etc/";
-	
-	private static final String QUEUE_NAME = "sync.test.queue";
+	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);
 	
 	protected static Integer artemisPort;
 	
 	private static ActiveMQConnection activeMQConn;
-	
-	private ActiveMQQueue queue;
 	
 	@BeforeClass
 	public static void startArtemis() throws Exception {
@@ -52,18 +52,29 @@ public abstract class BaseReceiverTest extends BaseDbBackedCamelTest {
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
 		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
 		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
-		activeMQConn.start();
 	}
 	
 	@Before
 	public void beforeBaseReceiverTestMethod() throws Exception {
-		if (queue != null) {
-			activeMQConn.destroyDestination(queue);
+		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
+	}
+	
+	public void sendSyncMessageToQueue() throws Exception {
+		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+			Queue queue = session.createQueue(QUEUE_NAME);
+			try (MessageProducer producer = session.createProducer(queue)) {
+				TextMessage m = session.createTextMessage(getDeleteMessage("tester"));
+				producer.send(m);
+			}
 		}
 	}
 	
-	public void sendMessage(String msg) {
-		
+	private String getDeleteMessage(String uuid) {
+		return "{\"tableToSyncModelClass\":\"" + PersonModel.class.getName() + "\",\"model\":{\"uuid\":\"" + uuid
+		        + "\",\"creatorUuid\":null,\"dateCreated\":null,\"voided\":false,\"voidedByUuid\":null,\""
+		        + "dateVoided\":null,\"voidReason\":null,\"changedByUuid\":null,\"dateChanged\":null,\"gender\":"
+		        + "null,\"birthdate\":null,\"birthdateEstimated\":false,\"dead\":false,\"deathDate\":null,\""
+		        + "causeOfDeathUuid\":null,\"deathdateEstimated\":false,\"birthtime\":null},\"metadata\":{\"operation\":\"d\"}}";
 	}
 	
 }

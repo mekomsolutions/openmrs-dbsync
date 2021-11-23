@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Bean;
 public class TestSenderConfig {
 	
 	@Bean
-	public DbSyncTestBeanPostProcessor getDbSyncBeanPostProcessor() {
-		return new DbSyncTestBeanPostProcessor();
+	public TestSenderBeanPostProcessor getDbSyncBeanPostProcessor() {
+		return new TestSenderBeanPostProcessor();
 	}
 	
 }

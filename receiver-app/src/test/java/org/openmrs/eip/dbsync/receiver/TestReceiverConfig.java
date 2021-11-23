@@ -11,4 +11,9 @@ public class TestReceiverConfig {
 		return SyncMode.RECEIVER;
 	}
 	
+	@Bean
+	public TestReceiverBeanPostProcessor getReceiverBeanPostProcessor() {
+		return new TestReceiverBeanPostProcessor();
+	}
+	
 }

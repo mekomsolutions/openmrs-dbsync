@@ -1,5 +1,7 @@
 package org.openmrs.eip.dbsync.sender;
 
+import static org.openmrs.eip.dbsync.SyncTestConstants.ARTEMIS_ETC;
+import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
 import static org.openmrs.eip.mysql.watcher.WatcherConstants.PROP_EVENT;
 
 import java.lang.reflect.ParameterizedType;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
+import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -18,6 +21,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -36,15 +40,7 @@ import org.testcontainers.utility.MountableFile;
 @SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
 public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRouteTest {
 	
-	protected static GenericContainer artemisContainer = new GenericContainer("cnocorch/activemq-artemis");
-	
-	protected static final String CREATOR_UUID = "1a3b12d1-5c4f-415f-871b-b98a22137605";
-	
-	protected static final String SOURCE_SITE_ID = "test";
-	
-	private static final String ARTEMIS_ETC = "/var/lib/artemis/etc/";
-	
-	private static final String QUEUE_NAME = "sync.test.queue";
+	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);
 	
 	protected static Integer artemisPort;
 	
@@ -69,7 +65,7 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 	}
 	
 	@Before
-	public void beforeBaseSenderTestMethod() throws Exception {
+	public void destroyQueue() throws Exception {
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
 	}
 	
@@ -91,7 +87,7 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 	public List<SyncModel> getSyncMessagesInQueue() throws Exception {
 		List<SyncModel> syncMessages = new ArrayList();
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
-			ActiveMQQueue queue = (ActiveMQQueue) session.createQueue(QUEUE_NAME);
+			Queue queue = session.createQueue(QUEUE_NAME);
 			try (QueueBrowser browser = session.createBrowser(queue)) {
 				Enumeration messages = browser.getEnumeration();
 				while (messages.hasMoreElements()) {

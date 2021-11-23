@@ -7,10 +7,12 @@ import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 @Configuration
+@PropertySource("classpath:application-receiver.properties")
 public class ReceiverConfig {
 	
 	private static final long REDELIVERY_DELAY = 300000;
