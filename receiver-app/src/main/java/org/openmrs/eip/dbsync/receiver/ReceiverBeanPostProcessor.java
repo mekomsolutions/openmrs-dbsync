@@ -15,7 +15,7 @@ import liquibase.integration.spring.SpringLiquibase;
  * support both one-way and two-way sync.
  */
 @Component
-public class AppPropertiesBeanPostProcessor implements BeanPostProcessor {
+public class ReceiverBeanPostProcessor implements BeanPostProcessor {
 	
 	public static final String REC_ENTITY_PKG = "org.openmrs.eip.dbsync.receiver.management.entity";
 	
@@ -24,7 +24,7 @@ public class AppPropertiesBeanPostProcessor implements BeanPostProcessor {
 	final private SyncMode mode;
 	
 	@Autowired
-	public AppPropertiesBeanPostProcessor(SyncMode mode) {
+	public ReceiverBeanPostProcessor(SyncMode mode) {
 		this.mode = mode;
 	}
 	

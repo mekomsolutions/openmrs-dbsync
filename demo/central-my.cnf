@@ -2,3 +2,4 @@
 server-id=1
 binlog_format=row
 log_bin=bin-log
+character-set-server=utf8mb4

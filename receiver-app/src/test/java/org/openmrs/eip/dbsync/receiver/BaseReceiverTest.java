@@ -1,25 +1,14 @@
-package org.openmrs.eip.dbsync.sender;
+package org.openmrs.eip.dbsync.receiver;
 
-import static org.openmrs.eip.mysql.watcher.WatcherConstants.PROP_EVENT;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Stream;
-
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.openmrs.eip.dbsync.model.SyncModel;
-import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.openmrs.eip.mysql.watcher.route.BaseWatcherRouteTest;
+import org.openmrs.eip.BaseDbBackedCamelTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -28,10 +17,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
-@Import(TestSenderConfig.class)
+@Import(TestReceiverConfig.class)
 @ComponentScan("org.openmrs.eip")
 @SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
-public abstract class BaseSenderTest extends BaseWatcherRouteTest {
+public abstract class BaseReceiverTest extends BaseDbBackedCamelTest {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer("cnocorch/activemq-artemis");
 	
@@ -68,34 +57,14 @@ public abstract class BaseSenderTest extends BaseWatcherRouteTest {
 	}
 	
 	@Before
-	public void beforeBaseSenderTestMethod() throws Exception {
+	public void beforeBaseReceiverTestMethod() throws Exception {
 		if (queue != null) {
 			activeMQConn.destroyDestination(queue);
 		}
 	}
 	
-	public void fireEvent(String table, String databaseId, String identifier, String op) {
-		producerTemplate.sendBodyAndProperty("direct:sender-db-sync", null, PROP_EVENT,
-		    createEvent(table, databaseId, identifier, op));
-	}
-	
-	public List<SyncModel> getSyncMessagesInQueue() throws Exception {
-		List<SyncModel> syncMessages = new ArrayList();
-		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
-			if (queue == null) {
-				queue = (ActiveMQQueue) session.createQueue(QUEUE_NAME);
-			}
-			
-			try (QueueBrowser browser = session.createBrowser(queue)) {
-				Enumeration messages = browser.getEnumeration();
-				while (messages.hasMoreElements()) {
-					String m = ((TextMessage) messages.nextElement()).getText();
-					syncMessages.add(JsonUtils.unmarshalSyncModel(m));
-				}
-			}
-		}
+	public void sendMessage(String msg) {
 		
-		return syncMessages;
 	}
 	
 }
