@@ -91,4 +91,16 @@ public class TableToSyncEnumTest {
 		TableToSyncEnum.getModelClass(mockedEntity);
 	}
 	
+	@Test
+	public void getTableToSyncEnumForEntity_shouldReturnTheEnumValueForTheEntityClass() {
+		// Given
+		Class<Person> clazz = Person.class;
+		
+		// When
+		TableToSyncEnum result = TableToSyncEnum.getTableToSyncEnumForType(clazz);
+		
+		// Then
+		assertEquals(TableToSyncEnum.PERSON, result);
+	}
+	
 }

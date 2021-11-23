@@ -190,6 +190,11 @@ public enum TableToSyncEnum {
 		        .orElseThrow(() -> new SyncException("No enum found for model class " + tableToSyncClass));
 	}
 	
+	public static TableToSyncEnum getTableToSyncEnumForType(final Class<? extends BaseEntity> entityClass) {
+		return Arrays.stream(values()).filter(e -> e.getEntityClass().equals(entityClass)).findFirst()
+		        .orElseThrow(() -> new SyncException("No enum found for entity class " + entityClass));
+	}
+	
 	public static Class<? extends BaseModel> getModelClass(final BaseEntity entity) {
 		return Stream.of(values()).filter(e -> e.getEntityClass().equals(entity.getClass())).findFirst()
 		        .map(TableToSyncEnum::getModelClass).orElseThrow(

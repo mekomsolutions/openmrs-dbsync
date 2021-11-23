@@ -7,12 +7,13 @@ import static org.openmrs.eip.dbsync.utils.JsonUtils.marshall;
 import java.util.List;
 
 import org.junit.Test;
+import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-public class PersonSenderTest extends BaseSenderTest {
+public class PersonSenderTest extends BaseSenderTest<Person> {
 	
 	private static final String PERSON_UUID = "6afd940e-32dc-491f-8038-a8f3afe3e35a";
 	
@@ -35,35 +36,33 @@ public class PersonSenderTest extends BaseSenderTest {
 	}
 	
 	@Test
-	public void shouldProcessAPersonInsertEvent() throws Exception {
-		final String op = "c";
+	public void shouldProcessAPersonEvent() throws Exception {
 		assertEquals(0, getSyncMessagesInQueue().size());
 		
-		fireEvent("person", "2", PERSON_UUID, op);
+		sendInsertEvent(PERSON_UUID);
 		
 		List<SyncModel> messages = getSyncMessagesInQueue();
 		assertEquals(1, messages.size());
 		SyncModel syncModel = messages.get(0);
 		JSONAssert.assertEquals(getExpectedJson(), marshall(syncModel), false);
 		assertEquals(SOURCE_SITE_ID, syncModel.getMetadata().getSourceIdentifier());
-		assertEquals(op, syncModel.getMetadata().getOperation());
+		assertEquals("c", syncModel.getMetadata().getOperation());
 		assertNotNull(syncModel.getMetadata().getDateSent());
 	}
 	
 	@Test
 	public void shouldProcessAPersonDeleteEvent() throws Exception {
-		final String op = "d";
 		final String uuid = "some-uuid";
 		assertEquals(0, getSyncMessagesInQueue().size());
 		
-		fireEvent("person", "2", uuid, op);
+		sendDeleteEvent(uuid);
 		
 		List<SyncModel> messages = getSyncMessagesInQueue();
 		assertEquals(1, messages.size());
 		SyncModel syncModel = messages.get(0);
 		JSONAssert.assertEquals(getDeleteMessage(uuid), marshall(syncModel), false);
 		assertEquals(SOURCE_SITE_ID, syncModel.getMetadata().getSourceIdentifier());
-		assertEquals(op, syncModel.getMetadata().getOperation());
+		assertEquals("d", syncModel.getMetadata().getOperation());
 		assertNotNull(syncModel.getMetadata().getDateSent());
 	}
 	

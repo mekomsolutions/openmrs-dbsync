@@ -40,7 +40,6 @@ public abstract class BaseReceiverTest extends BaseDbBackedCamelTest {
 	
 	@BeforeClass
 	public static void startArtemis() throws Exception {
-		
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
 		    ARTEMIS_ETC + "artemis-roles.properties");
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-users.properties"),

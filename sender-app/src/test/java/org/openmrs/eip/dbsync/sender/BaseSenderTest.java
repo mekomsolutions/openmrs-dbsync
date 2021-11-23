@@ -2,6 +2,7 @@ package org.openmrs.eip.dbsync.sender;
 
 import static org.openmrs.eip.mysql.watcher.WatcherConstants.PROP_EVENT;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -17,7 +18,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.model.SyncModel;
+import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.openmrs.eip.mysql.watcher.route.BaseWatcherRouteTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,11 +34,11 @@ import org.testcontainers.utility.MountableFile;
 @Import(TestSenderConfig.class)
 @ComponentScan("org.openmrs.eip")
 @SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
-public abstract class BaseSenderTest extends BaseWatcherRouteTest {
+public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRouteTest {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer("cnocorch/activemq-artemis");
 	
-	protected static final String CREATOR_UUID = "2a3b12d1-5c4f-415f-871b-b98a22137606";
+	protected static final String CREATOR_UUID = "1a3b12d1-5c4f-415f-871b-b98a22137605";
 	
 	protected static final String SOURCE_SITE_ID = "test";
 	
@@ -46,8 +49,6 @@ public abstract class BaseSenderTest extends BaseWatcherRouteTest {
 	protected static Integer artemisPort;
 	
 	private static ActiveMQConnection activeMQConn;
-	
-	private ActiveMQQueue queue;
 	
 	@BeforeClass
 	public static void startArtemis() throws Exception {
@@ -69,23 +70,28 @@ public abstract class BaseSenderTest extends BaseWatcherRouteTest {
 	
 	@Before
 	public void beforeBaseSenderTestMethod() throws Exception {
-		if (queue != null) {
-			activeMQConn.destroyDestination(queue);
-		}
+		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
 	}
 	
-	public void fireEvent(String table, String databaseId, String identifier, String op) {
+	public void sendInsertEvent(String identifier) {
+		sendMessageToSyncRoute(identifier, "c");
+	}
+	
+	public void sendDeleteEvent(String identifier) {
+		sendMessageToSyncRoute(identifier, "d");
+	}
+	
+	private void sendMessageToSyncRoute(String identifier, String op) {
+		ParameterizedType pType = (ParameterizedType) getClass().getGenericSuperclass();
+		Class<T> entityClass = (Class<T>) pType.getActualTypeArguments()[0];
 		producerTemplate.sendBodyAndProperty("direct:sender-db-sync", null, PROP_EVENT,
-		    createEvent(table, databaseId, identifier, op));
+		    createEvent(TableToSyncEnum.getTableToSyncEnumForType(entityClass).name(), null, identifier, op));
 	}
 	
 	public List<SyncModel> getSyncMessagesInQueue() throws Exception {
 		List<SyncModel> syncMessages = new ArrayList();
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
-			if (queue == null) {
-				queue = (ActiveMQQueue) session.createQueue(QUEUE_NAME);
-			}
-			
+			ActiveMQQueue queue = (ActiveMQQueue) session.createQueue(QUEUE_NAME);
 			try (QueueBrowser browser = session.createBrowser(queue)) {
 				Enumeration messages = browser.getEnumeration();
 				while (messages.hasMoreElements()) {
