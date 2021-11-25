@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -87,8 +86,7 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 	public List<SyncModel> getSyncMessagesInQueue() throws Exception {
 		List<SyncModel> syncMessages = new ArrayList();
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
-			Queue queue = session.createQueue(QUEUE_NAME);
-			try (QueueBrowser browser = session.createBrowser(queue)) {
+			try (QueueBrowser browser = session.createBrowser(session.createQueue(QUEUE_NAME))) {
 				Enumeration messages = browser.getEnumeration();
 				while (messages.hasMoreElements()) {
 					String m = ((TextMessage) messages.nextElement()).getText();

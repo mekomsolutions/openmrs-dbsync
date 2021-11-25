@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 @Configuration
-@PropertySource("classpath:application-receiver.properties")
+@PropertySource("classpath:receiver-application.properties")
 public class ReceiverConfig {
 	
 	private static final long REDELIVERY_DELAY = 300000;
