@@ -12,7 +12,9 @@ public final class ReceiverContext {
 	
 	public static final int MAX_COUNT = 1000;
 	
-	public static final int WAIT_IN_SECONDS = 15;
+	public static final long DELAY_MILLS = 15000;
+	
+	public static final String PROP_REC_CONSUMER_DELAY = "receiver.consumer.delay";
 	
 	private static boolean isStopping = false;
 	

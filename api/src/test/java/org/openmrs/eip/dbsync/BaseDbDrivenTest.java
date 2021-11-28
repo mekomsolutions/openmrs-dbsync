@@ -1,7 +1,5 @@
 package org.openmrs.eip.dbsync;
 
-import static org.testcontainers.utility.DockerImageName.parse;
-
 import java.util.stream.Stream;
 
 import javax.sql.DataSource;
@@ -41,7 +39,7 @@ public abstract class BaseDbDrivenTest {
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseDbDrivenTest.class);
 	
-	protected static MySQLContainer mysqlContainer = new MySQLContainer<>(parse("mysql:5.6"));
+	protected static MySQLContainer mysqlContainer = new MySQLContainer("mysql:5.7.31");
 	
 	protected static Integer MYSQL_PORT;
 	

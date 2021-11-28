@@ -28,7 +28,7 @@ public abstract class BaseHashEntity implements Serializable {
 	@Column(name = "date_created", nullable = false, updatable = false)
 	private LocalDateTime dateCreated;
 	
-	@Column(name = "date_Changed")
+	@Column(name = "date_changed")
 	private LocalDateTime dateChanged;
 	
 }

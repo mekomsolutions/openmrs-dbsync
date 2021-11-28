@@ -1,11 +1,15 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import static org.openmrs.eip.dbsync.receiver.ReceiverContext.PROP_REC_CONSUMER_DELAY;
+
 import java.util.List;
 
 import org.apache.camel.ProducerTemplate;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 /**
  * An instance of this class consumes sync messages and forwards them to the message processor route
@@ -23,6 +27,8 @@ public class MessageConsumer implements Runnable {
 	private ProducerTemplate producerTemplate;
 	
 	private boolean errorEncountered = false;
+	
+	private Long delay;
 	
 	/**
 	 * @param producerTemplate {@link ProducerTemplate} object
@@ -45,13 +51,19 @@ public class MessageConsumer implements Runnable {
 				List<SyncMessage> syncMessages = producerTemplate.requestBody(GET_JPA_URI, null, List.class);
 				
 				if (syncMessages.isEmpty()) {
-					if (log.isDebugEnabled()) {
-						log.debug("No sync message found");
+					if (delay == null) {
+						delay = SyncContext.getBean(Environment.class).getProperty(PROP_REC_CONSUMER_DELAY, Long.class);
+						if (delay == null) {
+							delay = ReceiverContext.DELAY_MILLS;
+						}
 					}
 					
-					//TODO Make the delay configurable
+					if (log.isDebugEnabled()) {
+						log.debug("No sync message found, snoozing for " + delay + " milliseconds");
+					}
+					
 					try {
-						Thread.sleep(ReceiverContext.WAIT_IN_SECONDS * 1000);
+						Thread.sleep(delay);
 					}
 					catch (InterruptedException e) {
 						//ignore

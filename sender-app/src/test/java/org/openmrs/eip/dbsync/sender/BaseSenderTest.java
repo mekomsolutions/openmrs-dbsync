@@ -18,6 +18,8 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.eip.dbsync.SyncTestConstants;
@@ -25,8 +27,8 @@ import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
+import org.openmrs.eip.mysql.watcher.management.entity.SenderRetryQueueItem;
 import org.openmrs.eip.mysql.watcher.route.BaseWatcherRouteTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -35,7 +37,6 @@ import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
 @Import(TestSenderConfig.class)
-@ComponentScan("org.openmrs.eip")
 @SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
 public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRouteTest {
 	
@@ -66,6 +67,13 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 	@Before
 	public void destroyQueue() throws Exception {
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
+	}
+	
+	@After
+	public void checkForErrors() {
+		List<SenderRetryQueueItem> errors = producerTemplate
+		        .requestBody("jpa:SenderRetryQueueItem?query=SELECT r FROM SenderRetryQueueItem r", null, List.class);
+		Assert.assertEquals("Found " + errors.size() + " error(s) in the sender error queue", 0, errors.size());
 	}
 	
 	public void sendInsertEvent(String identifier) {

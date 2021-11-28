@@ -33,7 +33,6 @@ public class CamelListener extends EventNotifierSupport {
 	
 	@Override
 	public void notify(CamelEvent event) {
-		
 		if (event instanceof CamelContextStartedEvent) {
 			log.info("Loading OpenMRS user account");
 			String username = SyncContext.getBean(Environment.class).getProperty(SyncConstants.PROP_OPENMRS_USER);
@@ -63,10 +62,10 @@ public class CamelListener extends EventNotifierSupport {
 			executor.shutdown();
 			
 			try {
-				int wait = ReceiverContext.WAIT_IN_SECONDS + 10;
-				log.info("Waiting for " + wait + " seconds for message consumer thread to terminate");
+				long wait = ReceiverContext.DELAY_MILLS + 10000;
+				log.info("Waiting for " + (wait / 1000) + " seconds for message consumer thread to terminate");
 				
-				executor.awaitTermination(wait, TimeUnit.SECONDS);
+				executor.awaitTermination(wait, TimeUnit.MILLISECONDS);
 				
 				log.info("The message consumer thread has successfully terminated");
 				log.info("Successfully shutdown executor for message consumer thread");
@@ -75,7 +74,6 @@ public class CamelListener extends EventNotifierSupport {
 				log.error("An error occurred while waiting for message consumer thread to terminate");
 			}
 		}
-		
 	}
 	
 }
