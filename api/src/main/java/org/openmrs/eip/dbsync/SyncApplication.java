@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
  * @see SyncMode
  * @see SyncContext
  */
-@SpringBootApplication(scanBasePackages = "org.openmrs.eip")
+@SpringBootApplication
 public abstract class SyncApplication {
 	
 	private static final Logger log = LoggerFactory.getLogger(SyncApplication.class);
