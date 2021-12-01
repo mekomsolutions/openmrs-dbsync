@@ -19,32 +19,39 @@ import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
+import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
+import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.openmrs.eip.mysql.watcher.management.entity.SenderRetryQueueItem;
 import org.openmrs.eip.mysql.watcher.route.BaseWatcherRouteTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
 @Import(TestSenderConfig.class)
-@SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql") })
-public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRouteTest {
+@Sql(value = "classpath:sync_test_data.sql")
+public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> extends BaseWatcherRouteTest implements SyncTest<E, M> {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);
 	
 	protected static Integer artemisPort;
 	
 	private static ActiveMQConnection activeMQConn;
+	
+	@Autowired
+	protected AbstractEntityService<E, M> service;
 	
 	@BeforeClass
 	public static void startArtemis() throws Exception {
@@ -64,6 +71,14 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 		activeMQConn.start();
 	}
 	
+	@AfterClass
+	public static void stopArtemis() throws Exception {
+		//TODO First stop the sender client
+		//activeMQConn.stop();
+		//activeMQConn.close();
+		//artemisContainer.stop();
+	}
+	
 	@Before
 	public void destroyQueue() throws Exception {
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
@@ -76,21 +91,67 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 		Assert.assertEquals("Found " + errors.size() + " error(s) in the sender error queue", 0, errors.size());
 	}
 	
+	/**
+	 * Sends an insert event to the sender DB sync route
+	 * 
+	 * @param identifier the uuid of the inserted entity
+	 */
 	public void sendInsertEvent(String identifier) {
 		sendMessageToSyncRoute(identifier, "c");
 	}
 	
+	/**
+	 * Sends an update event to the sender DB sync route
+	 *
+	 * @param identifier the uuid of the updated entity
+	 */
+	public void sendUpdateEvent(String identifier) {
+		sendMessageToSyncRoute(identifier, "u");
+	}
+	
+	/**
+	 * Sends a delete event to the sender DB sync route
+	 *
+	 * @param identifier the uuid of the deleted entity
+	 */
 	public void sendDeleteEvent(String identifier) {
 		sendMessageToSyncRoute(identifier, "d");
 	}
 	
-	private void sendMessageToSyncRoute(String identifier, String op) {
-		ParameterizedType pType = (ParameterizedType) getClass().getGenericSuperclass();
-		Class<T> entityClass = (Class<T>) pType.getActualTypeArguments()[0];
-		producerTemplate.sendBodyAndProperty("direct:sender-db-sync", null, PROP_EVENT,
-		    createEvent(TableToSyncEnum.getTableToSyncEnumForType(entityClass).name(), null, identifier, op));
+	/**
+	 * Gets the model object wrapped inside the specified {@link SyncModel} object
+	 * 
+	 * @param syncModel the {@link SyncModel} object
+	 * @return the entity model object
+	 */
+	public M getModel(SyncModel syncModel) {
+		return (M) syncModel.getModel();
 	}
 	
+	/**
+	 * Asserts that the specified model object represents a model for a deleted entity with the
+	 * specified uuid
+	 * 
+	 * @param uuid the uuid of the deleted entity
+	 * @param actual the actual model object to check against
+	 */
+	public void assertIsDeleteModel(String uuid, M actual) {
+		try {
+			M expectedModel = getModelClass().newInstance();
+			expectedModel.setUuid(uuid);
+			assertModelEquals(expectedModel, actual);
+		}
+		catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Reads and returns all messages in the sync queue in ActiveMQ
+	 * 
+	 * @return list of sync messages in the sync queue
+	 * @throws Exception
+	 */
 	public List<SyncModel> getSyncMessagesInQueue() throws Exception {
 		List<SyncModel> syncMessages = new ArrayList();
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
@@ -104,6 +165,13 @@ public abstract class BaseSenderTest<T extends BaseEntity> extends BaseWatcherRo
 		}
 		
 		return syncMessages;
+	}
+	
+	private void sendMessageToSyncRoute(String identifier, String op) {
+		ParameterizedType pType = (ParameterizedType) getClass().getGenericSuperclass();
+		Class<E> entityClass = (Class<E>) pType.getActualTypeArguments()[0];
+		producerTemplate.sendBodyAndProperty("direct:sender-db-sync", null, PROP_EVENT,
+		    createEvent(TableToSyncEnum.getTableToSyncEnumForType(entityClass).name(), null, identifier, op));
 	}
 	
 }

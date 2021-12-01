@@ -3,9 +3,7 @@ package org.openmrs.eip.dbsync.receiver;
 import static org.openmrs.eip.dbsync.SyncTestConstants.ARTEMIS_ETC;
 import static org.openmrs.eip.dbsync.SyncTestConstants.CREATOR_UUID;
 import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
-import static org.openmrs.eip.dbsync.utils.JsonUtils.marshall;
 
-import java.lang.reflect.ParameterizedType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,10 +24,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.eip.BaseDbBackedCamelTest;
+import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -38,7 +38,6 @@ import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -49,9 +48,9 @@ import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
 @Import(TestReceiverConfig.class)
-@SqlGroup({ @Sql(value = "classpath:test_data.sql"), @Sql(value = "classpath:sync_test_data.sql"),
+@SqlGroup({ @Sql(value = "classpath:sync_test_data.sql"),
         @Sql(value = "classpath:sync_test_data_mgt.sql", config = @SqlConfig(dataSource = "mngtDataSource", transactionManager = "mngtTransactionManager")) })
-public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseDbBackedCamelTest {
+public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseDbBackedCamelTest implements SyncTest<E, M> {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);
 	
@@ -85,6 +84,14 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
 		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
 		activeMQConn.start();
+	}
+	
+	@AfterClass
+	public static void stopArtemis() throws Exception {
+		//TODO First stop the receiver route that gets messages from ActiveMQ
+		//activeMQConn.stop();
+		//activeMQConn.close();
+		//artemisContainer.stop();
 	}
 	
 	@Before
@@ -172,20 +179,6 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		M model = getModelClass().newInstance();
 		model.setUuid(uuid);
 		sendToActiveMQInternal(JsonUtils.marshall(model), "d");
-	}
-	
-	/**
-	 * Asserts that the specified models have the same state
-	 *
-	 * @param expected expected model
-	 * @param actual actual model
-	 */
-	protected void assertModelEquals(M expected, M actual) {
-		JSONAssert.assertEquals(marshall(expected), marshall(actual), false);
-	}
-	
-	private Class<M> getModelClass() {
-		return (Class<M>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 	}
 	
 	private void sendToActiveMQInternal(String entityPayload, String operation) throws Exception {

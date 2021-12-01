@@ -24,6 +24,7 @@ CREATE TABLE `person` (
     `person_id` int(11) NOT NULL AUTO_INCREMENT,
     `creator` int(11) DEFAULT NULL,
     `date_created` datetime NOT NULL,
+    `voided` tinyint(1) NOT NULL DEFAULT '0',
     `changed_by` int(11) DEFAULT NULL,
     `voided_by` int(11) DEFAULT NULL,
     `cause_of_death` int(11) DEFAULT NULL,
@@ -41,6 +42,7 @@ CREATE TABLE `users` (
      `username` varchar(50) DEFAULT NULL,
      `creator` int(11) NOT NULL DEFAULT '0',
      `date_created` datetime NOT NULL,
+     `retired` tinyint(1) NOT NULL DEFAULT '0',
      `changed_by` int(11) DEFAULT NULL,
      `retired_by` int(11) DEFAULT NULL,
      `uuid` char(38) NOT NULL,
@@ -51,8 +53,8 @@ CREATE TABLE `users` (
      KEY `person_id_for_user` (`person_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO person (person_id,creator,date_created,uuid)
-VALUES  (1, 1, now(), 'ca3b12d1-5c4f-415f-871b-b98a22137605');
+INSERT INTO person (person_id,creator,date_created,voided,uuid)
+VALUES  (1, 1, now(), 0, 'ca3b12d1-5c4f-415f-871b-b98a22137605');
 
-INSERT INTO users (user_id,person_id,username,creator,date_created,uuid)
-VALUES (1, 1, 'user-1', 1, now(), '2a3b12d1-5c4f-415f-871b-b98a22137606');
+INSERT INTO users (user_id,person_id,username,creator,date_created,retired,uuid)
+VALUES (1, 1, 'user-1', 1, now(), 0, '2a3b12d1-5c4f-415f-871b-b98a22137606');

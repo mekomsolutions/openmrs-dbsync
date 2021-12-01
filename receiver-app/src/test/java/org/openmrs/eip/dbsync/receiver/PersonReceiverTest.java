@@ -3,6 +3,7 @@ package org.openmrs.eip.dbsync.receiver;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_PERSON_UUID;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,8 +17,6 @@ import org.openmrs.eip.dbsync.model.PersonModel;
 
 public class PersonReceiverTest extends BaseReceiverTest<Person, PersonModel> {
 	
-	private static final String EXISTING_PERSON_UUID = "6afd940e-32dc-491f-8038-a8f3afe3e35a";
-	
 	private static final String PERSON_UUID = "aafd940e-32dc-651f-8038-a8f3afe3e35b";
 	
 	@Test
@@ -30,10 +29,10 @@ public class PersonReceiverTest extends BaseReceiverTest<Person, PersonModel> {
 		model.setBirthtime(LocalTime.parse("04:15:00", DateTimeFormatter.ISO_LOCAL_TIME));
 		model.setDead(true);
 		model.setDeathDate(LocalDateTime.parse("2021-01-01T00:00:00Z", DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-		
+
 		sendToActiveMQ(model);
 		waitForSync(1);
-		
+
 		PersonModel savedPerson = service.getModel(PERSON_UUID);
 		assertNotNull(savedPerson);
 		assertModelEquals(model, savedPerson);
