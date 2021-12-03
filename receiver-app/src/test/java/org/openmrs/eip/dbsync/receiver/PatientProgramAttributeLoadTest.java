@@ -1,4 +1,4 @@
-package org.openmrs.eip.dbsync.sender;
+package org.openmrs.eip.dbsync.receiver;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -12,16 +12,11 @@ import org.openmrs.eip.dbsync.entity.light.PatientProgramLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PatientProgramAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
-import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest {
+public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest<PatientProgramAttribute, PatientProgramAttributeModel> {
 	
 	private static final String UUID = "218b4ff6-8d68-4845-975d-80ab98016679";
-	
-	@Autowired
-	private SyncEntityRepository<PatientProgramAttribute> repository;
 	
 	@Test
 	public void load() {
@@ -29,7 +24,7 @@ public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest {
 		exchange.getIn().setBody(getModel());
 		assertNull(repository.findByUuid(UUID));
 		
-		template.send(exchange);
+		producerTemplate.send("openmrs:load", exchange);
 		
 		assertNotNull(repository.findByUuid(UUID));
 	}

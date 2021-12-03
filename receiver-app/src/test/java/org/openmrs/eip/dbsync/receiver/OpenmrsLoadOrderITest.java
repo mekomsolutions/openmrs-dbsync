@@ -1,14 +1,12 @@
-package org.openmrs.eip.dbsync.sender;
+package org.openmrs.eip.dbsync.receiver;
 
 import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.eip.dbsync.entity.Order;
-import org.openmrs.eip.dbsync.entity.Patient;
 import org.openmrs.eip.dbsync.entity.light.CareSettingLight;
 import org.openmrs.eip.dbsync.entity.light.ConceptLight;
 import org.openmrs.eip.dbsync.entity.light.EncounterLight;
@@ -18,33 +16,20 @@ import org.openmrs.eip.dbsync.entity.light.ProviderLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
-import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Ignore
-public class OpenmrsLoadOrderITest extends OpenmrsLoadEndpointITest {
-	
-	@Autowired
-	private SyncEntityRepository<Order> repo;
+public class OpenmrsLoadOrderITest extends OpenmrsLoadEndpointITest<Order, OrderModel> {
 	
 	@Test
 	public void load() {
-		Patient p = new Patient();
 		Exchange exchange = new DefaultExchange(camelContext);
 		exchange.getIn().setBody(getOrderModel());
-		assertEquals(0, repo.findAll().size());
+		assertEquals(0, repository.count());
 		
-		template.send(exchange);
+		producerTemplate.send("openmrs:load", exchange);
 		
-		assertEquals(1, repo.findAll().size());
-	}
-	
-	// TEAR-DOWN
-	@After
-	public void after() {
-		Order o = repo.findByUuid("918b4ee6-8d68-4849-975d-80ab98016677");
-		repo.delete(o);
+		assertEquals(1, repository.count());
 	}
 	
 	private SyncModel getOrderModel() {
