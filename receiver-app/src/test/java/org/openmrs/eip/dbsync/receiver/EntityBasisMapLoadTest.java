@@ -11,16 +11,11 @@ import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
-import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class EntityBasisMapLoadTest extends OpenmrsLoadEndpointITest<EntityBasisMap, EntityBasisMapModel> {
 	
 	private static final String UUID = "68686c5c-725c-454b-baf2-e298128960b9";
-	
-	@Autowired
-	private SyncEntityRepository<EntityBasisMap> repository;
 	
 	@Test
 	public void load() {

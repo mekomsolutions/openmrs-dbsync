@@ -25,6 +25,7 @@ public class PersonSenderTest extends BaseSenderTest<Person, PersonModel> {
 		PersonModel expectedModel = service.getModel(EXISTING_PERSON_UUID);
 		SyncModel syncModel = messages.get(0);
 		assertModelEquals(expectedModel, getModel(syncModel));
+		//Move these assertions to base class
 		assertEquals(PersonModel.class, syncModel.getTableToSyncModelClass());
 		assertEquals(SOURCE_SITE_ID, syncModel.getMetadata().getSourceIdentifier());
 		assertEquals("c", syncModel.getMetadata().getOperation());

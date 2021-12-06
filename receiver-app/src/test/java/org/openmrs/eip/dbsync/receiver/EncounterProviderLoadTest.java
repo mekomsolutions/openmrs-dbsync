@@ -13,16 +13,11 @@ import org.openmrs.eip.dbsync.entity.light.ProviderLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.EncounterProviderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
-import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest<EncounterProvider, EncounterProviderModel> {
 	
 	private static final String UUID = "218b4ee6-8d68-4845-975d-80ab98016679";
-	
-	@Autowired
-	private SyncEntityRepository<EncounterProvider> repository;
 	
 	@Test
 	public void load() {
