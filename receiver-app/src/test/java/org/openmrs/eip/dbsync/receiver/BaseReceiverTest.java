@@ -38,6 +38,7 @@ import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -71,6 +72,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	
 	@BeforeClass
 	public static void startArtemis() throws Exception {
+		Whitebox.setInternalState(ReceiverContext.class, "isStopping", false);
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
 		    ARTEMIS_ETC + "artemis-roles.properties");
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-users.properties"),
