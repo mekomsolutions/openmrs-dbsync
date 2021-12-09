@@ -54,4 +54,8 @@ public class Person extends BaseChangeableDataEntity {
 	
 	@Column(name = "birthtime")
 	private LocalTime birthtime;
+	
+	@Column(name = "cause_of_death_non_coded")
+	private String causeOfDeathNonCoded;
+	
 }

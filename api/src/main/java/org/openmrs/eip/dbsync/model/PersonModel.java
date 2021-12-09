@@ -28,6 +28,8 @@ public class PersonModel extends BaseChangeableDataModel {
 	
 	private LocalTime birthtime;
 	
+	private String causeOfDeathNonCoded;
+	
 	/**
 	 * Gets the gender
 	 *
@@ -171,4 +173,23 @@ public class PersonModel extends BaseChangeableDataModel {
 	public void setBirthtime(LocalTime birthtime) {
 		this.birthtime = birthtime;
 	}
+	
+	/**
+	 * Gets the causeOfDeathNonCoded
+	 *
+	 * @return the causeOfDeathNonCoded
+	 */
+	public String getCauseOfDeathNonCoded() {
+		return causeOfDeathNonCoded;
+	}
+	
+	/**
+	 * Sets the causeOfDeathNonCoded
+	 *
+	 * @param causeOfDeathNonCoded the causeOfDeathNonCoded to set
+	 */
+	public void setCauseOfDeathNonCoded(String causeOfDeathNonCoded) {
+		this.causeOfDeathNonCoded = causeOfDeathNonCoded;
+	}
+	
 }
