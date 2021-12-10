@@ -37,9 +37,24 @@
                             <setProperty name="nameUuid">
                                 <jsonpath>$.model.uuid</jsonpath>
                             </setProperty>
-                            <setBody>
+                            <setProperty name="resourceBody">
                                 <simple>
                                     {"resource": "person", "subResource": "name", "uuid": "${exchangeProperty.nameUuid}"}
+                                </simple>
+                            </setProperty>
+
+                            <when>
+                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
+                                <setProperty name="resourceBody">
+                                    <simple>
+                                        {"resource": "person", "subResource": "name"}
+                                    </simple>
+                                </setProperty>
+                            </when>
+
+                            <setBody>
+                                <simple>
+                                    ${exchangeProperty.resourceBody}
                                 </simple>
                             </setBody>
 
@@ -47,17 +62,9 @@
 
                             <setBody>
                                 <simple>
-                                    {"resource": "person", "subResource": "name", "uuid": "${exchangeProperty.nameUuid}"}
+                                    ${exchangeProperty.resourceBody}
                                 </simple>
                             </setBody>
-                            <when>
-                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
-                                <setBody>
-                                    <simple>
-                                        {"resource": "person", "subResource": "name"}
-                                    </simple>
-                                </setBody>
-                            </when>
 
                             <to uri="direct:receiver-update-search-index" />
                         </when>
@@ -71,6 +78,7 @@
                                     {"resource": "patient", "subResource": "identifier", "uuid": "${exchangeProperty.idUuid}"}
                                 </simple>
                             </setBody>
+                            
                             <when>
                                 <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
                                 <setBody>
@@ -87,9 +95,24 @@
                             <setProperty name="attribUuid">
                                 <jsonpath>$.model.uuid</jsonpath>
                             </setProperty>
-                            <setBody>
+                            <setProperty name="resourceBody">
                                 <simple>
                                     {"resource": "person", "subResource": "attribute", "uuid": "${exchangeProperty.attribUuid}"}
+                                </simple>
+                            </setProperty>
+
+                            <when>
+                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
+                                <setProperty name="resourceBody">
+                                    <simple>
+                                        {"resource": "person", "subResource": "attribute"}
+                                    </simple>
+                                </setProperty>
+                            </when>
+
+                            <setBody>
+                                <simple>
+                                    ${exchangeProperty.resourceBody}
                                 </simple>
                             </setBody>
 
@@ -97,17 +120,9 @@
 
                             <setBody>
                                 <simple>
-                                    {"resource": "person", "subResource": "attribute", "uuid": "${exchangeProperty.attribUuid}"}
+                                    ${exchangeProperty.resourceBody}
                                 </simple>
                             </setBody>
-                            <when>
-                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
-                                <setBody>
-                                    <simple>
-                                        {"resource": "person", "subResource": "attribute"}
-                                    </simple>
-                                </setBody>
-                            </when>
 
                             <to uri="direct:receiver-update-search-index" />
                         </when>
@@ -121,6 +136,15 @@
                                     {"resource": "person", "uuid": "${exchangeProperty.personUuid}"}
                                 </simple>
                             </setBody>
+
+                            <when>
+                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
+                                <setBody>
+                                    <simple>
+                                        {"resource": "person"}
+                                    </simple>
+                                </setBody>
+                            </when>
 
                             <to uri="direct:receiver-clear-db-cache" />
 
@@ -166,6 +190,15 @@
                                 </simple>
                             </setBody>
 
+                            <when>
+                                <simple>${exchangeProperty.isDeletedEntity} == 'd'</simple>
+                                <setBody>
+                                    <simple>
+                                        {"resource": "person", "subResource": "address"}
+                                    </simple>
+                                </setBody>
+                            </when>
+
                             <to uri="direct:receiver-clear-db-cache" />
                         </when>
                         <when>
@@ -178,6 +211,8 @@
                                     {"resource": "user", "uuid": "${exchangeProperty.userUuid}"}
                                 </simple>
                             </setBody>
+
+                            <!-- We don't delete users, so we don't have to clear the cache for all users as we do for other cached entities-->
 
                             <to uri="direct:receiver-clear-db-cache" />
                         </when>
