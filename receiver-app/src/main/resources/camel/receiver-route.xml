@@ -39,6 +39,9 @@
                 <setProperty name="entity-id">
                     <jsonpath>$.model.uuid</jsonpath>
                 </setProperty>
+                <setProperty name="dbOp">
+                    <jsonpath>$.metadata.operation</jsonpath>
+                </setProperty>
 
                 <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
 
@@ -46,6 +49,10 @@
                     <when>
                         <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="skipSync(${exchangeProperty.model-class}, ${exchangeProperty.entity-id})"></method>
                         <log message="Skipping sync of entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
+                    </when>
+                    <when>
+                        <simple>${exchangeProperty.dbOp} == 'd' &amp;&amp; ${exchangeProperty.entity-id} == null</simple>
+                        <log message="Skipping sync of a deleted entity with no identifier, this usually happens for a deleted subclass row with no parent row" />
                     </when>
                     <otherwise>
                         <setProperty name="messageToSave">
