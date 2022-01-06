@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +72,13 @@ public class HashUtils {
 			        return entry.getValue();
 		        }));
 		
-		String val = new TreeMap<>(data).values().stream().map(o -> o.toString().trim()).collect(Collectors.joining());
+		Map<String, Object> treeMap = new TreeMap(data);
+		List<Object> values = new ArrayList(treeMap.size());
+		for (Map.Entry<String, Object> entry : treeMap.entrySet()) {
+			values.add(entry.getValue());
+		}
+		
+		String val = values.stream().map(o -> o.toString().trim()).collect(Collectors.joining());
 		
 		return DigestUtils.md5Hex(val.getBytes(StandardCharsets.UTF_8));
 	}
