@@ -42,8 +42,11 @@
                 <setProperty name="dbOp">
                     <jsonpath>$.metadata.operation</jsonpath>
                 </setProperty>
+                <setProperty name="sourceId">
+                    <jsonpath>$.metadata.sourceIdentifier</jsonpath>
+                </setProperty>
 
-                <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}" />
+                <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}, source=${exchangeProperty.sourceId}" />
 
                 <choice>
                     <when>
