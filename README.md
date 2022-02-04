@@ -117,7 +117,7 @@ with the actual version number from, this number can be found as part of the gen
 of the OpenMRS EIP project you cloned above.
 
 In practice, the sender and receiver applications are installed on separate physical machines, but for local deployments
-on a dev or testing machine this could be the same machine so be careful to use different directories for application 
+on a dev or testing machine this could be the same machine so be careful to use different directories for application
 properties that take directory paths as values e.g. log file, complex obs data directory and others.
 
 ### Receiver
@@ -170,8 +170,8 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
        accordingly, carefully read the in-inline documentation as you set each property value.
     5. It is highly recommended to set the value of the `eip.home` property in your properties file to match the path to
        your installation directory.
-    6. In the sender OpenMRS database, update the row in the person table with person_id 1 to set the creator column 
-       value from null to 1, this will no longer be necessary after [TRUNK-6037](https://issues.openmrs.org/browse/TRUNK-6037) 
+    6. In the sender OpenMRS database, update the row in the person table with person_id 1 to set the creator column
+       value from null to 1, this will no longer be necessary after [TRUNK-6037](https://issues.openmrs.org/browse/TRUNK-6037)
        is resolved.
     7. Launch the sender app by navigating to its installation directory from the terminal and run the command below.
     ```shell
@@ -192,7 +192,7 @@ The encryption is performed by PGP. So public and private keys shall be generate
 * To verify the message, the receiver needs the sender's public key
 * To decrypt the message, the receiver needs a private key
 
-Thus, the sender needs to hold it's own private key and the receiver's public key in a folder and the 
+Thus, the sender needs to hold it's own private key and the receiver's public key in a folder and the
 `application.properties` file of the sender should be as follows:
 
 `pgp.sender.keysFolderPath=<folder_path>` The path is a relative path of the working directory of the application.
@@ -251,3 +251,12 @@ in the incoming payload, the application won't sync the entity and it will move 
 table. Currently, to resolve the conflict, the entity has to be manually updated in the receiver or sender, then as it
 may dictate adjust date changed in the sender so that it is ahead of date voided/retired of the entity in the receiver
 and then mark the row as resolved in `receiver_conflict_queue` table.
+
+### Known Issues
+
+#### Docker Swarm:
+When running DB Sync Sender or Receiver with Docker Swarm, you might face a TCP timeout issue with the database connection after 2 hours.
+The database services (MySQL/PostgreSQL) should use the `endpoint_mode` called `dnsrr` in order to avoid the TCP timeout.
+
+- endpoint_mode: [https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode](https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode)
+- TCP issue: [https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179](https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179)
