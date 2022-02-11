@@ -185,7 +185,8 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	
 	private void sendToActiveMQInternal(String entityPayload, String operation) throws Exception {
 		String syncPayload = "{" + "\"tableToSyncModelClass\":\"" + getModelClass().getName() + "\"," + "\"model\":"
-		        + entityPayload + ",\"metadata\":{\"operation\":\"" + operation + "\"}" + "}";
+		        + entityPayload + ",\"metadata\":{\"operation\":\"" + operation + "\", \"sourceIdentifier\":\"testSite\"}"
+		        + "}";
 		
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
 			try (MessageProducer producer = session.createProducer(session.createQueue(QUEUE_NAME))) {
