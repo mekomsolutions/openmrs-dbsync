@@ -1,5 +1,5 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="sender-complex-obs-sync" errorHandlerRef="deadLetterChannelBuilder">
+    <route id="sender-complex-obs-sync" errorHandlerRef="watcherShutdownErrorHandler">
         <from uri="file:{{openmrs.complex.obs.data.directory}}?noop=true&amp;recursive=false&amp;idempotentKey=${file:name}-${file:modified}&amp;idempotentRepository=#jpaIdempotentRepository" />
         <marshal>
             <base64/>
