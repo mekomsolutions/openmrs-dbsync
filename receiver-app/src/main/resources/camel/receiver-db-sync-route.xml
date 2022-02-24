@@ -7,8 +7,11 @@
         <setProperty name="original-msg-body">
             <simple>${body}</simple>
         </setProperty>
+        <setProperty name="model-classes">
+            <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getModelClassesInHierarchy(${exchangeProperty.model-class})" />
+        </setProperty>
 
-        <toD uri="jpa:ConflictQueueItem?query=SELECT c FROM ConflictQueueItem c WHERE c.modelClassName ='${exchangeProperty.model-class}' AND c.identifier='${exchangeProperty.entity-id}' AND c.resolved = false" />
+        <toD uri="jpa:ConflictQueueItem?query=SELECT c FROM ConflictQueueItem c WHERE c.modelClassName IN (${exchangeProperty.model-classes}) AND c.identifier='${exchangeProperty.entity-id}' AND c.resolved = false" />
 
         <choice>
             <when>
@@ -23,7 +26,7 @@
                 <setBody>
                     <method beanType="org.openmrs.eip.dbsync.utils.JsonUtils" method="unmarshalSyncModel(${exchangeProperty.original-msg-body})" />
                 </setBody>
-                
+
                 <doTry>
                     <to uri="openmrs:load" />
                     
