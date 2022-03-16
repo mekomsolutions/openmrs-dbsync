@@ -2,9 +2,41 @@
     <route id="receiver-clear-db-cache" errorHandlerRef="receiverErrorHandler">
         <from uri="direct:receiver-clear-db-cache" />
 
-        <log loggingLevel="DEBUG" message="Start: ${routeId}" />
+        <log loggingLevel="DEBUG" message="Start: route with id ${routeId}" />
+
+        <setProperty name="originalBody">
+            <simple>${body}</simple>
+        </setProperty>
 
         <process ref="oauthProcessor" />
+
+        <choice>
+            <when>
+                <simple>${body} == null</simple>
+                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
+
+                <setBody>
+                    <simple>${properties:openmrs.username:''}:${properties:openmrs.password:''}</simple>
+                </setBody>
+                <marshal>
+                    <base64 lineSeparator="" />
+                </marshal>
+                <setHeader name="Authorization">
+                    <simple>Basic ${body}</simple>
+                </setHeader>
+            </when>
+            <otherwise>
+                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with oauth token" />
+
+                <setHeader name="Authorization">
+                    <simple>${body}</simple>
+                </setHeader>
+            </otherwise>
+        </choice>
+
+        <setBody>
+            <simple>${exchangeProperty.originalBody}</simple>
+        </setBody>
 
         <log message="Removing the entity from OpenMRS DB cache -> ${body}" />
 
@@ -15,27 +47,8 @@
             <constant>POST</constant>
         </setHeader>
 
-        <choice>
-            <when>
-                <simple>${headers.Authorization} == null</simple>
-                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with username and password" />
+        <to uri="{{openmrs.baseUrl}}/ws/rest/v1/cleardbcache" />
 
-                <setProperty name="openmrsUser">
-                    <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.username')" />
-                </setProperty>
-                <setProperty name="openmrsPassword">
-                    <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="getProperty('openmrs.password')" />
-                </setProperty>
-
-                <toD uri="{{openmrs.baseUrl}}/ws/rest/v1/cleardbcache?authMethod=Basic&amp;authUsername=${exchangeProperty.openmrsUser}&amp;authPassword=${exchangeProperty.openmrsPassword}" />
-            </when>
-            <otherwise>
-                <log loggingLevel="DEBUG" message="Authenticating to OpenMRS with oauth token" />
-
-                <to uri="{{openmrs.baseUrl}}/ws/rest/v1/cleardbcache" />
-            </otherwise>
-        </choice>
-
-        <log loggingLevel="DEBUG" message="End: ${routeId}" />
+        <log loggingLevel="DEBUG" message="End: route with id ${routeId}" />
     </route>
 </routes>
