@@ -69,13 +69,15 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 				
 				ety.setId(id);
 			}
-		} else if (etyInDb == null && model instanceof UserModel) {
+		}
+		
+		boolean hasSelfReference = false;
+		if (etyInDb == null && model instanceof UserModel) {
 			UserModel userModel = ((UserModel) model);
 			//The creator of the first admin account created in an OpenMRS database is a reference back to itself.
 			//It's also possible to have a user record where voided_by and changed_by are references back to itself.
 			//When we're creating it for the first time, it means a placeholder row has already been created, load 
 			//the placeholder and update it with this entity's payload otherwise we duplicate it including it's uuid 
-			boolean hasSelfReference = false;
 			Optional<DecomposedUuid> creatorUuid = decomposeUuid(userModel.getCreatorUuid());
 			if (creatorUuid.isPresent() && creatorUuid.get().getUuid().equals(userModel.getUuid())) {
 				hasSelfReference = true;
@@ -92,7 +94,7 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 			}
 			
 			if (hasSelfReference) {
-				log.info("CThe user entity being synced has a self reference");
+				log.info("The user entity being synced has a self reference");
 				
 				etyInDb = repository.findByUuid(model.getUuid());
 			}
@@ -105,7 +107,11 @@ public abstract class AbstractEntityService<E extends BaseEntity, M extends Base
 		} else {
 			ety.setId(etyInDb.getId());
 			modelToReturn = saveEntity(ety);
-			log.info(getMsg(ety, model.getUuid(), " updated"));
+			if (hasSelfReference) {
+				log.info(getMsg(ety, model.getUuid(), " inserted"));
+			} else {
+				log.info(getMsg(ety, model.getUuid(), " updated"));
+			}
 		}
 		
 		return modelToReturn;
