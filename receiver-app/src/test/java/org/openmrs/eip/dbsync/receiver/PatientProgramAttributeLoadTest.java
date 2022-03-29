@@ -36,7 +36,7 @@ public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest<Pa
 		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
 		        + "\"voidReason\":null," + "\"referencedEntityUuid\":\"" + PatientProgramLight.class.getName()
 		        + "(1a819794-31e9-11e9-9cf7-0452ac1c177f)\"," + "\"attributeTypeUuid\":\""
-		        + PatientProgramAttributeTypeLight.class.getName() + "(1)\","
+		        + PatientProgramAttributeTypeLight.class.getName() + "(1d229794-76e1-11f9-8cd8-0242ac1c111d)\","
 		        + "\"valueReference\":\"2019-05-28T13:42:31+00:00\"}, \"metadata\":{\"operation\":\"c\"}}");
 	}
 }
