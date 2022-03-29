@@ -31,4 +31,6 @@ public class SyncConstants {
 	
 	public static final String HASH_DELETED = "DELETED";
 	
+	public static final String OPENMRS_ROOT_PGK = "org.openmrs";
+	
 }
