@@ -80,7 +80,7 @@ values (1, 6, 1, '1', 3, '2021-06-23 00:00:00', 0, '1c2da012-e8fa-4491-8aab-66e4
        (3, 6, 1, '101', 3, '2021-06-23 00:00:00', 0, '3c2da012-e8fa-4491-8aab-66e4524552b3');
 
 insert into visit_type (visit_type_id,name,creator,date_created,retired,uuid)
-values (1, 'Initial', 0, '2021-06-23 00:00:00', 0, '1f339794-76e1-11f9-8cd8-0242ac1c342e');
+values (1, 'Initial', 1, '2021-06-23 00:00:00', 0, '1f339794-76e1-11f9-8cd8-0242ac1c342e');
 
 insert into visit_attribute_type (visit_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
 values (1, 'Visit Location', 0, 3, '2021-06-23 00:00:00', 0, '1b229794-76e1-11f9-8cd8-0242ac1c555e');
