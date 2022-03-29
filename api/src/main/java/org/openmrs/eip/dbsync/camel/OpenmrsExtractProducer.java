@@ -8,11 +8,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.openmrs.eip.dbsync.camel.fetchmodels.FetchModelsRuleEngine;
-import org.openmrs.eip.dbsync.entity.light.AttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.LightEntity;
 import org.openmrs.eip.dbsync.entity.light.PersonAttributeTypeLight;
 import org.openmrs.eip.dbsync.exception.SyncException;
-import org.openmrs.eip.dbsync.model.AttributeModel;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PersonAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
@@ -25,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 
 public class OpenmrsExtractProducer extends AbstractOpenmrsProducer {
 	
-	private static Logger log = LoggerFactory.getLogger(AbstractOpenmrsProducer.class);
+	private static Logger log = LoggerFactory.getLogger(OpenmrsExtractProducer.class);
 	
 	public OpenmrsExtractProducer(final OpenmrsEndpoint endpoint, final ApplicationContext applicationContext,
 	    final ProducerParams params) {
@@ -55,16 +53,6 @@ public class OpenmrsExtractProducer extends AbstractOpenmrsProducer {
 					}
 					
 					model.setValue(getUuid(type.getFormat(), model.getValue()));
-				}
-			} else if (syncModel.getModel() instanceof AttributeModel) {
-				AttributeModel model = (AttributeModel) syncModel.getModel();
-				AttributeTypeLight type = getLightEntity(model.getAttributeTypeUuid());
-				if (type.getDatatype() != null && type.getDatatype().startsWith(OPENMRS_ROOT_PGK)) {
-					if (log.isDebugEnabled()) {
-						log.debug("Converting id " + model.getValueReference() + " for " + type.getDatatype() + " to uuid");
-					}
-					
-					model.setValueReference(getUuid(type.getDatatype(), model.getValueReference()));
 				}
 			}
 		}

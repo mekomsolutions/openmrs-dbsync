@@ -20,7 +20,4 @@ public abstract class AttributeTypeLight extends RetireableLightEntity {
 	@Column(name = "min_occurs")
 	private long minOccurs;
 	
-	@Column
-	private String datatype;
-	
 }
