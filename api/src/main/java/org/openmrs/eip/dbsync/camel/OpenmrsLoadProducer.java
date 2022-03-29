@@ -14,14 +14,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
-import org.openmrs.eip.dbsync.entity.light.AttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.LightEntity;
 import org.openmrs.eip.dbsync.entity.light.PersonAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
-import org.openmrs.eip.dbsync.model.AttributeModel;
 import org.openmrs.eip.dbsync.model.BaseDataModel;
 import org.openmrs.eip.dbsync.model.BaseMetadataModel;
 import org.openmrs.eip.dbsync.model.BaseModel;
@@ -141,17 +139,6 @@ public class OpenmrsLoadProducer extends AbstractOpenmrsProducer {
 						}
 						
 						model.setValue(getId(type.getFormat(), model.getValue()).toString());
-					}
-				} else if (modelToSave instanceof AttributeModel) {
-					AttributeModel model = (AttributeModel) syncModel.getModel();
-					AttributeTypeLight type = getLightEntity(model.getAttributeTypeUuid());
-					if (type.getDatatype() != null && type.getDatatype().startsWith(OPENMRS_ROOT_PGK)) {
-						if (log.isDebugEnabled()) {
-							log.debug(
-							    "Converting uuid " + model.getValueReference() + " for " + type.getDatatype() + " to id");
-						}
-						
-						model.setValueReference(getId(type.getDatatype(), model.getValueReference()).toString());
 					}
 				}
 			} else {

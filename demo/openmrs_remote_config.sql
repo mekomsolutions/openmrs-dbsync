@@ -28,6 +28,10 @@ VALUES ('Nurse', 'View Navigation Menu'),
 INSERT INTO user_role(user_id, role)
 VALUES(3, 'Nurse');
 
+INSERT INTO location (location_id,name,creator,date_created,retired,uuid)
+VALUES (3, 'Ward C', 1, now(), 0, 'b02f825b-aa65-4bfa-b8a2-6965385c9a48'),
+       (4, 'Ward C', 1, now(), 0, 'c02f825b-aa65-4bfa-b8a2-6965385c9a48');
+
 insert into datafilter_entity_basis_map(entity_identifier,entity_type,basis_identifier,basis_type,creator,date_created,uuid)
 values ('3', 'org.openmrs.User', '2', 'org.openmrs.Location', 1, now(),'ebm-uuid-remote');
 

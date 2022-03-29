@@ -82,14 +82,11 @@ values (1, 6, 1, '1', 3, '2021-06-23 00:00:00', 0, '1c2da012-e8fa-4491-8aab-66e4
 insert into visit_type (visit_type_id,name,creator,date_created,retired,uuid)
 values (1, 'Initial', 0, '2021-06-23 00:00:00', 0, '1f339794-76e1-11f9-8cd8-0242ac1c342e');
 
-insert into visit_attribute_type (visit_attribute_type_id,name,datatype,min_occurs,creator,date_created,retired,uuid)
-values (1, 'Visit Location', 'org.openmrs.Location', 0, 3, '2021-06-23 00:00:00', 0, '1b229794-76e1-11f9-8cd8-0242ac1c555e'),
-       (2, 'Visit Notes', 'java.lang.String', 0, 3, '2021-06-23 00:00:00', 0, '2b229794-76e1-11f9-8cd8-0242ac1c555e');
+insert into visit_attribute_type (visit_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
+values (1, 'Visit Location', 0, 3, '2021-06-23 00:00:00', 0, '1b229794-76e1-11f9-8cd8-0242ac1c555e');
 
 insert into visit (visit_id, visit_type_id,patient_id,date_started,creator,date_created,voided,uuid)
 values (1, 1, 6, '2021-06-23 00:00:00', 1, '2021-06-23 00:00:00', 0, '1a859794-76e9-11e9-8cf7-0242ac1c166e');
 
 insert into visit_attribute(visit_attribute_id,visit_id,attribute_type_id,value_reference,creator,date_created,voided,uuid)
-values (1, 1, 1, '1', 3, '2021-06-23 00:00:00', 0, '1d2da012-e8fa-4491-8aab-66e4524552b3'),
-       (2, 1, 2, 'None', 3, '2021-06-23 00:00:00', 0, '2d2da012-e8fa-4491-8aab-66e4524552b3'),
-       (3, 1, 1, '101', 3, '2021-06-23 00:00:00', 0, '3d2da012-e8fa-4491-8aab-66e4524552b3');
+values (1, 1, 1, '1a129794-76e1-11f9-8cd8-0242ac1c444e', 3, '2021-06-23 00:00:00', 0, '1d2da012-e8fa-4491-8aab-66e4524552b3');
