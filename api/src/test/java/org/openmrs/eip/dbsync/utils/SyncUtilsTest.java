@@ -2,10 +2,12 @@ package org.openmrs.eip.dbsync.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 
 public class SyncUtilsTest {
@@ -24,19 +26,36 @@ public class SyncUtilsTest {
 	
 	@Test
 	public void isEntitySynced_shouldReturnTrueForASyncedEntity() {
-		assertTrue(SyncUtils.isSyncType("org.openmrs.Patient"));
-		assertTrue(SyncUtils.isSyncType("org.openmrs.Person"));
-		assertTrue(SyncUtils.isSyncType("org.openmrs.module.datafilter.EntityBasisMap"));
+		EntityBasisMapModel map = new EntityBasisMapModel();
+		map.setEntityType("org.openmrs.Patient");
+		assertTrue(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.Person");
+		assertTrue(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.module.datafilter.EntityBasisMap");
+		assertTrue(SyncUtils.isEntitySynced(map));
 	}
 	
 	@Test
 	public void isEntitySynced_shouldReturnFalseForANonSyncedEntity() {
-		assertFalse(SyncUtils.isSyncType("org.openmrs.Concept"));
-		assertFalse(SyncUtils.isSyncType("org.openmrs.Location"));
-		assertFalse(SyncUtils.isSyncType("org.openmrs.ConceptAttribute"));
-		assertFalse(SyncUtils.isSyncType("org.openmrs.LocationAttribute"));
-		assertFalse(SyncUtils.isSyncType("org.openmrs.ProviderAttribute"));
-		assertFalse(SyncUtils.isSyncType("org.openmrs.ConceptMapType"));
+		EntityBasisMapModel map = new EntityBasisMapModel();
+		map.setEntityType("org.openmrs.Concept");
+		assertNotNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.Location");
+		assertNotNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.ConceptAttribute");
+		assertNotNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.LocationAttribute");
+		assertNotNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.ProviderAttribute");
+		assertNotNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
+		map.setEntityType("org.openmrs.ConceptMapType");
+		assertNull(SyncUtils.getModelClass(map.getEntityType()));
+		assertFalse(SyncUtils.isEntitySynced(map));
 	}
 	
 }
