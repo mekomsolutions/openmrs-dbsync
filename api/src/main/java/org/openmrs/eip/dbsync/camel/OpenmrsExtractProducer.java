@@ -70,7 +70,7 @@ public class OpenmrsExtractProducer extends AbstractOpenmrsProducer {
 	 * @param model the BaseModel object
 	 */
 	private void replaceIdsWithUuids(EntityBasisMapModel model) {
-		if (SyncUtils.isSyncType(model.getEntityType())) {
+		if (SyncUtils.isEntitySynced(model)) {
 			Long entityId = Long.valueOf(model.getEntityIdentifier());
 			LightEntity entity = getEntityLightRepository(model.getEntityType()).findById(entityId).orElse(null);
 			if (entity == null) {
