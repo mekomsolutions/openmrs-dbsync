@@ -21,7 +21,7 @@ public class MessageConsumer implements Runnable {
 	private static final String ENTITY = SyncMessage.class.getSimpleName();
 	
 	//Order by dateCreated may be just in case the DB is migrated and id change
-	private static final String GET_JPA_URI = "jpa:" + ENTITY + "?query=SELECT m FROM " + ENTITY
+	protected static final String GET_JPA_URI = "jpa:" + ENTITY + "?query=SELECT m FROM " + ENTITY
 	        + " m ORDER BY m.id ASC &maximumResults=" + ReceiverContext.MAX_COUNT;
 	
 	private ProducerTemplate producerTemplate;
@@ -90,6 +90,11 @@ public class MessageConsumer implements Runnable {
 		} while (!ReceiverContext.isStopSignalReceived() && !errorEncountered);
 		
 		log.info("Sync message consumer has stopped");
+		
+		if (errorEncountered) {
+			log.info("Shutting down the application because of an exception in the sync message consumer");
+			org.openmrs.eip.Utils.shutdown();
+		}
 		
 	}
 	
