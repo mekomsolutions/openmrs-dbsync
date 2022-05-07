@@ -38,7 +38,8 @@ public class OrderGroupExtractTest extends OpenmrsExtractEndpointITest<OrderGrou
 		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
 		        + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
 		        + "\"patientUuid\":\"" + PatientLight.class.getName() + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\","
-		        + "\"orderSetUuid\":\"" + OrderSetLight.class.getName() + "(1a379794-31e9-11e9-8cf7-0242ac1c177b)\"}}";
+		        + "\"orderSetUuid\":\"" + OrderSetLight.class.getName() + "(1a379794-31e9-11e9-8cf7-0242ac1c177b)\","
+		        + "\"reasonUuid\":null," + "\"parentUuid\":null," + "\"previousOrderGroupUuid\":null}}";
 	}
 	
 }

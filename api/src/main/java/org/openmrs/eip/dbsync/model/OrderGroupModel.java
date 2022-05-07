@@ -13,4 +13,10 @@ public class OrderGroupModel extends BaseChangeableDataModel {
 	
 	private String orderSetUuid;
 	
+	private String reasonUuid;
+	
+	private String parentUuid;
+	
+	private String previousOrderGroupUuid;
+	
 }

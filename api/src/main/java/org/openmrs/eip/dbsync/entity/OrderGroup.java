@@ -8,7 +8,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.openmrs.eip.dbsync.entity.light.ConceptLight;
 import org.openmrs.eip.dbsync.entity.light.EncounterLight;
+import org.openmrs.eip.dbsync.entity.light.OrderGroupLight;
 import org.openmrs.eip.dbsync.entity.light.OrderSetLight;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
 
@@ -35,5 +37,17 @@ public class OrderGroup extends BaseChangeableDataEntity {
 	@ManyToOne
 	@JoinColumn(name = "order_set_id")
 	private OrderSetLight orderSet;
+	
+	@ManyToOne
+	@JoinColumn(name = "order_group_reason")
+	private ConceptLight reason;
+	
+	@ManyToOne
+	@JoinColumn(name = "parent_order_group")
+	private OrderGroupLight parent;
+	
+	@ManyToOne
+	@JoinColumn(name = "previous_order_group")
+	private OrderGroupLight previousOrderGroup;
 	
 }
