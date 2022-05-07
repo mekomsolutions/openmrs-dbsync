@@ -1,9 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.openmrs.eip.dbsync.entity.light.PatientProgramLight;
-import org.openmrs.eip.dbsync.entity.light.ProgramWorkflowStateLight;
+import java.time.LocalDate;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -12,7 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+
+import org.openmrs.eip.dbsync.entity.light.EncounterLight;
+import org.openmrs.eip.dbsync.entity.light.PatientProgramLight;
+import org.openmrs.eip.dbsync.entity.light.ProgramWorkflowStateLight;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -20,20 +23,27 @@ import java.time.LocalDate;
 @Table(name = "patient_state")
 @AttributeOverride(name = "id", column = @Column(name = "patient_state_id"))
 public class PatientState extends BaseChangeableDataEntity {
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "patient_program_id")
+	private PatientProgramLight patientProgram;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "state")
+	private ProgramWorkflowStateLight state;
+	
+	@Column(name = "start_date")
+	private LocalDate startDate;
+	
+	@Column(name = "end_date")
+	private LocalDate endDate;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "patient_program_id")
-    private PatientProgramLight patientProgram;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "state")
-    private ProgramWorkflowStateLight state;
-
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
+    @JoinColumn(name = "encounter_id")
+    private EncounterLight encounter;
+	
+	@Column(name = "form_namespace_and_path")
+	private String formNamespaceAndPath;
 }
