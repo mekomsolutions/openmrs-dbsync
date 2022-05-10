@@ -54,7 +54,7 @@ public class EncounterDiagnosis extends BaseChangeableDataEntity {
 	private String certainty;
 	
 	@NotNull
-	@Column(name = "rank")
+	@Column(name = "dx_rank")
 	private int rank;
 	
 	@Column(name = "form_namespace_and_path")
