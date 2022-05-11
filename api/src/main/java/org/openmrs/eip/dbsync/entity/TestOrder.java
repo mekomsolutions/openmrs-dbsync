@@ -33,6 +33,7 @@ public class TestOrder extends Order {
 	private Integer numberOfRepeats;
 	
 	@ManyToOne
+    @JoinColumn(name = "location")
 	private ConceptLight location;
 	
 	/**
