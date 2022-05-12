@@ -1,5 +1,7 @@
 package org.openmrs.eip.dbsync;
 
+import org.openmrs.eip.dbsync.utils.SyncUtils;
+
 public class SyncConstants {
 	
 	public static final String SYNC_MODE_BEAN_NAME = "dbSyncMode";
@@ -32,5 +34,7 @@ public class SyncConstants {
 	public static final String HASH_DELETED = "DELETED";
 	
 	public static final String OPENMRS_ROOT_PGK = "org.openmrs";
+	
+	public static final String VERSION = SyncUtils.getDbSyncVersion();
 	
 }

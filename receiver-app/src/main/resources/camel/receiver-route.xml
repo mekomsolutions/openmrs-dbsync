@@ -45,6 +45,9 @@
                 <setProperty name="sourceId">
                     <jsonpath>$.metadata.sourceIdentifier</jsonpath>
                 </setProperty>
+                <setProperty name="version">
+                    <jsonpath>$.metadata.dbSyncVersion</jsonpath>
+                </setProperty>
 
                 <log message="Entity: ${exchangeProperty.model-class}, identifier=${exchangeProperty.entity-id}, source=${exchangeProperty.sourceId}" />
 
@@ -69,6 +72,7 @@
                                 #{getProperty('messageToSave').setModelClassName(getProperty('model-class'))}
                                 #{getProperty('messageToSave').setEntityPayload(getProperty('entity-payload'))}
                                 #{getProperty('messageToSave').setDateCreated(new java.util.Date())}
+                                #{getProperty('messageToSave').setDbSyncVersion(getProperty('version'))}
                             </spel>
                         </script>
                         <setBody>

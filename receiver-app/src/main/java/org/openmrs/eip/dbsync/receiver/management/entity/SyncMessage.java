@@ -3,6 +3,7 @@ package org.openmrs.eip.dbsync.receiver.management.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.openmrs.eip.app.management.entity.AbstractEntity;
 
@@ -24,6 +25,10 @@ public class SyncMessage extends AbstractEntity {
 	
 	@Column(name = "model_class_name", nullable = false, updatable = false)
 	private String modelClassName;
+	
+	@NotNull
+	@Column(name = "dbsync_version", nullable = false, updatable = false)
+	private String dbSyncVersion;
 	
 	/**
 	 * Gets the identifier
@@ -79,10 +84,28 @@ public class SyncMessage extends AbstractEntity {
 		this.modelClassName = modelClassName;
 	}
 	
+	/**
+	 * Gets the dbSyncVersion
+	 *
+	 * @return the dbSyncVersion
+	 */
+	public String getDbSyncVersion() {
+		return dbSyncVersion;
+	}
+	
+	/**
+	 * Sets the dbSyncVersion
+	 *
+	 * @param dbSyncVersion the dbSyncVersion to set
+	 */
+	public void setDbSyncVersion(String dbSyncVersion) {
+		this.dbSyncVersion = dbSyncVersion;
+	}
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " {id=" + getId() + ", identifier=" + identifier + ", modelClassName="
-		        + modelClassName + "}";
+		        + modelClassName + ", dbSyncVersion=" + dbSyncVersion + "}";
 	}
 	
 }

@@ -14,6 +14,8 @@ public class SyncMetadata {
 	
 	private LocalDateTime dateSent;
 	
+	private String dbSyncVersion;
+	
 	/**
 	 * Gets the sourceIdentifier
 	 *
@@ -68,10 +70,28 @@ public class SyncMetadata {
 		this.dateSent = dateSent;
 	}
 	
+	/**
+	 * Gets the dbSyncVersion
+	 *
+	 * @return the dbSyncVersion
+	 */
+	public String getDbSyncVersion() {
+		return dbSyncVersion;
+	}
+	
+	/**
+	 * Sets the dbSyncVersion
+	 *
+	 * @param dbSyncVersion the dbSyncVersion to set
+	 */
+	public void setDbSyncVersion(String dbSyncVersion) {
+		this.dbSyncVersion = dbSyncVersion;
+	}
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "{sourceIdentifier=" + sourceIdentifier + ", operation=" + operation
-		        + ", dateSent=" + dateSent + "}";
+		        + ", dateSent=" + dateSent + ", dbSyncVersion=" + dbSyncVersion + "}";
 	}
 	
 }

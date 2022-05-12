@@ -748,4 +748,42 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="wluyima" id="20220512-0900">
+        <preConditions onFail="HALT" onFailMessage="Found items in the sync queue">
+            <tableIsEmpty tableName="receiver_sync_msg" />
+        </preConditions>
+        <comment>Checking that receiver_sync_msg table is empty</comment>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0901">
+        <preConditions onFail="HALT" onFailMessage="Found items in the error queue">
+            <tableIsEmpty tableName="receiver_retry_queue" />
+        </preConditions>
+        <comment>Checking that receiver_retry_queue table is empty</comment>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0902">
+        <preConditions onFail="HALT" onFailMessage="Found unresolved items in the conflict queue">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM receiver_conflict_queue WHERE is_resolved = 0;
+            </sqlCheck>
+        </preConditions>
+        <comment>Checking that all rows in receiver_conflict_queue table are marked as resolved</comment>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0903">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="dbsync_version" tableName="receiver_sync_msg" />
+            </not>
+        </preConditions>
+        <comment>Add dbsync_version column to receiver_sync_msg table</comment>
+
+        <addColumn tableName="receiver_sync_msg">
+            <column name="dbsync_version" type="VARCHAR(32)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
