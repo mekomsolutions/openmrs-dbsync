@@ -786,4 +786,54 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="wluyima" id="20220512-0904">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="dbsync_version" tableName="receiver_retry_queue" />
+            </not>
+        </preConditions>
+        <comment>Add dbsync_version column to receiver_retry_queue table</comment>
+
+        <addColumn tableName="receiver_retry_queue">
+            <column name="dbsync_version" type="VARCHAR(32)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0905">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="dbsync_version" tableName="receiver_conflict_queue" />
+            </not>
+        </preConditions>
+        <comment>Add dbsync_version column to receiver_conflict_queue table</comment>
+
+        <addColumn tableName="receiver_conflict_queue">
+            <column name="dbsync_version" type="VARCHAR(32)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0906">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableIsEmpty tableName="receiver_conflict_queue" />
+            </not>
+        </preConditions>
+        <comment>Setting receiver_conflict_queue.dbsync_version for existing rows</comment>
+
+        <update tableName="receiver_conflict_queue">
+            <column name="dbsync_version" value="2.3.3" />
+        </update>
+    </changeSet>
+
+    <changeSet author="wluyima" id="20220512-0907">
+        <preConditions onFail="MARK_RAN">
+            <changeSetExecuted author="wluyima" id="20220512-0905" />
+        </preConditions>
+        <comment>Add not null constraint to receiver_conflict_queue.dbsync_version column</comment>
+
+        <addNotNullConstraint tableName="receiver_conflict_queue" columnName="dbsync_version" />
+    </changeSet>
+
 </databaseChangeLog>
