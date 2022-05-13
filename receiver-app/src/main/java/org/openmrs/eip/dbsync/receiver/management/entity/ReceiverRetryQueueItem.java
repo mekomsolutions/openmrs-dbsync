@@ -1,11 +1,10 @@
 package org.openmrs.eip.dbsync.receiver.management.entity;
 
+import org.openmrs.eip.app.management.entity.BaseRetryQueueItem;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.openmrs.eip.app.management.entity.BaseRetryQueueItem;
 
 @Entity
 @Table(name = "receiver_retry_queue")
@@ -22,10 +21,6 @@ public class ReceiverRetryQueueItem extends BaseRetryQueueItem {
 	
 	@Column(name = "entity_payload", columnDefinition = "text", nullable = false)
 	private String entityPayload;
-	
-	@NotNull
-	@Column(name = "dbsync_version", nullable = false, updatable = false)
-	private String dbSyncVersion;
 	
 	/**
 	 * Gets the modelClassName
@@ -81,29 +76,10 @@ public class ReceiverRetryQueueItem extends BaseRetryQueueItem {
 		this.entityPayload = entityPayload;
 	}
 	
-	/**
-	 * Gets the dbSyncVersion
-	 *
-	 * @return the dbSyncVersion
-	 */
-	public String getDbSyncVersion() {
-		return dbSyncVersion;
-	}
-	
-	/**
-	 * Sets the dbSyncVersion
-	 *
-	 * @param dbSyncVersion the dbSyncVersion to set
-	 */
-	public void setDbSyncVersion(String dbSyncVersion) {
-		this.dbSyncVersion = dbSyncVersion;
-	}
-	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " {identifier=" + identifier + ", modelClassName=" + modelClassName
-		        + ", attemptCount=" + getAttemptCount() + ", payload=" + entityPayload + ", dbSyncVersion=" + dbSyncVersion
-		        + "}";
+		        + ", attemptCount=" + getAttemptCount() + ", payload=" + entityPayload + "}";
 	}
 	
 }

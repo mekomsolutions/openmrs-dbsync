@@ -40,9 +40,6 @@
                     <setProperty name="entity-id">
                         <simple>${exchangeProperty.retry-item.identifier}</simple>
                     </setProperty>
-                    <setProperty name="${routeId}Version">
-                        <simple>${exchangeProperty.retry-item.dbSyncVersion}</simple>
-                    </setProperty>
                     
                     <log message="Updating attempt count for retry item" />
 

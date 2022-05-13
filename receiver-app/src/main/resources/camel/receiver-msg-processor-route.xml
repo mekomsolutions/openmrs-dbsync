@@ -15,9 +15,6 @@
         <setProperty name="entity-id">
             <simple>${body.identifier}</simple>
         </setProperty>
-        <setProperty name="${routeId}Version">
-            <simple>${body.dbSyncVersion}</simple>
-        </setProperty>
 
         <setProperty name="retry-count">
             <spel>0</spel>
