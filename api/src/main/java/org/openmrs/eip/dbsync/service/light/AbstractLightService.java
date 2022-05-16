@@ -28,6 +28,8 @@ public abstract class AbstractLightService<E extends LightEntity> implements Lig
 	
 	public static final String DEFAULT_VOID_REASON = "[placeholder]";
 	
+	public static final Number DEFAULT_NUMBER = 0;
+	
 	protected OpenmrsRepository<E> repository;
 	
 	public AbstractLightService(final OpenmrsRepository<E> repository) {
