@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openmrs.eip.BaseDbBackedCamelTest;
+import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
@@ -185,8 +186,8 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	
 	private void sendToActiveMQInternal(String entityPayload, String operation) throws Exception {
 		String syncPayload = "{" + "\"tableToSyncModelClass\":\"" + getModelClass().getName() + "\"," + "\"model\":"
-		        + entityPayload + ",\"metadata\":{\"operation\":\"" + operation + "\", \"sourceIdentifier\":\"testSite\"}"
-		        + "}";
+		        + entityPayload + ",\"metadata\":{\"operation\":\"" + operation
+		        + "\", \"sourceIdentifier\":\"testSite\", \"dbSyncVersion\":\"" + SyncConstants.VERSION + "\"}}";
 		
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
 			try (MessageProducer producer = session.createProducer(session.createQueue(QUEUE_NAME))) {

@@ -1,7 +1,10 @@
 package org.openmrs.eip.dbsync.sender;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.ARTEMIS_ETC;
 import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
+import static org.openmrs.eip.dbsync.SyncTestConstants.SOURCE_SITE_ID;
 import static org.openmrs.eip.mysql.watcher.WatcherConstants.PROP_EVENT;
 
 import java.lang.reflect.ParameterizedType;
@@ -23,6 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
@@ -144,6 +148,19 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 		catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Asserts that the specified SyncModel object has the expected values
+	 * 
+	 * @param syncModel {@link SyncModel} instance
+	 */
+	public void assertCoreModelProps(SyncModel syncModel, String expectedOperation) {
+		assertEquals(getModelClass(), syncModel.getTableToSyncModelClass());
+		assertEquals(SOURCE_SITE_ID, syncModel.getMetadata().getSourceIdentifier());
+		assertEquals(expectedOperation, syncModel.getMetadata().getOperation());
+		assertEquals(SyncConstants.VERSION, syncModel.getMetadata().getDbSyncVersion());
+		assertNotNull(syncModel.getMetadata().getDateSent());
 	}
 	
 	/**
