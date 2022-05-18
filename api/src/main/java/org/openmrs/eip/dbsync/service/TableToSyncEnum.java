@@ -18,6 +18,7 @@ import org.openmrs.eip.dbsync.entity.LocationAttribute;
 import org.openmrs.eip.dbsync.entity.Observation;
 import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.entity.OrderGroup;
+import org.openmrs.eip.dbsync.entity.OrderGroupAttribute;
 import org.openmrs.eip.dbsync.entity.Patient;
 import org.openmrs.eip.dbsync.entity.PatientIdentifier;
 import org.openmrs.eip.dbsync.entity.PatientProgram;
@@ -46,6 +47,7 @@ import org.openmrs.eip.dbsync.management.hash.entity.EncounterHash;
 import org.openmrs.eip.dbsync.management.hash.entity.EncounterProviderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.EntityBasisMapHash;
 import org.openmrs.eip.dbsync.management.hash.entity.ObsHash;
+import org.openmrs.eip.dbsync.management.hash.entity.OrderGroupAttributeHash;
 import org.openmrs.eip.dbsync.management.hash.entity.OrderGroupHash;
 import org.openmrs.eip.dbsync.management.hash.entity.OrderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.PatientHash;
@@ -76,6 +78,7 @@ import org.openmrs.eip.dbsync.model.EncounterModel;
 import org.openmrs.eip.dbsync.model.EncounterProviderModel;
 import org.openmrs.eip.dbsync.model.LocationModel;
 import org.openmrs.eip.dbsync.model.ObservationModel;
+import org.openmrs.eip.dbsync.model.OrderGroupAttributeModel;
 import org.openmrs.eip.dbsync.model.OrderGroupModel;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientIdentifierModel;
@@ -157,7 +160,9 @@ public enum TableToSyncEnum {
 	PROVIDER(Provider.class, ProviderModel.class, ProviderHash.class),
 	
 	DIAGNOSIS_ATTRIBUTE(DiagnosisAttribute.class, DiagnosisAttributeModel.class, DiagnosisAttributeHash.class),
-
+	
+	ORDER_GROUP_ATTRIBUTE(OrderGroupAttribute.class, OrderGroupAttributeModel.class, OrderGroupAttributeHash.class),
+	
     //Module tables
 	DATAFILTER_ENTITY_BASIS_MAP(EntityBasisMap.class, EntityBasisMapModel.class, EntityBasisMapHash.class);
 	

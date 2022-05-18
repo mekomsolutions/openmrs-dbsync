@@ -13,6 +13,8 @@ public class SyncTestConstants {
 	public static final String QUEUE_NAME = "sync.test.queue";
 
     public static final String EXISTING_PERSON_UUID = "6afd940e-32dc-491f-8038-a8f3afe3e35a";
-	
-	public static final String EXISTING_DIAGNOSIS_ATTR_UUID = "8afd940e-32da-491f-8038-a8f3afe3e35a";
+
+    public static final String EXISTING_DIAGNOSIS_ATTR_UUID = "8afd940e-32da-491f-8038-a8f3afe3e35a";
+
+	public static final String EXISTING_ORDER_GRP_ATTR_UUID = "7bfd940e-32da-491f-8038-a8f3afe3e34b";
 }

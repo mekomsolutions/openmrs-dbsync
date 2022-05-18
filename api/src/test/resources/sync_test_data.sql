@@ -30,3 +30,12 @@ values (1, 'Comments', 0, 2, '2022-01-01 00:00:00', 0, '1b229794-76e1-11f9-8cd8-
 
 insert into diagnosis_attribute(diagnosis_attribute_id,diagnosis_id,attribute_type_id,value_reference,creator,date_created,voided,uuid)
 values (1, 1, 1, 'None', 2, '2022-05-18 00:00:00', 0, '8afd940e-32da-491f-8038-a8f3afe3e35a');
+
+INSERT INTO order_group (order_group_id,patient_id,encounter_id,creator,date_created,voided,uuid)
+VALUES (1, 4, 1, 2, '2022-05-18 00:00:00', 0, 'ec229794-76e1-11f8-8cd8-0242ac1c555d');
+
+insert into order_group_attribute_type (order_group_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
+values (1, 'Comments', 0, 2, '2022-01-01 00:00:00', 0, '2c229794-76e1-11f9-8cd8-0242ac1c555f');
+
+insert into order_group_attribute(order_group_attribute_id,order_group_id,attribute_type_id,value_reference,creator,date_created,voided,uuid)
+values (1, 1, 1, 'None', 2, '2022-05-18 00:00:00', 0, '7bfd940e-32da-491f-8038-a8f3afe3e34b');
