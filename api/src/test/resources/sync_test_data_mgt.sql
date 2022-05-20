@@ -9,3 +9,6 @@ VALUES (1, '7bfd940e-32da-491f-8038-a8f3afe3e34b', '2e9de4415f03f1db2478f464d3f1
 
 INSERT INTO order_attribute_hash (id, identifier, hash, date_created)
 VALUES (1, '6cfd940e-32da-491f-8038-a8f3afe3e34c', '2b2e50abb44f859de7c2d5c6b180e1ef', now());
+
+INSERT INTO referral_order_hash (id, identifier, hash, date_created)
+VALUES (1, '27170d8e-d201-4d94-ae89-0be0b0b6d8bb', '6443c9d9a2d1c9111c9e8dadaf8d0d45', now());

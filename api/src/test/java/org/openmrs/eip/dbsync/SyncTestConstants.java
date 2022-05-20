@@ -19,4 +19,6 @@ public class SyncTestConstants {
 	public static final String EXISTING_ORDER_GRP_ATTR_UUID = "7bfd940e-32da-491f-8038-a8f3afe3e34b";
 	
 	public static final String EXISTING_ORDER_ATTR_UUID = "6cfd940e-32da-491f-8038-a8f3afe3e34c";
+	
+	public static final String EXISTING_REF_ORDER_UUID = "27170d8e-d201-4d94-ae89-0be0b0b6d8bb";
 }

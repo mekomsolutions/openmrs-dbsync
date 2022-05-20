@@ -35,4 +35,13 @@ public interface SyncTest<E extends BaseEntity, M extends BaseModel> {
 		return (Class<M>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 	}
 	
+	/**
+	 * Returns the concrete entity class set as the value of the first type parameter of this interface
+	 *
+	 * @return the entity class object
+	 */
+	default Class<E> getEntityClass() {
+		return (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	}
+	
 }

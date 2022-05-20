@@ -52,11 +52,22 @@ VALUES  (1, 'Misc', 2, '2022-05-18 00:00:00', 0, 'f4464518-f5e2-4aab-a54e-1f1a2e
 insert into concept(concept_id,datatype_id,class_id,is_set,creator,date_created,retired,uuid)
 values (1, 1, 1, 0, 2, '2022-05-18 00:00:00', 0, '1e279794-76e9-11e9-9cd8-0242ac1c111f');
 
+insert into location (location_id,name,creator,date_created,retired,uuid)
+values (1, 'Unknown Location', 2, '2022-05-18 00:00:00', 0, '1b229794-76e1-11f9-8cd8-0242ac1c444f');
+
+insert into order_frequency(order_frequency_id,concept_id,creator,date_created,retired,uuid)
+values (1, 1, 2, '2022-05-18 00:00:00', 0, '1c93d0cc-6534-48ea-bebc-4aeeda9471a6');
+
 INSERT INTO order_type (order_type_id, name,java_class_name,creator,date_created,retired,uuid)
-VALUES  (1, 'Order', 'org.openmrs.Order', 2, '2020-03-05 00:00:00', 0, '2e93d0cc-6534-48ed-bebc-4aeeda9471a5');
+VALUES  (1, 'Order', 'org.openmrs.Order', 2, '2020-03-05 00:00:00', 0, '2e93d0cc-6534-48ed-bebc-4aeeda9471a5'),
+        (2, 'Referral Order', 'org.openmrs.ReferralOrder', 2, '2020-03-05 00:00:00', 0, '3e93d0cc-6534-48ed-bebc-4aeeda9471a5');
 
 INSERT INTO orders (order_id,order_type_id,patient_id,encounter_id,concept_id,urgency,order_number,order_action,care_setting,orderer,creator,date_activated,date_created,voided,uuid)
-VALUES  (1, 1, 4, 1, 1, 'NO-URGENCY', 'ORD-1','NEW', 1, 1, 2, '2022-05-18 00:00:00', '2022-05-18 00:00:00', 0, '17170d8e-d201-4d94-ae89-0be0b0b6d8bb');
+VALUES  (1, 1, 4, 1, 1, 'NO-URGENCY', 'ORD-1','NEW', 1, 1, 2, '2022-05-18 00:00:00', '2022-05-18 00:00:00', 0, '17170d8e-d201-4d94-ae89-0be0b0b6d8bb'),
+        (2, 2, 4, 1, 1, 'NO-URGENCY', 'ORD-2','NEW', 1, 1, 2, '2022-05-18 00:00:00', '2022-05-18 00:00:00', 0, '27170d8e-d201-4d94-ae89-0be0b0b6d8bb');
+
+INSERT INTO referral_order (order_id,specimen_source,laterality,clinical_history,frequency,number_of_repeats,location)
+VALUES  (2, 1, 'RIGHT', 'none', 1, 1, 1);
 
 INSERT INTO order_attribute_type (order_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
 VALUES (1, 'Comments', 0, 2, '2022-01-01 00:00:00', 0, '3d229794-76e1-11f9-8cd8-0242ac1c555a');

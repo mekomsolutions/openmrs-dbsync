@@ -7,7 +7,6 @@ import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
 import static org.openmrs.eip.dbsync.SyncTestConstants.SOURCE_SITE_ID;
 import static org.openmrs.eip.mysql.watcher.WatcherConstants.PROP_EVENT;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -185,10 +184,8 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	}
 	
 	private void sendMessageToSyncRoute(String identifier, String op) {
-		ParameterizedType pType = (ParameterizedType) getClass().getGenericSuperclass();
-		Class<E> entityClass = (Class<E>) pType.getActualTypeArguments()[0];
 		producerTemplate.sendBodyAndProperty("direct:sender-db-sync", null, PROP_EVENT,
-		    createEvent(TableToSyncEnum.getTableToSyncEnumForType(entityClass).name(), null, identifier, op));
+		    createEvent(TableToSyncEnum.getTableToSyncEnumForType(getEntityClass()).name(), null, identifier, op));
 	}
 	
 }

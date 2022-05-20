@@ -31,6 +31,7 @@ import org.openmrs.eip.dbsync.entity.PersonAttribute;
 import org.openmrs.eip.dbsync.entity.PersonName;
 import org.openmrs.eip.dbsync.entity.Provider;
 import org.openmrs.eip.dbsync.entity.ProviderAttribute;
+import org.openmrs.eip.dbsync.entity.ReferralOrder;
 import org.openmrs.eip.dbsync.entity.Relationship;
 import org.openmrs.eip.dbsync.entity.TestOrder;
 import org.openmrs.eip.dbsync.entity.User;
@@ -62,6 +63,7 @@ import org.openmrs.eip.dbsync.management.hash.entity.PersonAttributeHash;
 import org.openmrs.eip.dbsync.management.hash.entity.PersonHash;
 import org.openmrs.eip.dbsync.management.hash.entity.PersonNameHash;
 import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
+import org.openmrs.eip.dbsync.management.hash.entity.ReferralOrderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.RelationshipHash;
 import org.openmrs.eip.dbsync.management.hash.entity.TestOrderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
@@ -94,6 +96,7 @@ import org.openmrs.eip.dbsync.model.PersonAttributeModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.PersonNameModel;
 import org.openmrs.eip.dbsync.model.ProviderModel;
+import org.openmrs.eip.dbsync.model.ReferralOrderModel;
 import org.openmrs.eip.dbsync.model.RelationshipModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
@@ -167,6 +170,8 @@ public enum TableToSyncEnum {
 	ORDER_GROUP_ATTRIBUTE(OrderGroupAttribute.class, OrderGroupAttributeModel.class, OrderGroupAttributeHash.class),
 	
 	ORDER_ATTRIBUTE(OrderAttribute.class, OrderAttributeModel.class, OrderAttributeHash.class),
+	
+	REFERRAL_ORDER(ReferralOrder.class, ReferralOrderModel.class, ReferralOrderHash.class),
 	
     //Module tables
 	DATAFILTER_ENTITY_BASIS_MAP(EntityBasisMap.class, EntityBasisMapModel.class, EntityBasisMapHash.class);
