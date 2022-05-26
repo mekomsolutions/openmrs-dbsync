@@ -12,13 +12,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
-import org.openmrs.eip.dbsync.model.DrugOrderModel;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
-import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -31,6 +30,8 @@ public class Utils {
 	
 	private static Map<String, List<String>> typeAndIdsToExcludeMap = null;
 	
+	private static List<String> orderModelSubClassnames = null;
+
 	/**
 	 * Gets comma-separated list of model class names surrounded with apostrophes that are subclasses or
 	 * superclasses of the specified class name.
@@ -46,15 +47,23 @@ public class Utils {
 			tables.add(
 			    PersonModel.class.getName().equals(modelClass) ? PatientModel.class.getName() : PersonModel.class.getName());
 		} else if (OrderModel.class.getName().equals(modelClass)) {
-			tables.add(TestOrderModel.class.getName());
-			tables.add(DrugOrderModel.class.getName());
-		} else if (TestOrderModel.class.getName().equals(modelClass) || DrugOrderModel.class.getName().equals(modelClass)) {
+			tables.addAll(getOrderSubClassnames());
+		} else if (getOrderSubClassnames().contains(modelClass)) {
 			tables.add(OrderModel.class.getName());
 		}
 		
 		return tables;
 	}
 	
+	private static List<String> getOrderSubClassnames() {
+		if (orderModelSubClassnames == null) {
+			orderModelSubClassnames = SyncUtils.getOrderSubclassEnums().stream().map(e -> e.getModelClass().getName())
+			        .collect(Collectors.toList());
+		}
+
+		return orderModelSubClassnames;
+	}
+
 	/**
 	 * Gets all the model classes that are subclasses or superclass of the specified class name.
 	 *

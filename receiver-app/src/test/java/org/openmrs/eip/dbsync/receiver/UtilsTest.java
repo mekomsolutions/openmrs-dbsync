@@ -22,6 +22,7 @@ import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.PersonNameModel;
+import org.openmrs.eip.dbsync.model.ReferralOrderModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
@@ -72,11 +73,12 @@ public class UtilsTest {
 		
 		className = OrderModel.class.getName();
 		classes = Utils.getListOfModelClassHierarchy(className);
-		assertEquals(3, classes.size());
+		assertEquals(4, classes.size());
 		assertTrue(classes.contains(className));
 		assertTrue(classes.contains(TestOrderModel.class.getName()));
 		assertTrue(classes.contains(DrugOrderModel.class.getName()));
-		
+		assertTrue(classes.contains(ReferralOrderModel.class.getName()));
+
 		className = TestOrderModel.class.getName();
 		classes = Utils.getListOfModelClassHierarchy(className);
 		assertEquals(2, classes.size());
@@ -84,6 +86,12 @@ public class UtilsTest {
 		assertTrue(classes.contains(OrderModel.class.getName()));
 		
 		className = DrugOrderModel.class.getName();
+		classes = Utils.getListOfModelClassHierarchy(className);
+		assertEquals(2, classes.size());
+		assertTrue(classes.contains(className));
+		assertTrue(classes.contains(OrderModel.class.getName()));
+
+		className = ReferralOrderModel.class.getName();
 		classes = Utils.getListOfModelClassHierarchy(className);
 		assertEquals(2, classes.size());
 		assertTrue(classes.contains(className));
@@ -111,11 +119,12 @@ public class UtilsTest {
 		
 		className = OrderModel.class.getName();
 		classes = stream(Utils.getModelClassesInHierarchy(className).split(",")).collect(Collectors.toList());
-		assertEquals(3, classes.size());
+		assertEquals(4, classes.size());
 		assertTrue(classes.contains("'" + className + "'"));
 		assertTrue(classes.contains("'" + TestOrderModel.class.getName() + "'"));
 		assertTrue(classes.contains("'" + DrugOrderModel.class.getName() + "'"));
-		
+		assertTrue(classes.contains("'" + ReferralOrderModel.class.getName() + "'"));
+
 		className = TestOrderModel.class.getName();
 		classes = stream(Utils.getModelClassesInHierarchy(className).split(",")).collect(Collectors.toList());
 		assertEquals(2, classes.size());
@@ -123,6 +132,12 @@ public class UtilsTest {
 		assertTrue(classes.contains("'" + OrderModel.class.getName() + "'"));
 		
 		className = DrugOrderModel.class.getName();
+		classes = stream(Utils.getModelClassesInHierarchy(className).split(",")).collect(Collectors.toList());
+		assertEquals(2, classes.size());
+		assertTrue(classes.contains("'" + className + "'"));
+		assertTrue(classes.contains("'" + OrderModel.class.getName() + "'"));
+
+		className = ReferralOrderModel.class.getName();
 		classes = stream(Utils.getModelClassesInHierarchy(className).split(",")).collect(Collectors.toList());
 		assertEquals(2, classes.size());
 		assertTrue(classes.contains("'" + className + "'"));

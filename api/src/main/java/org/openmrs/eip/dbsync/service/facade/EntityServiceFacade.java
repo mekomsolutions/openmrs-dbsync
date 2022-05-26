@@ -6,6 +6,7 @@ import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,10 +81,8 @@ public class EntityServiceFacade {
 		return services.stream().filter(service -> {
 			if (service.getTableToSync().equals(tableToSync)) {
 				return true;
-			} else if (service.getTableToSync().name().equals(TableToSyncEnum.ORDERS.name())
-			        && (tableToSync.name().equals(TableToSyncEnum.DRUG_ORDER.name())
-			                || tableToSync.name().equals(TableToSyncEnum.TEST_ORDER.name())
-			                || tableToSync.name().equals(TableToSyncEnum.REFERRAL_ORDER.name()))) {
+			} else if (service.getTableToSync().equals(TableToSyncEnum.ORDERS)
+			        && SyncUtils.isOrderSubclassEnum(tableToSync)) {
 				//TODO Add an implementation that auto discovers subclass tables
 				return true;
 			}

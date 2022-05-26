@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -58,4 +60,25 @@ public class SyncUtilsTest {
 		assertFalse(SyncUtils.isEntitySynced(map));
 	}
 	
+	@Test
+	public void isOrderSubclassEnum_shouldReturnTrueForAnOrderSubclass() {
+		assertTrue(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.DRUG_ORDER));
+		assertTrue(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.TEST_ORDER));
+		assertTrue(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.REFERRAL_ORDER));
+	}
+
+	@Test
+	public void isOrderSubclassEnum_shouldReturnFalseANonOrderSubclass() {
+		assertFalse(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.PATIENT));
+	}
+
+	@Test
+	public void getOrderSubclassEnums_shouldReturnEnumsForOrderSubclasses() {
+		List<TableToSyncEnum> enums = SyncUtils.getOrderSubclassEnums();
+		assertEquals(3, enums.size());
+		assertTrue(enums.contains(TableToSyncEnum.DRUG_ORDER));
+		assertTrue(enums.contains(TableToSyncEnum.TEST_ORDER));
+		assertTrue(enums.contains(TableToSyncEnum.REFERRAL_ORDER));
+	}
+
 }

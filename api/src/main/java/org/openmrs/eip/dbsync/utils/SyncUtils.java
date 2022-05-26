@@ -2,6 +2,8 @@ package org.openmrs.eip.dbsync.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -105,4 +107,24 @@ public class SyncUtils {
 		return value;
 	}
 	
+	/**
+	 * Checks if the specified {@link TableToSyncEnum} value is for an Order subclass.
+	 *
+	 * @param tableToSyncEnum the enum value to check
+	 * @return true if the specified {@link TableToSyncEnum} value represents an Order subclass
+	 *         otherwise false
+	 */
+	public static boolean isOrderSubclassEnum(TableToSyncEnum tableToSyncEnum) {
+		return getOrderSubclassEnums().contains(tableToSyncEnum);
+	}
+
+	/**
+	 * Gets all {@link TableToSyncEnum} values for order subclasses
+	 *
+	 * @return list of {@link TableToSyncEnum} values for order subclasses
+	 */
+	public static List<TableToSyncEnum> getOrderSubclassEnums() {
+		return Arrays.asList(TableToSyncEnum.DRUG_ORDER, TableToSyncEnum.TEST_ORDER, TableToSyncEnum.REFERRAL_ORDER);
+	}
+
 }
