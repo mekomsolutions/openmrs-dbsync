@@ -50,7 +50,7 @@ import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
 @Import(TestReceiverConfig.class)
-@SqlGroup({ @Sql(value = "classpath:sync_test_data.sql"),
+@SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql"),
         @Sql(value = "classpath:sync_test_data_mgt.sql", config = @SqlConfig(dataSource = "mngtDataSource", transactionManager = "mngtTransactionManager")) })
 public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseDbBackedCamelTest implements SyncTest<E, M> {
 	

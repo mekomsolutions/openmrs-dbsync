@@ -21,7 +21,7 @@ public class OrderGroupAttributeReceiverTest extends BaseReceiverTest<OrderGroup
 		Assert.assertNull(service.getModel(ORDER_GRP_ATTR_UUID));
 		OrderGroupAttributeModel model = new OrderGroupAttributeModel();
 		model.setUuid(ORDER_GRP_ATTR_UUID);
-		model.setReferencedEntityUuid(OrderGroupLight.class.getName() + "(" + "ec229794-76e1-11f8-8cd8-0242ac1c555d" + ")");
+		model.setReferencedEntityUuid(OrderGroupLight.class.getName() + "(1c819794-31e9-11e9-9cf7-0242ac1c177a)");
 		model.setAttributeTypeUuid(
 		    OrderGroupAttributeTypeLight.class.getName() + "(" + "2c229794-76e1-11f9-8cd8-0242ac1c555f" + ")");
 		model.setValueReference("testing");

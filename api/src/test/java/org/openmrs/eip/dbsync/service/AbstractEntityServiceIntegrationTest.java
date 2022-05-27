@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
+import org.openmrs.eip.dbsync.entity.light.PersonLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.UserModel;
@@ -48,6 +49,9 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		PatientModel patientModel = new PatientModel();
 		patientModel.setCreatorUuid(UserLight.class.getName() + "(1a3b12d1-5c4f-415f-871b-b98a22137605)");
 		patientModel.setDateCreated(LocalDateTime.now());
+		patientModel.setPatientDateCreated(LocalDateTime.now());
+		patientModel.setPatientCreatorUuid(UserLight.class.getName() + "(1a3b12d1-5c4f-415f-871b-b98a22137605)");
+		patientModel.setAllergyStatus("Unknown");
 		patientModel.setUuid(uuid);
 		
 		patientService.save(patientModel);
@@ -66,6 +70,8 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		user.setCreatorUuid(UserLight.class.getName() + "(" + uuid + ")");
 		user.setDateCreated(LocalDateTime.now());
 		user.setUuid(uuid);
+		user.setPersonUuid(PersonLight.class.getName() + "(person-uuid)");
+		user.setSystemId("test");
 		
 		userService.save(user);
 		
@@ -87,6 +93,8 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		user.setDateRetired(LocalDateTime.now());
 		user.setRetireReason("Testing");
 		user.setUuid(uuid);
+		user.setPersonUuid(PersonLight.class.getName() + "(person-uuid)");
+		user.setSystemId("test");
 		
 		userService.save(user);
 		
@@ -106,6 +114,8 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 		user.setChangedByUuid(UserLight.class.getName() + "(" + uuid + ")");
 		user.setDateChanged(LocalDateTime.now());
 		user.setUuid(uuid);
+		user.setPersonUuid(PersonLight.class.getName() + "(person-uuid)");
+		user.setSystemId("test");
 		
 		userService.save(user);
 		

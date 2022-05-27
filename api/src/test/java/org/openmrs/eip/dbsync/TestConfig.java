@@ -3,7 +3,6 @@ package org.openmrs.eip.dbsync;
 import javax.jms.ConnectionFactory;
 import javax.sql.DataSource;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,11 +25,6 @@ public class TestConfig {
 	@Bean("activeMqConnFactory")
 	public ConnectionFactory getConnectionFactory() {
 		return Mockito.mock(ConnectionFactory.class);
-	}
-	
-	@Bean("CamelContext")
-	public CamelContext getCamelContext() {
-		return Mockito.mock(CamelContext.class);
 	}
 	
 	@Bean("producerTemplate")

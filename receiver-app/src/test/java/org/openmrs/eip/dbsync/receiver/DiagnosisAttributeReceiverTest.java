@@ -21,9 +21,8 @@ public class DiagnosisAttributeReceiverTest extends BaseReceiverTest<DiagnosisAt
 		Assert.assertNull(service.getModel(DIAGNOSIS_ATTR_UUID));
 		DiagnosisAttributeModel model = new DiagnosisAttributeModel();
 		model.setUuid(DIAGNOSIS_ATTR_UUID);
-		model.setReferencedEntityUuid(DiagnosisLight.class.getName() + "(" + "ec229794-76e1-11f8-8cd8-0242ac1c555d" + ")");
-		model.setAttributeTypeUuid(
-		    DiagnosisAttributeTypeLight.class.getName() + "(" + "1b229794-76e1-11f9-8cd8-0242ac1c555e" + ")");
+		model.setReferencedEntityUuid(DiagnosisLight.class.getName() + "(ec229794-76e1-11f8-8cd8-0242ac1c555d)");
+		model.setAttributeTypeUuid(DiagnosisAttributeTypeLight.class.getName() + "(1b229794-76e1-11f9-8cd8-0242ac1c555e)");
 		model.setValueReference("testing");
 		
 		sendToActiveMQ(model);

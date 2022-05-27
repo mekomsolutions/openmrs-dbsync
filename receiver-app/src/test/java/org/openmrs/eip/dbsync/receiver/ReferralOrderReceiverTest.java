@@ -38,7 +38,7 @@ public class ReferralOrderReceiverTest extends BaseReceiverTest<Order, OrderMode
 		Assert.assertNull(service.getModel(PERSON_UUID));
 		ReferralOrderModel model = new ReferralOrderModel();
 		model.setUuid(PERSON_UUID);
-		model.setPatientUuid(PatientLight.class.getName() + "(dd279794-76e9-11e9-8cd9-0242ac1c000b)");
+		model.setPatientUuid(PatientLight.class.getName() + "(1d279794-76e9-11e9-8cd9-0242ac1c000c)");
 		model.setOrderTypeUuid(OrderTypeLight.class.getName() + "(3e93d0cc-6534-48ed-bebc-4aeeda9471a5)");
 		model.setConceptUuid(ConceptLight.class.getName() + "(1e279794-76e9-11e9-9cd8-0242ac1c111f)");
 		model.setEncounterUuid(EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)");

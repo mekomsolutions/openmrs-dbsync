@@ -36,7 +36,7 @@ public class AbstractLightServiceIntegrationTest extends BaseDbDrivenTest {
 	 */
 	@Test
 	@Transactional(Transactional.TxType.NOT_SUPPORTED)
-	public void save_shouldSaveANewPatientRecordWhenThereIsAnExistingPersonRecord() {
+	public void getOrInitEntity_shouldSaveANewPatientRecordWhenThereIsAnExistingPersonRecord() {
 		final String uuid = "ba3b12d1-5c4f-415f-871b-b98a22137604";
 		Assert.assertNotNull(personRepo.findByUuid(uuid));
 		Assert.assertNull(patientRepo.findByUuid(uuid));
@@ -51,7 +51,7 @@ public class AbstractLightServiceIntegrationTest extends BaseDbDrivenTest {
 	}
 	
 	@Test
-	public void getOrInit_shouldCreateAVoidedPatientPlaceHolder() throws Exception {
+	public void getOrInitEntity_shouldCreateAVoidedPatientPlaceHolder() {
 		final String patientUuid = "patient-uuid";
 		Assert.assertNull(patientRepo.findByUuid(patientUuid));
 		

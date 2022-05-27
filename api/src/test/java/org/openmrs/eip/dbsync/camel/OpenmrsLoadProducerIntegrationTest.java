@@ -6,17 +6,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
 import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
 import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
 import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,6 +26,7 @@ import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.Provider;
 import org.openmrs.eip.dbsync.entity.User;
+import org.openmrs.eip.dbsync.entity.light.PersonLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.management.hash.entity.ProviderHash;
 import org.openmrs.eip.dbsync.management.hash.entity.UserHash;
@@ -59,7 +59,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Before
 	public void init() {
-		exchange = new DefaultExchange(new DefaultCamelContext());
+		exchange = new DefaultExchange(camelContext);
 		producer = new OpenmrsLoadProducer(null, applicationContext, null);
 	}
 	
@@ -80,6 +80,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		model.setSystemId(systemId);
 		model.setCreatorUuid(creator);
 		model.setDateCreated(LocalDateTime.now());
+		model.setPersonUuid(PersonLight.class.getName() + "(person-uuid)");
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);

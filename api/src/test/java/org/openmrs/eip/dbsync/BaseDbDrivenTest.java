@@ -34,7 +34,9 @@ import org.testcontainers.lifecycle.Startables;
         DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
         ResetMocksTestExecutionListener.class, DeleteDataTestExecutionListener.class, SqlScriptsTestExecutionListener.class,
         TransactionalTestExecutionListener.class })
-@TestPropertySource(properties = { "spring.jpa.properties.hibernate.hbm2ddl.auto=update" })
+@TestPropertySource(properties = "spring.jpa.properties.hibernate.hbm2ddl.auto=update")
+@TestPropertySource(properties = "camel.springboot.routes-collector-enabled=false")
+@TestPropertySource(properties = "spring.liquibase.enabled=false")
 public abstract class BaseDbDrivenTest {
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseDbDrivenTest.class);
