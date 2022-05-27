@@ -2,13 +2,15 @@ package org.openmrs.eip.dbsync.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.eip.Constants;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.exception.SyncException;
@@ -28,6 +30,17 @@ public class SyncUtils {
 	private static final TableToSyncEnum[] EXCLUDED = new TableToSyncEnum[] { TableToSyncEnum.CONCEPT,
 	        TableToSyncEnum.LOCATION, TableToSyncEnum.CONCEPT_ATTRIBUTE, TableToSyncEnum.LOCATION_ATTRIBUTE,
 	        TableToSyncEnum.PROVIDER_ATTRIBUTE };
+	
+	private static final List<TableToSyncEnum> ORDER_SUBCLASS_ENUMS;
+	
+	static {
+		List<TableToSyncEnum> enums = new ArrayList(Constants.ORDER_SUBCLASS_TABLES.size());
+		for (String tableName : Constants.ORDER_SUBCLASS_TABLES) {
+			enums.add(TableToSyncEnum.getTableToSyncEnum(tableName));
+		}
+		
+		ORDER_SUBCLASS_ENUMS = Collections.unmodifiableList(enums);
+	}
 	
 	/**
 	 * Gets the TableToSyncEnum value that maps to the specified openmrs classname
@@ -117,14 +130,14 @@ public class SyncUtils {
 	public static boolean isOrderSubclassEnum(TableToSyncEnum tableToSyncEnum) {
 		return getOrderSubclassEnums().contains(tableToSyncEnum);
 	}
-
+	
 	/**
 	 * Gets all {@link TableToSyncEnum} values for order subclasses
 	 *
 	 * @return list of {@link TableToSyncEnum} values for order subclasses
 	 */
 	public static List<TableToSyncEnum> getOrderSubclassEnums() {
-		return Arrays.asList(TableToSyncEnum.DRUG_ORDER, TableToSyncEnum.TEST_ORDER, TableToSyncEnum.REFERRAL_ORDER);
+		return ORDER_SUBCLASS_ENUMS;
 	}
-
+	
 }
