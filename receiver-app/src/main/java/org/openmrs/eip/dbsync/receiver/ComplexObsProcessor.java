@@ -89,7 +89,10 @@ public class ComplexObsProcessor implements Processor {
 			
 			exchange.getMessage().setBody(new ByteArrayInputStream(contents));
 			producerTemplate.send("file:" + complexObsDir, exchange);
-			
+			if (exchange.getException() != null) {
+				throw new SyncException("An error occurred while saving complex obs file: " + filename,
+				        exchange.getException());
+			}
 		} else {
 			if (log.isDebugEnabled()) {
 				log.debug("Handling existing complex obs file -> " + complexObsFile);
