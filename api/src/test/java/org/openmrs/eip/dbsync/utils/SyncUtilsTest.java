@@ -66,12 +66,12 @@ public class SyncUtilsTest {
 		assertTrue(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.TEST_ORDER));
 		assertTrue(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.REFERRAL_ORDER));
 	}
-
+	
 	@Test
 	public void isOrderSubclassEnum_shouldReturnFalseANonOrderSubclass() {
 		assertFalse(SyncUtils.isOrderSubclassEnum(TableToSyncEnum.PATIENT));
 	}
-
+	
 	@Test
 	public void getOrderSubclassEnums_shouldReturnEnumsForOrderSubclasses() {
 		List<TableToSyncEnum> enums = SyncUtils.getOrderSubclassEnums();
@@ -80,5 +80,13 @@ public class SyncUtilsTest {
 		assertTrue(enums.contains(TableToSyncEnum.TEST_ORDER));
 		assertTrue(enums.contains(TableToSyncEnum.REFERRAL_ORDER));
 	}
-
+	
+	@Test
+	public void getSyncedTableToSyncEnums_shouldReturnTheListOfTableToSyncEnumValuesForSyncedEntities() {
+		List<TableToSyncEnum> values = SyncUtils.getSyncedTableToSyncEnums();
+		assertEquals(29, values.size());
+		assertEquals(TableToSyncEnum.ALLERGY, values.iterator().next());
+		assertEquals(TableToSyncEnum.VISIT_ATTRIBUTE, values.get(values.size() - 1));
+	}
+	
 }

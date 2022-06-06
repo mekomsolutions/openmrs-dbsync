@@ -3,9 +3,12 @@ package org.openmrs.eip.dbsync.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -15,9 +18,12 @@ import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
+import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 
 public class SyncUtils {
 	
@@ -138,6 +144,44 @@ public class SyncUtils {
 	 */
 	public static List<TableToSyncEnum> getOrderSubclassEnums() {
 		return ORDER_SUBCLASS_ENUMS;
+	}
+	
+	/**
+	 * Gets the list of {@link TableToSyncEnum} values for synced tables
+	 * 
+	 * @return list of TableToSyncEnum values
+	 */
+	public static List<TableToSyncEnum> getSyncedTableToSyncEnums() {
+		return Arrays.stream(TableToSyncEnum.values()).filter(e -> !ArrayUtils.contains(EXCLUDED, e))
+		        .sorted(Comparator.comparing(Enum::name)).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Gets the repository for the specified entity type
+	 *
+	 * @param entityType entity type to match
+	 * @return OpenmrsRepository instance
+	 */
+	public static <E extends BaseEntity> OpenmrsRepository<E> getRepository(Class<E> entityType,
+	                                                                        ApplicationContext appContext) {
+		
+		ResolvableType resType = ResolvableType.forClassWithGenerics(OpenmrsRepository.class, entityType);
+		String[] beanNames = appContext.getBeanNamesForType(resType);
+		if (beanNames.length != 1) {
+			if (beanNames.length == 0) {
+				throw new SyncException("No repository found for type " + entityType);
+			} else {
+				throw new SyncException("Found multiple repositories for type " + entityType);
+			}
+		}
+		
+		Object repo = appContext.getBean(beanNames[0]);
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Found entity repo: " + repo + " for entity type: " + entityType);
+		}
+		
+		return (OpenmrsRepository<E>) repo;
 	}
 	
 }
