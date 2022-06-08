@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
-@Sql({ "classpath:test_data.sql", "classpath:patients.sql" })
+@Sql("classpath:patients.sql")
 public class SyncEntityRepositoryIntegrationTest extends BaseDbDrivenTest {
 	
 	@Autowired
