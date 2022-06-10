@@ -225,7 +225,7 @@ public class HashUtils {
 	 * @param hashClass the hash class object
 	 * @return return the created or updated {@link BaseHashEntity} object
 	 */
-	public static BaseHashEntity updateHash(BaseModel model, Class<? extends BaseHashEntity> hashClass) {
+	public static BaseHashEntity createOrUpdateHash(BaseModel model, Class<? extends BaseHashEntity> hashClass) {
 		if (hashClass == null) {
 			hashClass = TableToSyncEnum.getTableToSyncEnum(model.getClass()).getHashClass();
 		}

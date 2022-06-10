@@ -130,12 +130,12 @@ public class HashUtilsTest {
 	}
 	
 	@Test
-	public void updateHash_shouldInsertHashIfItDoesNotExist() {
+	public void createOrUpdateHash_shouldInsertHashIfItDoesNotExist() {
 		final String uuid = "visit-uuid";
 		BaseModel model = new VisitModel();
 		model.setUuid(uuid);
 		
-		BaseHashEntity hash = HashUtils.updateHash(model, null);
+		BaseHashEntity hash = HashUtils.createOrUpdateHash(model, null);
 		
 		assertNotNull(hash.getHash());
 		assertEquals(uuid, hash.getIdentifier());
@@ -144,7 +144,7 @@ public class HashUtilsTest {
 	}
 	
 	@Test
-	public void updateHash_shouldUpdateAnExistingHash() {
+	public void createOrUpdateHash_shouldUpdateAnExistingHash() {
 		final String uuid = "visit-uuid";
 		BaseModel model = new VisitModel();
 		model.setUuid(uuid);
@@ -157,7 +157,7 @@ public class HashUtilsTest {
 		        .replace(PLACEHOLDER_UUID, uuid);
 		Mockito.when(mockTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
 		
-		existingHash = (VisitHash) HashUtils.updateHash(model, null);
+		existingHash = (VisitHash) HashUtils.createOrUpdateHash(model, null);
 		
 		assertNotNull(existingHash.getHash());
 		assertNotEquals(oldHash, existingHash.getHash());

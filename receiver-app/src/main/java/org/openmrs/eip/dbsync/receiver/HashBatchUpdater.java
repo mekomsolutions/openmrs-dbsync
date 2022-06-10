@@ -57,7 +57,7 @@ public class HashBatchUpdater {
 				}
 				
 				page.forEach(entity -> {
-					HashUtils.updateHash(mapper.apply(entity), hashClass);
+					HashUtils.createOrUpdateHash(mapper.apply(entity), hashClass);
 				});
 				
 			} while (!page.isLast());
