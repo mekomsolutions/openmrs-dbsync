@@ -127,7 +127,7 @@ public class ComplexObsProcessorTest {
 		when(HashUtils.computeHashForBytes(bytes)).thenCallRealMethod();
 		when(HashUtils.getComplexObsFile(filename)).thenReturn(mockFile);
 		when(HashUtils.computeHashForFile(mockFile)).thenReturn(currentHash);
-		when(HashUtils.getStoredHash(filename, ComplexObsHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(filename, ComplexObsHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		processor.process(exchange);
@@ -152,7 +152,7 @@ public class ComplexObsProcessorTest {
 		storedHash.setHash("old-hash");
 		when(HashUtils.getComplexObsFile(filename)).thenReturn(mockFile);
 		when(HashUtils.computeHashForFile(mockFile)).thenReturn("new-hash");
-		when(HashUtils.getStoredHash(filename, ComplexObsHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(filename, ComplexObsHash.class)).thenReturn(storedHash);
 		
 		processor.process(exchange);
 	}
@@ -188,7 +188,7 @@ public class ComplexObsProcessorTest {
 		when(HashUtils.instantiateHashEntity(ComplexObsHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		final String expectedNewHash = "098f6bcd4621d373cade4e832627b4f6";
-		when(HashUtils.getStoredHash(filename, ComplexObsHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(filename, ComplexObsHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		processor.process(exchange);
@@ -221,7 +221,7 @@ public class ComplexObsProcessorTest {
 		when(HashUtils.computeHashForBytes(bytes)).thenCallRealMethod();
 		when(HashUtils.getComplexObsFile(filename)).thenReturn(mockFile);
 		when(HashUtils.computeHashForFile(mockFile)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(filename, ComplexObsHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(filename, ComplexObsHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		processor.process(exchange);

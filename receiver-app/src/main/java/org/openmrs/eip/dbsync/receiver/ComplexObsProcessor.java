@@ -35,7 +35,7 @@ public class ComplexObsProcessor implements Processor {
 		String filename = exchange.getMessage().getHeader(Exchange.FILE_NAME_ONLY, String.class);
 		File complexObsFile = HashUtils.getComplexObsFile(filename);
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		BaseHashEntity storedHash = HashUtils.getStoredHash(filename, ComplexObsHash.class, producerTemplate);
+		BaseHashEntity storedHash = HashUtils.getStoredHash(filename, ComplexObsHash.class);
 		Environment env = SyncContext.getBean(Environment.class);
 		String complexObsDir = env.getProperty(SyncConstants.PROP_COMPLEX_OBS_DIR);
 		

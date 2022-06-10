@@ -1,7 +1,12 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
+import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
+import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
+import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +33,12 @@ public class HashBatchUpdater {
 	}
 	
 	public void update() {
+		EntityToModelMapper mapper = SyncContext.getBean(EntityToModelMapper.class);
 		SyncUtils.getSyncedTableToSyncEnums().forEach(e -> {
 			final String type = e.getEntityClass().getSimpleName();
+			Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getTableToSyncEnumForType(e.getEntityClass())
+			        .getHashClass();
+			
 			log.info("Updating hashes for " + type + " entities");
 			
 			SyncEntityRepository repo = (SyncEntityRepository) SyncUtils.getRepository(e.getEntityClass(), appContext);
@@ -48,7 +57,7 @@ public class HashBatchUpdater {
 				}
 				
 				page.forEach(entity -> {
-					log.info("Entity: " + entity.getClass() + "#" + entity.getId());
+					HashUtils.updateHash(mapper.apply(entity), hashClass);
 				});
 				
 			} while (!page.isLast());

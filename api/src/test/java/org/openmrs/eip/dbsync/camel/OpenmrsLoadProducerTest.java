@@ -141,7 +141,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "tester";
 		when(HashUtils.computeHash(dbModel)).thenReturn(currentHash);
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -172,7 +172,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn(storedHash.getHash());
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
@@ -241,7 +241,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn("different-hash");
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
@@ -270,7 +270,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash(currentHash);
 		assertNull(storedHash.getDateChanged());
-		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class), any(ProducerTemplate.class))).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(eq(personUuid), any(Class.class))).thenReturn(storedHash);
 		when(HashUtils.computeHash(model)).thenReturn(storedHash.getHash());
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
@@ -301,7 +301,7 @@ public class OpenmrsLoadProducerTest {
 		PersonHash storedHash = new PersonHash();
 		storedHash.setHash("old-hash");
 		when(HashUtils.computeHash(dbModel)).thenReturn("new-hash");
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		
 		// When
 		producer.process(exchange);
@@ -325,7 +325,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(dbModel)).thenReturn("current-hash");
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -335,7 +335,7 @@ public class OpenmrsLoadProducerTest {
 		// Then
 		verify(serviceFacade).saveModel(TableToSyncEnum.PERSON, model);
 		verify(mockLogger).debug("Updating hash for the incoming entity state");
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		assertEquals(expectedNewHash, storedHash.getHash());
 		assertNotNull(storedHash.getDateChanged());
 	}
@@ -356,7 +356,7 @@ public class OpenmrsLoadProducerTest {
 		assertNull(storedHash.getDateChanged());
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		// When
@@ -444,7 +444,7 @@ public class OpenmrsLoadProducerTest {
 		final String expectedNewHash = "new-hash";
 		when(HashUtils.computeHash(dbModel)).thenReturn(expectedNewHash);
 		when(HashUtils.computeHash(model)).thenReturn(expectedNewHash);
-		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class, mockProducerTemplate)).thenReturn(storedHash);
+		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		when(mockLogger.isDebugEnabled()).thenReturn(true);
 		
 		producer.process(exchange);

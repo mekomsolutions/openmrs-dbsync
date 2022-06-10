@@ -1,5 +1,10 @@
 package org.openmrs.eip.dbsync.utils;
 
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
+import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
+import static org.openmrs.eip.dbsync.SyncConstants.QUERY_SAVE_HASH;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +27,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -33,7 +39,9 @@ public class HashUtils {
 	
 	protected static final Logger log = LoggerFactory.getLogger(HashUtils.class);
 	
-	private static Map<Class<? extends BaseModel>, Set<String>> modelClassDatetimePropsMap = null;
+	private static Map<Class<? extends BaseModel>, Set<String>> modelClassDatetimePropsMap;
+	
+	private static ProducerTemplate producerTemplate;
 	
 	/**
 	 * Computes the hash of the specified model, the logic is such that it removes null values, extracts
@@ -130,15 +138,13 @@ public class HashUtils {
 	 * 
 	 * @param identifier the unique identifier of the entity
 	 * @param hashClass entity hash class
-	 * @param producerTemplate ProducerTemplate object
 	 * @return the saved hash entity object otherwise null
 	 */
-	public static BaseHashEntity getStoredHash(String identifier, Class<? extends BaseHashEntity> hashClass,
-	                                           ProducerTemplate producerTemplate) {
+	public static BaseHashEntity getStoredHash(String identifier, Class<? extends BaseHashEntity> hashClass) {
 		
-		final String query = SyncConstants.QUERY_GET_HASH.replace(SyncConstants.PLACEHOLDER_CLASS, hashClass.getSimpleName())
-		        .replace(SyncConstants.PLACEHOLDER_UUID, identifier);
-		List<? extends BaseHashEntity> hashes = producerTemplate.requestBody(query, null, List.class);
+		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()).replace(PLACEHOLDER_UUID,
+		    identifier);
+		List<? extends BaseHashEntity> hashes = getProducerTemplate().requestBody(query, null, List.class);
 		
 		BaseHashEntity hash = null;
 		if (hashes != null && hashes.size() == 1) {
@@ -146,6 +152,16 @@ public class HashUtils {
 		}
 		
 		return hash;
+	}
+	
+	/**
+	 * Saves the specified hash to the database
+	 * 
+	 * @param hashEntity the hash entity to save
+	 */
+	public static void saveHash(BaseHashEntity hashEntity) {
+		getProducerTemplate().sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, hashEntity.getClass().getSimpleName()),
+		    hashEntity);
 	}
 	
 	/**
@@ -189,10 +205,67 @@ public class HashUtils {
 	 * 
 	 * @param data an array of bytes
 	 * @return md5 hash
-	 * @throws IOException
 	 */
-	public static String computeHashForBytes(byte[] data) throws IOException {
+	public static String computeHashForBytes(byte[] data) {
 		return DigestUtils.md5Hex(data);
+	}
+	
+	private static ProducerTemplate getProducerTemplate() {
+		if (producerTemplate == null) {
+			producerTemplate = SyncContext.getBean(ProducerTemplate.class);
+		}
+		
+		return producerTemplate;
+	}
+	
+	/**
+	 * Updates or inserts a hash for the specified entity
+	 *
+	 * @param model the model entity for which to update the hash
+	 * @param hashClass the hash class object
+	 * @return return the created or updated {@link BaseHashEntity} object
+	 */
+	public static BaseHashEntity updateHash(BaseModel model, Class<? extends BaseHashEntity> hashClass) {
+		if (hashClass == null) {
+			hashClass = TableToSyncEnum.getTableToSyncEnum(model.getClass()).getHashClass();
+		}
+		
+		BaseHashEntity hashEntity = getStoredHash(model.getUuid(), hashClass);
+		if (hashEntity == null) {
+			if (log.isDebugEnabled()) {
+				log.debug("Inserting hash for " + model.getClass().getSimpleName() + " with uuid " + model.getUuid());
+			}
+			
+			try {
+				hashEntity = instantiateHashEntity(hashClass);
+			}
+			catch (Exception e) {
+				throw new SyncException("Failed to create an instance of " + hashClass, e);
+			}
+			
+			hashEntity.setIdentifier(model.getUuid());
+			hashEntity.setDateCreated(LocalDateTime.now());
+		} else {
+			if (log.isDebugEnabled()) {
+				log.debug("Updating hash for " + model.getClass().getSimpleName() + " with uuid " + model.getUuid());
+			}
+			
+			hashEntity.setDateChanged(LocalDateTime.now());
+		}
+		
+		hashEntity.setHash(computeHash(model));
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Saving the hash");
+		}
+		
+		saveHash(hashEntity);
+		
+		if (log.isDebugEnabled()) {
+			log.debug("Successfully saved the hash");
+		}
+		
+		return hashEntity;
 	}
 	
 }
