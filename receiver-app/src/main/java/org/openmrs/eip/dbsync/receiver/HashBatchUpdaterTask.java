@@ -17,7 +17,7 @@ public class HashBatchUpdaterTask implements Runnable {
 	@Override
 	public void run() {
 		try {
-			updater.update();
+			updater.updateAll();
 		}
 		finally {
 			destroy();

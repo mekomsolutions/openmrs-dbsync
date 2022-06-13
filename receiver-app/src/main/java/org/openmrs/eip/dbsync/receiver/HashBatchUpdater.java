@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
+import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
@@ -49,17 +50,27 @@ public class HashBatchUpdater {
 		futures = synchronizedList(new ArrayList(pageSize));
 	}
 	
-	public void update() {
+	public void updateAll() {
+		update(SyncUtils.getSyncedTableToSyncEnums());
+	}
+	
+	public void update(List<TableToSyncEnum> tableToSyncEnums) {
 		EntityToModelMapper mapper = SyncContext.getBean(EntityToModelMapper.class);
 		
-		SyncUtils.getSyncedTableToSyncEnums().forEach(e -> {
-			final String type = e.getEntityClass().getSimpleName();
-			Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getTableToSyncEnumForType(e.getEntityClass())
+		tableToSyncEnums.forEach(syncEnum -> {
+			final Class<? extends BaseEntity> entityClass = syncEnum.getEntityClass();
+			final String entityClassName = entityClass.getSimpleName();
+			Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getTableToSyncEnumForType(entityClass)
 			        .getHashClass();
 			
-			log.info("Updating hashes for " + type + " entities");
+			log.info("Updating hashes for " + entityClassName + " entities");
 			
-			SyncEntityRepository repo = (SyncEntityRepository) SyncUtils.getRepository(e.getEntityClass(), appContext);
+			Class<? extends BaseEntity> entityRepoClass = entityClass;
+			if (SyncUtils.getOrderSubclassEnums().contains(syncEnum)) {
+				entityRepoClass = Order.class;
+			}
+			
+			SyncEntityRepository repo = (SyncEntityRepository) SyncUtils.getRepository(entityRepoClass, appContext);
 			Page<BaseEntity> page = null;
 			
 			do {
@@ -70,8 +81,8 @@ public class HashBatchUpdater {
 				}
 				
 				if (page.isFirst()) {
-					log.info("Total Count Of " + type + "s: " + page.getTotalElements());
-					log.info("Total Page Count Of " + type + "s: " + page.getTotalPages());
+					log.info("Total Count Of " + entityClassName + "s: " + page.getTotalElements());
+					log.info("Total Page Count Of " + entityClassName + "s: " + page.getTotalPages());
 				}
 				
 				page.forEach(entity -> {

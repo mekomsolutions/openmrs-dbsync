@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.openmrs.eip.BaseDbBackedCamelTest;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.repository.PatientRepository;
+import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -25,8 +26,7 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	@Test
 	public void getNextPage_shouldGetTheFirstPageOfEntitiesIfPreviousPageIsNull() {
 		final int batchSize = 2;
-		updater = new HashBatchUpdater(batchSize, applicationContext);
-		Page<BaseEntity> page = updater.getNextPage(repository, null);
+		Page<BaseEntity> page = new HashBatchUpdater(batchSize, applicationContext).getNextPage(repository, null);
 		assertTrue(page.isFirst());
 		assertFalse(page.isLast());
 		assertEquals(batchSize, page.getNumberOfElements());
@@ -37,8 +37,7 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	@Test
 	public void getNextPage_shouldGetTheNextPageOfEntities() {
 		final int batchSize = 2;
-		updater = new HashBatchUpdater(batchSize, applicationContext);
-		Page<BaseEntity> page = updater.getNextPage(repository, null);
+		Page<BaseEntity> page = new HashBatchUpdater(batchSize, applicationContext).getNextPage(repository, null);
 		page = updater.getNextPage(repository, page);
 		assertFalse(page.isFirst());
 		assertFalse(page.isLast());
@@ -49,8 +48,7 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	
 	@Test
 	public void getNextPage_shouldGetTheLastPageOfEntities() {
-		updater = new HashBatchUpdater(7, applicationContext);
-		Page<BaseEntity> page = updater.getNextPage(repository, null);
+		Page<BaseEntity> page = new HashBatchUpdater(7, applicationContext).getNextPage(repository, null);
 		assertTrue(page.isFirst());
 		assertTrue(page.isLast());
 		assertEquals(5, page.getNumberOfElements());
@@ -59,6 +57,11 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 		assertEquals(103, page.getContent().get(2).getId().intValue());
 		assertEquals(105, page.getContent().get(3).getId().intValue());
 		assertEquals(106, page.getContent().get(4).getId().intValue());
+	}
+	
+	@Test
+	public void update_shouldPassAndUseOrderRepositoryForOrderSubclasses() {
+		new HashBatchUpdater(1, applicationContext).update(SyncUtils.getOrderSubclassEnums());
 	}
 	
 }
