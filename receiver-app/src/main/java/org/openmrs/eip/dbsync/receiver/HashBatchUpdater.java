@@ -86,7 +86,7 @@ public class HashBatchUpdater {
 					log.info("Total Page Count Of " + entityClassName + "s: " + page.getTotalPages());
 				}
 				
-				page.forEach(entity -> {
+				page.getContent().forEach(entity -> {
 					futures.add(CompletableFuture.runAsync(() -> {
 						try {
 							HashUtils.createOrUpdateHash(mapper.apply(entity), hashClass);
