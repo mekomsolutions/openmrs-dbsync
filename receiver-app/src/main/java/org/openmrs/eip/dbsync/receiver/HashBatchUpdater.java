@@ -43,8 +43,8 @@ public class HashBatchUpdater {
 	
 	private List<CompletableFuture<Void>> futures;
 	
-	public HashBatchUpdater(int batchSize, ApplicationContext appContext) {
-		this.pageSize = batchSize;
+	public HashBatchUpdater(int pageSize, ApplicationContext appContext) {
+		this.pageSize = pageSize;
 		this.appContext = appContext;
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		futures = synchronizedList(new ArrayList(pageSize));
@@ -55,6 +55,7 @@ public class HashBatchUpdater {
 	}
 	
 	public void update(List<TableToSyncEnum> tableToSyncEnums) {
+		//TODO Check if no conflicts exist
 		EntityToModelMapper mapper = SyncContext.getBean(EntityToModelMapper.class);
 		
 		tableToSyncEnums.forEach(syncEnum -> {

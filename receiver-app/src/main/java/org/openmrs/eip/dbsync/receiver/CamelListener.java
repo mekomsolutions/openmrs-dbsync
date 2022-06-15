@@ -1,7 +1,5 @@
 package org.openmrs.eip.dbsync.receiver;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -13,16 +11,13 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.EIPException;
-import org.openmrs.eip.Utils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.repository.UserRepository;
 import org.openmrs.eip.dbsync.repository.light.UserLightRepository;
-import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -64,29 +59,7 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 			}
 			
 			if (updateHashes) {
-				//TODO Check if no conflicts exist
-				executor.execute(() -> {
-					try {
-						if (CollectionUtils.isEmpty(hashUpdateTables)) {
-							log.info("Updating entity hashes for all entities");
-							new HashBatchUpdater(2, applicationContext).updateAll();
-						} else {
-							log.info("Updating entity hashes for all entities in tables -> " + hashUpdateTables);
-							List<TableToSyncEnum> enums = new ArrayList();
-							hashUpdateTables.forEach(t -> enums.add(TableToSyncEnum.getTableToSyncEnum(t)));
-							new HashBatchUpdater(2, applicationContext).update(Collections.unmodifiableList(enums));
-						}
-						
-						log.info("Successfully updated entity hashes");
-					}
-					catch (Throwable t) {
-						log.error("An error occurred while updating entity hashes", t);
-					}
-					finally {
-						log.info("Shutting down the application");
-						Utils.shutdown();
-					}
-				});
+				executor.execute(new HashBatchUpdaterTask(hashUpdateTables, applicationContext));
 			} else {
 				User exampleUser = new User();
 				exampleUser.setUsername(username);
