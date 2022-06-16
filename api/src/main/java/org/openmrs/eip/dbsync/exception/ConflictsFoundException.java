@@ -10,4 +10,8 @@ public class ConflictsFoundException extends SyncException {
 		super("Entity has conflicts");
 	}
 	
+	public ConflictsFoundException(String message) {
+		super(message);
+	}
+	
 }

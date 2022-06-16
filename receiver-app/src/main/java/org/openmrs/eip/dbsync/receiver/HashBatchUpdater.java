@@ -1,6 +1,7 @@
 package org.openmrs.eip.dbsync.receiver;
 
 import static java.util.Collections.synchronizedList;
+import static org.openmrs.eip.dbsync.utils.SyncUtils.getSyncedTableToSyncEnums;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +10,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ProducerTemplate;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.entity.Order;
+import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
+import org.openmrs.eip.dbsync.receiver.management.entity.ConflictQueueItem;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.HashUtils;
@@ -33,7 +37,7 @@ public class HashBatchUpdater {
 	
 	private static final Logger log = LoggerFactory.getLogger(HashBatchUpdater.class);
 	
-	private static final int WAIT_IN_SECONDS = 60;
+	private static final int WAIT_IN_SECONDS = 120;
 	
 	private int pageSize;
 	
@@ -51,14 +55,15 @@ public class HashBatchUpdater {
 	}
 	
 	public void updateAll() {
-		update(SyncUtils.getSyncedTableToSyncEnums());
+		update(null);
 	}
 	
 	public void update(List<TableToSyncEnum> tableToSyncEnums) {
-		//TODO Check if no conflicts exist
+		checkForConflicts(tableToSyncEnums);
+		List<TableToSyncEnum> enums = tableToSyncEnums == null ? getSyncedTableToSyncEnums() : tableToSyncEnums;
 		EntityToModelMapper mapper = SyncContext.getBean(EntityToModelMapper.class);
 		
-		tableToSyncEnums.forEach(syncEnum -> {
+		enums.forEach(syncEnum -> {
 			final Class<? extends BaseEntity> entityClass = syncEnum.getEntityClass();
 			final String entityClassName = entityClass.getSimpleName();
 			Class<? extends BaseHashEntity> hashClass = TableToSyncEnum.getTableToSyncEnumForType(entityClass)
@@ -101,6 +106,7 @@ public class HashBatchUpdater {
 				});
 				
 				waitForFutures(futures);
+				futures.clear();
 				
 			} while (!page.isLast());
 		});
@@ -118,6 +124,31 @@ public class HashBatchUpdater {
 		}
 		catch (Exception e) {
 			log.error("An error occurred while waiting for hash updater threads to terminate");
+		}
+	}
+	
+	private void checkForConflicts(List<TableToSyncEnum> tableToSyncEnums) {
+		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
+		final String type = ConflictQueueItem.class.getSimpleName();
+		String query = "jpa:" + type + "?query=SELECT count(*) FROM " + type + " WHERE resolved = false";
+		if (tableToSyncEnums == null) {
+			int conflictCount = producerTemplate.requestBody(query, null, int.class);
+			if (conflictCount > 0) {
+				throw new ConflictsFoundException("Found " + conflictCount + " conflicts, first resolve them");
+			}
+			return;
+		}
+		
+		for (TableToSyncEnum e : tableToSyncEnums) {
+			String modelClassname = e.getModelClass().getName();
+			query = "jpa:" + type + "?query=SELECT count(*) FROM " + type + " WHERE modelClassName = '" + modelClassname
+			        + "' AND resolved = false";
+			
+			int conflictCount = producerTemplate.requestBody(query, null, int.class);
+			if (conflictCount > 0) {
+				throw new ConflictsFoundException("Found " + conflictCount + " conflicts for "
+				        + e.getModelClass().getSimpleName() + " entities, first resolve them");
+			}
 		}
 	}
 	
@@ -144,7 +175,7 @@ public class HashBatchUpdater {
 	 *
 	 * @param futures the list of Futures instance to wait for
 	 */
-	public void waitForFutures(List<CompletableFuture<Void>> futures) {
+	private void waitForFutures(List<CompletableFuture<Void>> futures) {
 		if (log.isDebugEnabled()) {
 			log.debug("Waiting for " + futures.size() + " hash updater thread(s) to terminate");
 		}
