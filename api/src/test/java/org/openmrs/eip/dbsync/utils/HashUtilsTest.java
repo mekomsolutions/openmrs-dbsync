@@ -18,8 +18,11 @@ import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
@@ -163,6 +166,36 @@ public class HashUtilsTest {
 		assertNotEquals(oldHash, existingHash.getHash());
 		assertEquals(uuid, existingHash.getIdentifier());
 		assertNotNull(existingHash.getDateChanged());
+	}
+	
+	@Test
+	public void getDatetimePropertyNames_shouldBeThreadSafe() throws Exception {
+		final int size = 200;
+		Map<Integer, Set<String>> modelPropsMap = new ConcurrentHashMap(size);
+		List<Thread> threads = new ArrayList(size);
+		for (int i = 0; i < size; i++) {
+			final Integer index = i;
+			threads.add(new Thread(() -> {
+				modelPropsMap.put(index, HashUtils.getDatetimePropertyNames(PersonModel.class));
+			}));
+		}
+		for (int i = 0; i < size; ++i) {
+			threads.get(i).start();
+		}
+		for (int i = 0; i < size; ++i) {
+			threads.get(i).join();
+		}
+		
+		assertEquals(size, modelPropsMap.size());
+		
+		for (int i = 0; i < size; i++) {
+			Set<String> dateProps = modelPropsMap.get(i);
+			assertEquals(4, dateProps.size());
+			assertTrue(dateProps.contains("dateCreated"));
+			assertTrue(dateProps.contains("dateVoided"));
+			assertTrue(dateProps.contains("dateChanged"));
+			assertTrue(dateProps.contains("deathDate"));
+		}
 	}
 	
 }

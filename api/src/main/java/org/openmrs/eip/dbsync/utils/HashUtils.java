@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -101,7 +102,7 @@ public class HashUtils {
 		if (modelClassDatetimePropsMap == null) {
 			synchronized (HashUtils.class) {
 				if (modelClassDatetimePropsMap == null) {
-					modelClassDatetimePropsMap = new HashMap();
+					Map temp = new HashMap();
 					Arrays.stream(TableToSyncEnum.values()).forEach(e -> {
 						Set<String> datetimeProps = new HashSet();
 						Arrays.stream(PropertyUtils.getPropertyDescriptors(e.getModelClass())).forEach(d -> {
@@ -110,8 +111,10 @@ public class HashUtils {
 							}
 						});
 						
-						modelClassDatetimePropsMap.put(e.getModelClass(), datetimeProps);
+						temp.put(e.getModelClass(), Collections.unmodifiableSet(datetimeProps));
 					});
+					
+					modelClassDatetimePropsMap = Collections.unmodifiableMap(temp);
 				}
 			}
 		}
