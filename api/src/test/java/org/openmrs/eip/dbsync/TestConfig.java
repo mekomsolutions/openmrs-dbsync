@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.ProducerTemplate;
 import org.mockito.Mockito;
+import org.openmrs.eip.Constants;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ public class TestConfig {
 		return Mockito.mock(ProducerTemplate.class);
 	}
 	
-	@Bean(name = SyncConstants.EIP_COMMON_PROPS_BEAN_NAME)
+	@Bean(name = Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public PropertySource getCommonPropertySource() {
 		return Mockito.mock(PropertySource.class);
 	}

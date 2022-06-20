@@ -3,6 +3,7 @@ package org.openmrs.eip.dbsync.config;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.openmrs.eip.Constants;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class OpenmrsEntityManagerConfig {
 	
 	@Primary
 	@Bean(name = "openmrsEntityManager")
-	@DependsOn(SyncConstants.EIP_COMMON_PROPS_BEAN_NAME)
+	@DependsOn(Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
 	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource) {
 		

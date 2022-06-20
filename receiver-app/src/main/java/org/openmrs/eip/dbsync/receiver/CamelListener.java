@@ -6,7 +6,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.event.CamelContextRoutesStartingEvent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
@@ -51,7 +53,12 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 	
 	@Override
 	public void notify(CamelEvent event) {
-		if (event instanceof CamelContextStartedEvent) {
+		if (event instanceof CamelContextRoutesStartingEvent) {
+			if (updateHashes) {
+				log.info("Disabling all camel routes before running hash updater task");
+				SyncContext.getBean(CamelContext.class).setAutoStartup(false);
+			}
+		} else if (event instanceof CamelContextStartedEvent) {
 			log.info("Loading OpenMRS user account");
 			String username = SyncContext.getBean(Environment.class).getProperty(SyncConstants.PROP_OPENMRS_USER);
 			if (StringUtils.isBlank(username)) {
