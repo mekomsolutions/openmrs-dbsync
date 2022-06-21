@@ -273,7 +273,7 @@ To run the hash updater task, you need to the following.
   going to update hashes for specific tables, then ensure there is no unresolved conflicts for rows in those tables.
 - Stop the Receiver
 - Update the receiver `application.properties` file to set the value of the `hashes.update` property to `true`.
-- To update hashes only for rows in specific tables, in the receiver `application.properties` file, set the value of the  
+- To update hashes only for rows in specific tables, in the receiver `application.properties` file, set the value of the 
   `hashes.update.tables` property to a comma separated list of tables names.
 - Start the receiver, note that the application will shutdown itself when done updating hashes.
 
