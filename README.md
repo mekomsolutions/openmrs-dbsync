@@ -14,6 +14,9 @@ Sender and Receiver applications to sync data between OpenMRS databases.
 7. [DB Sync Technical Overview](#db-sync-technical-overview)
     1. [Sender Overview](#sender-overview)
     2. [Receiver Overview](#receiver-overview)
+       1. [Conflict Resolution In The Receiver](#conflict-resolution-in-the-receiver)
+       2. [Updating Entity Hashes](#updating-entity-hashes)
+       3. [Known Issues](#known-issues)
 
 ## Introduction
 This installation guide is for those intending to set up database synchronization between 2 OpenMRS databases.
@@ -251,6 +254,28 @@ in the incoming payload, the application won't sync the entity and it will move 
 table. Currently, to resolve the conflict, the entity has to be manually updated in the receiver or sender, then as it
 may dictate adjust date changed in the sender so that it is ahead of date voided/retired of the entity in the receiver
 and then mark the row as resolved in `receiver_conflict_queue` table.
+
+### Updating Entity Hashes
+After upgrading OpenMRS and DB sync, it is highly likely that some entities are affected by the upgrade scripts, this 
+could imply the stored hashes in management DB are no longer valid for the affected entities which would result in 
+conflicts whenever sync events are received for the affected entities. With the assumption that the receiver and remote 
+sites are all upgraded, and that no other modifications have been made in the receiver, you can run the hash batch 
+updater task to recalculate the entity hashes. If there are other modifications in the receiver to some entities and 
+you run this task, the application won't be able to detect the conflicts and would overwrite these changes with the 
+entity states from the remote sites.
+
+By default all entity hashes are updated, if you want to update hashes for specific entity types, the mechanism allows 
+to explicitly specify tables names containing rows to be updated, this is typical after upgrading where 1 or more tables 
+are the only ones affected and only need to update hashes for rows in these tables.
+
+To run the hash updater task, you need to the following.
+- Ensure all existing sync messages in the conflict queue have been resolved otherwise the task will fail, if you are 
+  going to update hashes for specific tables, then ensure there is no unresolved conflicts for rows in those tables.
+- Stop the Receiver
+- Update the receiver `application.properties` file to set the value of the `hashes.update` property to `true`.
+- To update hashes only for rows in specific tables, in the receiver `application.properties` file, set the value of the  
+  `hashes.update.tables` property to a comma separated list of tables names.
+- Start the receiver, note that the application will shutdown itself when done updating hashes.
 
 ### Known Issues
 
