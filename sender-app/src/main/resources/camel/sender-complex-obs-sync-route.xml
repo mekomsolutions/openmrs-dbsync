@@ -1,6 +1,6 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="sender-complex-obs-sync" errorHandlerRef="watcherShutdownErrorHandler">
-        <from uri="file:{{openmrs.complex.obs.data.directory}}?noop=true&amp;recursive=false&amp;idempotentKey=${file:name}-${file:modified}&amp;idempotentRepository=#jpaIdempotentRepository" />
+        <from uri="file:{{openmrs.complex.obs.data.directory}}?initialDelay={{complex.obs.sync.initial.delay:15000}}&amp;delay={{complex.obs.sync.delay:900000}}&amp;noop=true&amp;recursive=false&amp;idempotentKey=${file:name}-${file:modified}&amp;idempotentRepository=#jpaIdempotentRepository" />
         <marshal>
             <base64/>
         </marshal>
