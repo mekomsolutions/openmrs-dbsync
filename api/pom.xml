@@ -23,6 +23,11 @@
             <version>${sprintBootVersion}</version>
         </dependency>
         <dependency>
+            <groupId>org.openmrs.eip</groupId>
+            <artifactId>commons-web</artifactId>
+            <version>${eipVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
             <version>${camelVersion}</version>
