@@ -24,9 +24,8 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.eip</groupId>
-            <artifactId>commons</artifactId>
+            <artifactId>commons-web</artifactId>
             <version>${eipVersion}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
