@@ -886,4 +886,28 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="wluyima" id="20220722-1000">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="site_info"/>
+            </not>
+        </preConditions>
+        <comment>Adding site_info table</comment>
+
+        <createTable tableName="site_info">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="identifier" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="date_created" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
