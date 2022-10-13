@@ -70,9 +70,6 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 		Startables.deepStart(Stream.of(artemisContainer)).join();
 		artemisPort = artemisContainer.getMappedPort(61616);
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
-		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
-		activeMQConn.start();
 	}
 	
 	@AfterClass
@@ -84,7 +81,10 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	}
 	
 	@Before
-	public void destroyQueue() throws Exception {
+	public void beforeBaseSenderTest() throws Exception {
+		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
+		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
+		activeMQConn.start();
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
 	}
 	
