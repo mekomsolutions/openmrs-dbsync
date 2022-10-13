@@ -84,9 +84,6 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		Startables.deepStart(Stream.of(artemisContainer)).join();
 		artemisPort = artemisContainer.getMappedPort(61616);
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
-		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
-		activeMQConn.start();
 	}
 	
 	@AfterClass
@@ -98,7 +95,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	}
 	
 	@Before
-	public void adviseSyncRoute() throws Exception {
+	public void beforeBaseReceiverTest() throws Exception {
 		mockOpenmrsRestEndpoint.reset();
 		camelContext.adviceWith(this.camelContext.getRouteDefinition("receiver-db-sync"), new AdviceWithRouteBuilder() {
 			
@@ -113,10 +110,14 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 			
 		});
 		
+		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
+		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
+		activeMQConn.start();
+		
+		clearMessageQueues();
 	}
 	
-	@Before
-	public void clearMessageQueues() throws Exception {
+	private void clearMessageQueues() throws Exception {
 		log.info("Clearing any undelivered message(s) from the queue from previous tests");
 		
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {

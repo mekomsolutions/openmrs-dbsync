@@ -15,7 +15,7 @@ public class TestSenderBeanPostProcessor implements BeanPostProcessor {
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		if (Constants.COMMON_PROP_SOURCE_BEAN_NAME.equals(beanName)) {
 			MapPropertySource propSource = (MapPropertySource) bean;
-			propSource.getSource().put("spring.artemis.port", BaseSenderTest.artemisPort);
+			propSource.getSource().put("spring.activemq.broker-url", "tcp://localhost:" + BaseSenderTest.artemisPort);
 		}
 		
 		return bean;
