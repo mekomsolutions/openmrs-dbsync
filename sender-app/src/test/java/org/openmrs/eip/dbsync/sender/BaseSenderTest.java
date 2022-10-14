@@ -52,13 +52,15 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	protected static Integer artemisPort;
 	
+	private static ActiveMQConnectionFactory activeMqConnFactory;
+	
 	private static ActiveMQConnection activeMQConn;
 	
 	@Autowired
 	protected AbstractEntityService<E, M> service;
 	
 	@BeforeClass
-	public static void startArtemis() throws Exception {
+	public static void startArtemis() {
 		
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
 		    ARTEMIS_ETC + "artemis-roles.properties");
@@ -82,9 +84,14 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	@Before
 	public void beforeBaseSenderTest() throws Exception {
-		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
-		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
-		activeMQConn.start();
+		if (activeMqConnFactory == null) {
+			activeMqConnFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
+		}
+		
+		if (activeMQConn == null) {
+			activeMQConn = (ActiveMQConnection) activeMqConnFactory.createConnection("admin", "admin");
+			activeMQConn.start();
+		}
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
 	}
 	
@@ -97,7 +104,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	/**
 	 * Sends an insert event to the sender DB sync route
-	 * 
+	 *
 	 * @param identifier the uuid of the inserted entity
 	 */
 	public void sendInsertEvent(String identifier) {
@@ -124,7 +131,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	/**
 	 * Gets the model object wrapped inside the specified {@link SyncModel} object
-	 * 
+	 *
 	 * @param syncModel the {@link SyncModel} object
 	 * @return the entity model object
 	 */
@@ -135,7 +142,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	/**
 	 * Asserts that the specified model object represents a model for a deleted entity with the
 	 * specified uuid
-	 * 
+	 *
 	 * @param uuid the uuid of the deleted entity
 	 * @param actual the actual model object to check against
 	 */
@@ -152,7 +159,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	/**
 	 * Asserts that the specified SyncModel object has the expected values
-	 * 
+	 *
 	 * @param syncModel {@link SyncModel} instance
 	 */
 	public void assertCoreModelProps(SyncModel syncModel, String expectedOperation) {
@@ -165,7 +172,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	
 	/**
 	 * Reads and returns all messages in the sync queue in ActiveMQ
-	 * 
+	 *
 	 * @return list of sync messages in the sync queue
 	 * @throws Exception
 	 */
