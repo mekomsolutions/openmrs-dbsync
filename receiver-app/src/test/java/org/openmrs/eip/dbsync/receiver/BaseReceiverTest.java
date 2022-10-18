@@ -58,6 +58,8 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	
 	protected static Integer artemisPort;
 	
+	private static ActiveMQConnectionFactory activeMqConnFactory;
+	
 	private static ActiveMQConnection activeMQConn;
 	
 	private CountDownLatch messagesLatch;
@@ -110,9 +112,14 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 			
 		});
 		
-		ActiveMQConnectionFactory connFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
-		activeMQConn = (ActiveMQConnection) connFactory.createConnection("admin", "admin");
-		activeMQConn.start();
+		if (activeMqConnFactory == null) {
+			activeMqConnFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
+		}
+		
+		if (activeMQConn == null) {
+			activeMQConn = (ActiveMQConnection) activeMqConnFactory.createConnection("admin", "admin");
+			activeMQConn.start();
+		}
 		
 		clearMessageQueues();
 	}
