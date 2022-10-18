@@ -1,9 +1,11 @@
 package org.openmrs.eip.dbsync;
 
 import org.openmrs.eip.dbsync.entity.light.UserLight;
+import org.openmrs.eip.dbsync.exception.SyncException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +39,26 @@ public class SyncContext implements ApplicationContextAware {
 	 */
 	public static <T> T getBean(Class<T> clazz) {
 		return appContext.getBean(clazz);
+	}
+	
+	/**
+	 * Gets the bean matching the specified {@link ResolvableType} from the application context
+	 * 
+	 * @param resolvableType the {@link ResolvableType} instance
+	 * @return The bean instance
+	 * @param <T>
+	 */
+	public static <T> T getBean(ResolvableType resolvableType) {
+		String[] beanNames = appContext.getBeanNamesForType(resolvableType);
+		if (beanNames.length != 1) {
+			if (beanNames.length == 0) {
+				throw new SyncException("No bean found matching resolvable type " + resolvableType);
+			} else {
+				throw new SyncException("Found multiple beans matching resolvable type " + resolvableType);
+			}
+		}
+		
+		return (T) appContext.getBean(beanNames[0]);
 	}
 	
 	/**

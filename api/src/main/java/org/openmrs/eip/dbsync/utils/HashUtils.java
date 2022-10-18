@@ -1,10 +1,5 @@
 package org.openmrs.eip.dbsync.utils;
 
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_SAVE_HASH;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +17,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.camel.ProducerTemplate;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -30,6 +24,7 @@ import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
+import org.openmrs.eip.dbsync.management.hash.repository.BaseHashRepository;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.slf4j.Logger;
@@ -41,8 +36,6 @@ public class HashUtils {
 	protected static final Logger log = LoggerFactory.getLogger(HashUtils.class);
 	
 	private static Map<Class<? extends BaseModel>, Set<String>> modelClassDatetimePropsMap;
-	
-	private static ProducerTemplate producerTemplate;
 	
 	/**
 	 * Computes the hash of the specified model, the logic is such that it removes null values, extracts
@@ -144,17 +137,7 @@ public class HashUtils {
 	 * @return the saved hash entity object otherwise null
 	 */
 	public static BaseHashEntity getStoredHash(String identifier, Class<? extends BaseHashEntity> hashClass) {
-		
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, hashClass.getSimpleName()).replace(PLACEHOLDER_UUID,
-		    identifier);
-		List<? extends BaseHashEntity> hashes = getProducerTemplate().requestBody(query, null, List.class);
-		
-		BaseHashEntity hash = null;
-		if (hashes != null && hashes.size() == 1) {
-			hash = hashes.get(0);
-		}
-		
-		return hash;
+		return getHashRepository(hashClass).findByIdentifier(identifier);
 	}
 	
 	/**
@@ -163,8 +146,8 @@ public class HashUtils {
 	 * @param hashEntity the hash entity to save
 	 */
 	public static void saveHash(BaseHashEntity hashEntity) {
-		getProducerTemplate().sendBody(QUERY_SAVE_HASH.replace(PLACEHOLDER_CLASS, hashEntity.getClass().getSimpleName()),
-		    hashEntity);
+		BaseHashRepository repo = getHashRepository(hashEntity.getClass());
+		repo.save(hashEntity);
 	}
 	
 	/**
@@ -211,14 +194,6 @@ public class HashUtils {
 	 */
 	public static String computeHashForBytes(byte[] data) {
 		return DigestUtils.md5Hex(data);
-	}
-	
-	private static ProducerTemplate getProducerTemplate() {
-		if (producerTemplate == null) {
-			producerTemplate = SyncContext.getBean(ProducerTemplate.class);
-		}
-		
-		return producerTemplate;
 	}
 	
 	/**
@@ -269,6 +244,16 @@ public class HashUtils {
 		}
 		
 		return hashEntity;
+	}
+	
+	/**
+	 * Gets the repository object for the specified hash class
+	 *
+	 * @param hashClass type of the hash class to match
+	 * @return BaseHashRepository instance
+	 */
+	private static <T extends BaseHashEntity> BaseHashRepository<T> getHashRepository(Class<T> hashClass) {
+		return SyncUtils.getJpaRepository(hashClass, BaseHashRepository.class);
 	}
 	
 }

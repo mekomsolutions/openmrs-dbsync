@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.Constants;
 import org.openmrs.eip.dbsync.SyncConstants;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public class SyncUtils {
 	
@@ -164,24 +166,23 @@ public class SyncUtils {
 	 */
 	public static <E extends BaseEntity> OpenmrsRepository<E> getRepository(Class<E> entityType,
 	                                                                        ApplicationContext appContext) {
-		
-		ResolvableType resType = ResolvableType.forClassWithGenerics(OpenmrsRepository.class, entityType);
-		String[] beanNames = appContext.getBeanNamesForType(resType);
-		if (beanNames.length != 1) {
-			if (beanNames.length == 0) {
-				throw new SyncException("No repository found for type " + entityType);
-			} else {
-				throw new SyncException("Found multiple repositories for type " + entityType);
-			}
-		}
-		
-		Object repo = appContext.getBean(beanNames[0]);
+		return getJpaRepository(entityType, OpenmrsRepository.class);
+	}
+	
+	/**
+	 * Gets the {@link JpaRepository} for the specified entity type
+	 *
+	 * @param entityType entity type to match
+	 * @return JpaRepository instance
+	 */
+	public static <T, R extends JpaRepository<T, Long>> R getJpaRepository(Class<T> entityType, Class<R> repoClass) {
+		Object repo = SyncContext.getBean(ResolvableType.forClassWithGenerics(repoClass, entityType));
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Found entity repo: " + repo + " for entity type: " + entityType);
 		}
 		
-		return (OpenmrsRepository<E>) repo;
+		return (R) repo;
 	}
 	
 }
