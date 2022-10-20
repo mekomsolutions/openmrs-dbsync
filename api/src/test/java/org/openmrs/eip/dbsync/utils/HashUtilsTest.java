@@ -4,16 +4,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.ZoneId.systemDefault;
 import static java.time.ZonedDateTime.parse;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +29,7 @@ import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.management.hash.entity.VisitHash;
+import org.openmrs.eip.dbsync.management.hash.repository.BaseHashRepository;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
@@ -44,7 +40,7 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FileUtils.class)
+@PrepareForTest({ FileUtils.class, SyncUtils.class })
 public class HashUtilsTest {
 	
 	private final String EXPECTED_HASH = "05558ccafade5c5194e6849f87dfad95";
@@ -56,14 +52,13 @@ public class HashUtilsTest {
 	private final String UUID = "818b4ee6-8d68-4849-975d-80ab98016677";
 	
 	@Mock
-	private ProducerTemplate mockTemplate;
+	private BaseHashRepository mockHashRepo;
 	
 	@Mock
 	private Logger mockLogger;
 	
 	@Before
 	public void setup() {
-		Whitebox.setInternalState(HashUtils.class, ProducerTemplate.class, mockTemplate);
 		Whitebox.setInternalState(HashUtils.class, Logger.class, mockLogger);
 	}
 	
@@ -137,6 +132,8 @@ public class HashUtilsTest {
 		final String uuid = "visit-uuid";
 		BaseModel model = new VisitModel();
 		model.setUuid(uuid);
+		PowerMockito.mockStatic(SyncUtils.class);
+		when(SyncUtils.getJpaRepository(VisitHash.class, BaseHashRepository.class)).thenReturn(mockHashRepo);
 		
 		BaseHashEntity hash = HashUtils.createOrUpdateHash(model, null);
 		
@@ -144,6 +141,7 @@ public class HashUtilsTest {
 		assertEquals(uuid, hash.getIdentifier());
 		assertNotNull(hash.getDateCreated());
 		assertNull(hash.getDateChanged());
+		Mockito.verify(mockHashRepo).save(hash);
 	}
 	
 	@Test
@@ -156,9 +154,9 @@ public class HashUtilsTest {
 		final String oldHash = "old-hash";
 		existingHash.setHash(oldHash);
 		assertNull(existingHash.getDateChanged());
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, VisitHash.class.getSimpleName())
-		        .replace(PLACEHOLDER_UUID, uuid);
-		Mockito.when(mockTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		PowerMockito.mockStatic(SyncUtils.class);
+		when(SyncUtils.getJpaRepository(VisitHash.class, BaseHashRepository.class)).thenReturn(mockHashRepo);
+		Mockito.when(mockHashRepo.findByIdentifier(uuid)).thenReturn(existingHash);
 		
 		existingHash = (VisitHash) HashUtils.createOrUpdateHash(model, null);
 		
@@ -166,6 +164,7 @@ public class HashUtilsTest {
 		assertNotEquals(oldHash, existingHash.getHash());
 		assertEquals(uuid, existingHash.getIdentifier());
 		assertNotNull(existingHash.getDateChanged());
+		Mockito.verify(mockHashRepo).save(existingHash);
 	}
 	
 	@Test
