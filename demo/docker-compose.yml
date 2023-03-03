@@ -1,32 +1,52 @@
 version: "3.3"
 
 services:
-  mysql-central:
+  mysql-central-openmrs:
     image: mysql:5.7.31
-    container_name: mysql-central
+    container_name: mysql-central-openmrs
     env_file:
-      - db.env
+      - db-openmrs.env
     ports:
       - "3307:3306"
     volumes:
-      - ./central-my.cnf:/etc/mysql/my.cnf
+      - ./central-openmrs-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
       - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
       - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
 
-  mysql-remote:
+  mysql-central-dbsync:
     image: mysql:5.7.31
-    container_name: mysql-remote
+    container_name: mysql-central-dbsync
     env_file:
-      - db.env
+      - db-dbsync.env
+    ports:
+      - "3407:3306"
+    volumes:
+      - ./central-dbsync-my.cnf:/etc/mysql/my.cnf
+
+  mysql-remote-openmrs:
+    image: mysql:5.7.31
+    container_name: mysql-remote-openmrs
+    env_file:
+      - db-openmrs.env
     ports:
       - "3308:3306"
     volumes:
-      - ./remote-my.cnf:/etc/mysql/my.cnf
+      - ./remote-openmrs-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
       - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
       - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
       - ./patients.sql:/docker-entrypoint-initdb.d/openmrs3.sql
+
+  mysql-remote-dbsync:
+    image: mysql:5.7.31
+    container_name: mysql-remote-dbsync
+    env_file:
+      - db-dbsync.env
+    ports:
+      - "3408:3306"
+    volumes:
+      - ./remote-dbsync-my.cnf:/etc/mysql/my.cnf
 
   artemis:
     image: cnocorch/activemq-artemis
@@ -63,7 +83,7 @@ services:
     image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-central
     depends_on:
-      - mysql-central
+      - mysql-central-openmrs
       - artemis
       - keycloak
     volumes:
@@ -81,9 +101,9 @@ services:
     image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-remote
     environment:
-      TZ: "America/Chicago"
+      TZ: "Africa/Kampala"
     depends_on:
-      - mysql-remote
+      - mysql-remote-openmrs
       - artemis
       - keycloak
     volumes:
