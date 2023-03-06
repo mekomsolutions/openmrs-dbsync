@@ -2,6 +2,7 @@ package org.openmrs.eip.dbsync.receiver;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,6 +70,8 @@ public class HashBatchUpdaterTest {
 	
 	@Test
 	public void update_shouldUpdateHashesForAllRowsInTheSpecifiedTablesInParallel() {
+		updater = Mockito.spy(updater);
+		Mockito.doNothing().when(updater).checkForConflicts(anyList());
 		when(SyncUtils.getRepository(Person.class, mockAppContext)).thenReturn(mockPersonRepo);
 		when(SyncUtils.getRepository(Visit.class, mockAppContext)).thenReturn(mockVisitRepo);
 		
