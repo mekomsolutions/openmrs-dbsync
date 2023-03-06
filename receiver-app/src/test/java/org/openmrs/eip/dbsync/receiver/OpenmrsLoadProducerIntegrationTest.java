@@ -1,29 +1,22 @@
-package org.openmrs.eip.dbsync.camel;
+package org.openmrs.eip.dbsync.receiver;
 
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_CLASS;
-import static org.openmrs.eip.dbsync.SyncConstants.PLACEHOLDER_UUID;
-import static org.openmrs.eip.dbsync.SyncConstants.QUERY_GET_HASH;
 import static org.openmrs.eip.dbsync.SyncConstants.VALUE_SITE_SEPARATOR;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
+import org.openmrs.eip.dbsync.camel.OpenmrsLoadProducer;
 import org.openmrs.eip.dbsync.entity.Provider;
 import org.openmrs.eip.dbsync.entity.User;
 import org.openmrs.eip.dbsync.entity.light.PersonLight;
@@ -39,10 +32,12 @@ import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-@Sql(scripts = "classpath:test_data.sql")
-public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
+@Sql(scripts = "classpath:test_data_it.sql")
+public class OpenmrsLoadProducerIntegrationTest extends BaseReceiverDbDrivenTest {
 	
-	private String creator = UserLight.class.getName() + "(1a3b12d1-5c4f-415f-871b-b98a22137605)";
+	private static final String USER_UUID = "user_uuid";
+	
+	private String creator = UserLight.class.getName() + "(" + USER_UUID + ")";
 	
 	private Exchange exchange;
 	
@@ -53,9 +48,6 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Autowired
 	private AbstractEntityService<Provider, ProviderModel> providerService;
-	
-	@Autowired
-	private ProducerTemplate producerTemplate;
 	
 	@Before
 	public void init() {
@@ -141,8 +133,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	@Test
 	public void process_shouldPreProcessDeletedAUserAndMarkThemAsRetired() {
-		final String userUuid = "1a3b12d1-5c4f-415f-871b-b98a22137605";
-		UserModel existingUser = userService.getModel(userUuid);
+		UserModel existingUser = userService.getModel(USER_UUID);
 		assertNotNull(existingUser);
 		assertFalse(existingUser.isRetired());
 		assertNull(existingUser.getRetiredByUuid());
@@ -150,35 +141,34 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		assertNull(existingUser.getDateRetired());
 		final String siteId = "some-site-uuid";
 		UserModel model = new UserModel();
-		model.setUuid(userUuid);
+		model.setUuid(USER_UUID);
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		metadata.setOperation("d");
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
 		exchange.getIn().setBody(syncModel);
 		UserLight user = new UserLight();
-		final String appUserUuid = "test-user-uuid";
-		user.setUuid(appUserUuid);
+		user.setUuid(USER_UUID);
 		SyncContext.setUser(user);
 		UserHash existingHash = new UserHash();
+		existingHash.setIdentifier(USER_UUID);
 		existingHash.setHash(HashUtils.computeHash(existingUser));
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, UserHash.class.getSimpleName())
-		        .replace(PLACEHOLDER_UUID, userUuid);
-		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		existingHash.setDateCreated(LocalDateTime.now());
+		HashUtils.saveHash(existingHash);
 		
 		producer.process(exchange);
 		
-		existingUser = userService.getModel(userUuid);
+		existingUser = userService.getModel(USER_UUID);
 		assertNotNull(existingUser);
 		assertTrue(existingUser.isRetired());
-		assertEquals(UserLight.class.getName() + "(" + appUserUuid + ")", existingUser.getRetiredByUuid());
+		assertEquals(UserLight.class.getName() + "(" + USER_UUID + ")", existingUser.getRetiredByUuid());
 		assertEquals(SyncConstants.DEFAULT_RETIRE_REASON, existingUser.getRetireReason());
 		assertNotNull(existingUser.getDateRetired());
 	}
 	
 	@Test
 	public void process_shouldPreProcessDeletedAProviderAndMarkThemAsRetired() {
-		final String providerUuid = "2b3b12d1-5c4f-415f-871b-b98a22137606";
+		final String providerUuid = "1f659794-76e9-11e9-8cf7-0242ac1c122e";
 		ProviderModel existingProvider = providerService.getModel(providerUuid);
 		assertNotNull(existingProvider);
 		assertFalse(existingProvider.isRetired());
@@ -194,21 +184,20 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseDbDrivenTest {
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);
 		exchange.getIn().setBody(syncModel);
 		UserLight user = new UserLight();
-		final String appUserUuid = "test-user";
-		user.setUuid(appUserUuid);
+		user.setUuid(USER_UUID);
 		SyncContext.setUser(user);
 		ProviderHash existingHash = new ProviderHash();
+		existingHash.setIdentifier(providerUuid);
 		existingHash.setHash(HashUtils.computeHash(existingProvider));
-		final String query = QUERY_GET_HASH.replace(PLACEHOLDER_CLASS, ProviderHash.class.getSimpleName())
-		        .replace(PLACEHOLDER_UUID, providerUuid);
-		Mockito.when(producerTemplate.requestBody(query, null, List.class)).thenReturn(singletonList(existingHash));
+		existingHash.setDateCreated(LocalDateTime.now());
+		HashUtils.saveHash(existingHash);
 		
 		producer.process(exchange);
 		
 		existingProvider = providerService.getModel(providerUuid);
 		assertNotNull(existingProvider);
 		assertTrue(existingProvider.isRetired());
-		assertEquals(UserLight.class.getName() + "(" + appUserUuid + ")", existingProvider.getRetiredByUuid());
+		assertEquals(UserLight.class.getName() + "(" + USER_UUID + ")", existingProvider.getRetiredByUuid());
 		assertEquals(SyncConstants.DEFAULT_RETIRE_REASON, existingProvider.getRetireReason());
 		assertNotNull(existingProvider.getDateRetired());
 	}

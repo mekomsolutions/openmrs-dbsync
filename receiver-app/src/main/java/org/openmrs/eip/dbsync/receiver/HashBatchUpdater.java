@@ -127,7 +127,7 @@ public class HashBatchUpdater {
 		}
 	}
 	
-	private void checkForConflicts(List<TableToSyncEnum> tableToSyncEnums) {
+	protected void checkForConflicts(List<TableToSyncEnum> tableToSyncEnums) {
 		ProducerTemplate producerTemplate = SyncContext.getBean(ProducerTemplate.class);
 		final String type = ConflictQueueItem.class.getSimpleName();
 		String query = "jpa:" + type + "?query=SELECT count(*) FROM " + type + " WHERE resolved = false";

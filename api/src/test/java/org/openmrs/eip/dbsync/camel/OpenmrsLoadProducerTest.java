@@ -472,9 +472,7 @@ public class OpenmrsLoadProducerTest {
 		when(applicationContext.getBean("entityServiceFacade")).thenReturn(serviceFacade);
 		PersonModel dbModel = new PersonModel();
 		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
-		final String beanName = "testRepo";
-		when(applicationContext.getBeanNamesForType(any(ResolvableType.class))).thenReturn(new String[] { beanName });
-		when(applicationContext.getBean(beanName)).thenReturn(mockEntityBasisMapRepo);
+		when(SyncContext.getBean(any(ResolvableType.class))).thenReturn(mockEntityBasisMapRepo);
 		
 		expectedException.expect(SyncException.class);
 		expectedException.expectMessage(
