@@ -2,9 +2,6 @@ package org.openmrs.eip.dbsync.utils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,8 +23,7 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 	
 	@Override
 	public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		return ZonedDateTime.parse(p.getText(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-		        .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+		return DateUtils.parse(p.getText());
 	}
 	
 }
