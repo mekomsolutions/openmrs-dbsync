@@ -15,7 +15,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 @Configuration
 @PropertySource("classpath:receiver-application.properties")
 @EnableJpaRepositories(entityManagerFactoryRef = "mngtEntityManager", transactionManagerRef = "mngtTransactionManager", basePackages = {
-        "org.openmrs.eip.dbsync.management.hash.repository" })
+        "org.openmrs.eip.dbsync.management.hash.repository", "org.openmrs.eip.dbsync.receiver.management.repository" })
 public class ReceiverConfig {
 	
 	private static final long REDELIVERY_DELAY = 300000;

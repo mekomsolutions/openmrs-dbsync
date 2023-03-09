@@ -4,6 +4,7 @@ import static java.time.ZoneId.systemDefault;
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -29,6 +30,20 @@ public final class DateUtils {
 			return null;
 		}
 		return LocalDateTime.parse(dateAsString, FORMATTER);
+	}
+	
+	/**
+	 * Serializes the specified {@link LocalDateTime} instance to a string
+	 *
+	 * @param dateTime date to serialize
+	 * @return string
+	 */
+	public static String serialize(LocalDateTime dateTime) {
+		if (dateTime == null) {
+			return null;
+		}
+		
+		return dateTime.atZone(ZoneId.systemDefault()).format(ISO_OFFSET_DATE_TIME);
 	}
 	
 	/**

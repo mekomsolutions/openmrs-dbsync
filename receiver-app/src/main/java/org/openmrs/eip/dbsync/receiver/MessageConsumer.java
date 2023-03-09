@@ -1,12 +1,23 @@
 package org.openmrs.eip.dbsync.receiver;
 
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.EX_PROP_MOVED_TO_CONFLICT_QUEUE;
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.EX_PROP_MOVED_TO_ERROR_QUEUE;
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.EX_PROP_MSG_PROCESSED;
 import static org.openmrs.eip.dbsync.receiver.ReceiverContext.PROP_REC_CONSUMER_DELAY;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
+import org.openmrs.eip.AppContext;
+import org.openmrs.eip.EIPException;
+import org.openmrs.eip.camel.CamelUtils;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncMessage;
+import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
+import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -26,6 +37,8 @@ public class MessageConsumer implements Runnable {
 	
 	private ProducerTemplate producerTemplate;
 	
+	private SyncedMessageRepository syncedMsgRepo;
+	
 	private boolean errorEncountered = false;
 	
 	private Long delay;
@@ -35,6 +48,7 @@ public class MessageConsumer implements Runnable {
 	 */
 	public MessageConsumer(ProducerTemplate producerTemplate) {
 		this.producerTemplate = producerTemplate;
+		syncedMsgRepo = AppContext.getBean(SyncedMessageRepository.class);
 	}
 	
 	@Override
@@ -43,8 +57,8 @@ public class MessageConsumer implements Runnable {
 		do {
 			Thread.currentThread().setName("sync-msg-consumer");
 			
-			if (log.isDebugEnabled()) {
-				log.debug("Fetching next batch of messages to sync");
+			if (log.isTraceEnabled()) {
+				log.trace("Fetching next batch of messages to sync");
 			}
 			
 			try {
@@ -58,8 +72,8 @@ public class MessageConsumer implements Runnable {
 						}
 					}
 					
-					if (log.isDebugEnabled()) {
-						log.debug("No sync message found, snoozing for " + delay + " milliseconds");
+					if (log.isTraceEnabled()) {
+						log.trace("No sync message found, snoozing for " + delay + " milliseconds");
 					}
 					
 					try {
@@ -107,22 +121,60 @@ public class MessageConsumer implements Runnable {
 				break;
 			}
 			
-			Thread.currentThread()
-			        .setName(Utils.getSimpleName(msg.getModelClassName()) + "-" + msg.getIdentifier() + "-" + msg.getId());
-			
-			log.info("Submitting sync message to the processor");
-			
-			producerTemplate.sendBody("direct:receiver-msg-processor", msg);
-			
-			if (log.isDebugEnabled()) {
-				log.debug("Removing sync message from the queue");
-			}
-			
-			producerTemplate.sendBody("jpa:" + ENTITY + "?query=DELETE FROM " + ENTITY + " WHERE id = " + msg.getId(), null);
-			
-			log.info("Successfully removed the sync message from the queue");
+			processMessage(msg);
 		}
 		
+	}
+	
+	private void processMessage(SyncMessage msg) {
+		final String originalThreadName = Thread.currentThread().getName();
+		Thread.currentThread()
+		        .setName(Utils.getSimpleName(msg.getModelClassName()) + "-" + msg.getIdentifier() + "-" + msg.getId());
+		
+		try {
+			Exchange exchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).withBody(msg).build();
+			
+			CamelUtils.send(ReceiverConstants.URI_MSG_PROCESSOR, exchange);
+			
+			boolean movedToConflict = exchange.getProperty(EX_PROP_MOVED_TO_CONFLICT_QUEUE, false, Boolean.class);
+			boolean movedToError = exchange.getProperty(EX_PROP_MOVED_TO_ERROR_QUEUE, false, Boolean.class);
+			boolean msgProcessed = exchange.getProperty(EX_PROP_MSG_PROCESSED, false, Boolean.class);
+			
+			final Long id = msg.getId();
+			if (msgProcessed || movedToConflict || movedToError) {
+				if (msgProcessed) {
+					log.info("Moving the message to the synced queue");
+					
+					SyncedMessage syncedMsg = Utils.createSyncedMessage(msg);
+					syncedMsg.setDateCreated(new Date());
+					if (log.isDebugEnabled()) {
+						log.debug("Saving synced message");
+					}
+					
+					syncedMsgRepo.save(syncedMsg);
+					
+					if (log.isDebugEnabled()) {
+						log.debug("Successfully saved synced message");
+					}
+				}
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Removing sync message from the queue");
+				}
+				
+				producerTemplate.sendBody("jpa:" + ENTITY + "?query=DELETE FROM " + ENTITY + " WHERE id = " + msg.getId(),
+				    null);
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Successfully removed the sync message from the queue");
+				}
+			} else {
+				throw new EIPException("Something went wrong while processing sync message with id: " + id);
+			}
+		}
+		finally {
+			Thread.currentThread().setName(originalThreadName);
+		}
 	}
 	
 }
