@@ -10,25 +10,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.eip.DatabaseOperation;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.UserModel;
-import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
-import org.openmrs.eip.dbsync.receiver.management.entity.SyncMessage;
-import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
-import org.openmrs.eip.dbsync.utils.DateUtils;
 import org.openmrs.eip.dbsync.utils.SyncUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.core.env.Environment;
-
-import com.jayway.jsonpath.JsonPath;
 
 public class Utils {
 	
@@ -164,29 +156,6 @@ public class Utils {
 		}
 		
 		return typeAndIdsToExcludeMap.get(modelClass).contains(identifier.toLowerCase());
-	}
-	
-	public static SyncedMessage createSyncedMessage(SyncMessage syncMessage) {
-		SyncedMessage syncedMsg = new SyncedMessage();
-		BeanUtils.copyProperties(syncMessage, syncedMsg, "id", "dateCreated");
-		syncedMsg.setDateReceived(syncMessage.getDateCreated());
-		setOtherFields(syncedMsg);
-		return syncedMsg;
-	}
-	
-	public static SyncedMessage createSyncedMessageFromRetry(ReceiverRetryQueueItem retry) {
-		SyncedMessage syncedMsg = new SyncedMessage();
-		BeanUtils.copyProperties(retry, syncedMsg, "id", "dateCreated");
-		setOtherFields(syncedMsg);
-		return syncedMsg;
-	}
-	
-	private static void setOtherFields(SyncedMessage syncedMessage) {
-		String op = JsonPath.read(syncedMessage.getEntityPayload(), "metadata.operation");
-		syncedMessage.setOperation(DatabaseOperation.valueOf(op));
-		String dateSent = JsonPath.read(syncedMessage.getEntityPayload(), "metadata.dateSent");
-		syncedMessage.setDateSent(DateUtils.parse(dateSent));
-		//TODO Itemize
 	}
 	
 }

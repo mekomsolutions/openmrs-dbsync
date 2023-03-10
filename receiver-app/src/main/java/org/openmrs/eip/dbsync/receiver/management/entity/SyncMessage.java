@@ -17,12 +17,15 @@ public class SyncMessage extends AbstractEntity {
 	public static final long serialVersionUID = 1;
 	
 	//Unique identifier for the entity usually a uuid or name for an entity like a privilege that has no uuid
+	@NotNull
 	@Column(nullable = false, updatable = false)
 	private String identifier;
 	
-	@Column(name = "entity_payload", columnDefinition = "text", nullable = false)
+	@NotNull
+	@Column(name = "entity_payload", columnDefinition = "text", nullable = false, updatable = false)
 	private String entityPayload;
 	
+	@NotNull
 	@Column(name = "model_class_name", nullable = false, updatable = false)
 	private String modelClassName;
 	

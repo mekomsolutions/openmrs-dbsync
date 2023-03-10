@@ -46,6 +46,12 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 	@Value("${hashes.update.tables:}")
 	private List<String> hashUpdateTables;
 	
+	private LifeCycleHandler lifeCycleHandler;
+	
+	public CamelListener(LifeCycleHandler lifeCycleHandler) {
+		this.lifeCycleHandler = lifeCycleHandler;
+	}
+	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -54,11 +60,13 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 	@Override
 	public void notify(CamelEvent event) {
 		if (event instanceof CamelContextRoutesStartingEvent) {
+			//TODO Move this logic to a new LifeCycleHandler
 			if (updateHashes) {
 				log.info("Disabling all camel routes before running hash updater task");
 				SyncContext.getBean(CamelContext.class).setAutoStartup(false);
 			}
 		} else if (event instanceof CamelContextStartedEvent) {
+			//TODO Move the rest of logic to LifeCycleHandler.onStartup method
 			log.info("Loading OpenMRS user account");
 			String username = SyncContext.getBean(Environment.class).getProperty(SyncConstants.PROP_OPENMRS_USER);
 			if (StringUtils.isBlank(username)) {
@@ -82,10 +90,13 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 				if (log.isDebugEnabled()) {
 					log.debug("Started sync message consumer");
 				}
+				
+				lifeCycleHandler.onStartup();
 			}
 			
 		} else if (event instanceof CamelContextStoppingEvent) {
 			ReceiverContext.setStopSignal();
+			//TODO Move the rest of logic below this line to LifeCycleHandler.onShutdown method
 			log.info("Shutting down executor for message consumer thread");
 			
 			executor.shutdown();
@@ -96,12 +107,13 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 				
 				executor.awaitTermination(wait, TimeUnit.MILLISECONDS);
 				
-				log.info("The message consumer thread has successfully terminated");
 				log.info("Successfully shutdown executor for message consumer thread");
 			}
 			catch (InterruptedException e) {
 				log.error("An error occurred while waiting for message consumer thread to terminate");
 			}
+			
+			lifeCycleHandler.onShutdown();
 		}
 	}
 	

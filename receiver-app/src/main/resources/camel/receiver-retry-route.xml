@@ -69,22 +69,20 @@
                                     <simple>${exchangeProperty.org.openmrs.eip.dbsync.receiver.sync-msgProcessed} == true || ${exchangeProperty.org.openmrs.eip.dbsync.receiver.sync-movedToConflictQueue} == true</simple>
                                     <when>
                                         <simple>${exchangeProperty.org.openmrs.eip.dbsync.receiver.sync-msgProcessed} == true</simple>
-                                        <log message="Moving to synced queue the error item with id: ${exchangeProperty.retry-item-id}" />
-
                                         <setBody>
-                                            <method beanType="org.openmrs.eip.dbsync.receiver.Utils" method="createSyncedMessageFromRetry(${exchangeProperty.retry-item})" />
+                                            <method beanType="org.openmrs.eip.dbsync.receiver.ReceiverUtils" method="createSyncedMessageFromRetry(${exchangeProperty.retry-item})" />
                                         </setBody>
-                                        <script>
-                                            <spel>
-                                                #{body.setDateCreated(new java.util.Date())}
-                                            </spel>
-                                        </script>
 
-                                        <log loggingLevel="DEBUG" message="Saving synced message" />
+                                        <when>
+                                            <simple>${body} != null</simple>
+                                            <log message="Moving to synced queue the error item with id: ${exchangeProperty.retry-item-id}" />
 
-                                        <toD uri="jpa:SyncedMessage" />
+                                            <log loggingLevel="DEBUG" message="Saving synced message" />
 
-                                        <log loggingLevel="DEBUG" message="Successfully saved synced message" />
+                                            <toD uri="jpa:SyncedMessage" />
+
+                                            <log loggingLevel="DEBUG" message="Successfully saved synced message" />
+                                        </when>
                                     </when>
 
                                     <log loggingLevel="DEBUG" message="Removing from the error queue an item with id: ${exchangeProperty.retry-item-id}" />

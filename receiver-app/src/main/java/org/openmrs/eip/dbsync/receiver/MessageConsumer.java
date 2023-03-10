@@ -5,7 +5,6 @@ import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.EX_PROP_MOVED_TO
 import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.EX_PROP_MSG_PROCESSED;
 import static org.openmrs.eip.dbsync.receiver.ReceiverContext.PROP_REC_CONSUMER_DELAY;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -143,18 +142,19 @@ public class MessageConsumer implements Runnable {
 			final Long id = msg.getId();
 			if (msgProcessed || movedToConflict || movedToError) {
 				if (msgProcessed) {
-					log.info("Moving the message to the synced queue");
-					
-					SyncedMessage syncedMsg = Utils.createSyncedMessage(msg);
-					syncedMsg.setDateCreated(new Date());
-					if (log.isDebugEnabled()) {
-						log.debug("Saving synced message");
-					}
-					
-					syncedMsgRepo.save(syncedMsg);
-					
-					if (log.isDebugEnabled()) {
-						log.debug("Successfully saved synced message");
+					SyncedMessage syncedMsg = ReceiverUtils.createSyncedMessage(msg);
+					if (syncedMsg != null) {
+						log.info("Moving the message to the synced queue");
+						
+						if (log.isDebugEnabled()) {
+							log.debug("Saving synced message");
+						}
+						
+						syncedMsgRepo.save(syncedMsg);
+						
+						if (log.isDebugEnabled()) {
+							log.debug("Successfully saved synced message");
+						}
 					}
 				}
 				

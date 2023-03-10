@@ -1,10 +1,21 @@
 package org.openmrs.eip.dbsync.receiver.config;
 
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.BEAN_TASK_EXECUTOR;
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_THREAD_NUMBER;
+
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.openmrs.eip.dbsync.receiver.BaseQueueTask;
+import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -49,6 +60,20 @@ public class ReceiverConfig {
 		cf.setRedeliveryPolicy(redeliveryPolicy);
 		
 		return new CachingConnectionFactory(cf);
+	}
+	
+	@Bean(ReceiverConstants.BEAN_QUEUE_EXECUTOR)
+	public ThreadPoolExecutor getQueueExecutor(@Value("${" + PROP_THREAD_NUMBER + "}") Integer threads) {
+		if (threads == null) {
+			threads = Runtime.getRuntime().availableProcessors();
+		}
+		
+		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
+	}
+	
+	@Bean(BEAN_TASK_EXECUTOR)
+	public ScheduledThreadPoolExecutor getSiteExecutor(List<BaseQueueTask> tasks) {
+		return (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(tasks.size());
 	}
 	
 }
