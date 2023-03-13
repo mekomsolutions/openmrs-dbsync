@@ -15,6 +15,9 @@ public interface SyncedMessageRepository extends JpaRepository<SyncedMessage, Lo
 	        + "m.indexed = true AND m.searchIndexUpdated = false AND (m.cached = false OR m.evictedFromCache = true) "
 	        + "ORDER BY m.dateCreated ASC";
 	
+	String CLEAN_QUERY = "SELECT m FROM SyncedMessage m WHERE (m.cached = false OR m.evictedFromCache = true) AND (m.indexed = false OR "
+	        + "m.searchIndexUpdated = true)";
+	
 	/**
 	 * Gets a batch of messages ordered by ascending date created for cached entities for which
 	 * evictions have not yet been done.
@@ -34,5 +37,14 @@ public interface SyncedMessageRepository extends JpaRepository<SyncedMessage, Lo
 	 */
 	@Query(INDEX_QUERY)
 	List<SyncedMessage> getBatchOfMessagesForIndexing(Pageable pageable);
+	
+	/**
+	 * Gets a batch of processed synced messages for deleting
+	 *
+	 * @param pageable {@link Pageable} instance
+	 * @return list of synced messages
+	 */
+	@Query(CLEAN_QUERY)
+	List<SyncedMessage> getBatchOfMessagesForRemoval(Pageable pageable);
 	
 }
