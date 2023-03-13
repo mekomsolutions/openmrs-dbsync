@@ -8,6 +8,10 @@ public class ReceiverConstants {
 	
 	public static final String PROP_TASK_BATCH_SIZE = "task.batch.size";
 	
+	public static final String PROP_INITIAL_DELAY_INDEX_UPDATER = "search.index.updater.initial.delay";
+	
+	public static final String PROP_DELAY_INDEX_UPDATER = "search.index.updater.delay";
+	
 	public static final int DEFAULT_TASK_BATCH_SIZE = 1000;
 	
 	public static final String ROUTE_ID_MSG_PROCESSOR = "receiver-msg-processor";

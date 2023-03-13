@@ -5,10 +5,11 @@ import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_TASK_BATCH_
 
 import java.util.List;
 
+import org.openmrs.eip.AppContext;
 import org.openmrs.eip.app.management.entity.AbstractEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -21,10 +22,7 @@ public abstract class BaseQueueTask<T extends AbstractEntity, P extends BaseQueu
 	
 	protected static final Logger LOG = LoggerFactory.getLogger(BaseQueueTask.class);
 	
-	@Value("${" + PROP_TASK_BATCH_SIZE + ":" + DEFAULT_TASK_BATCH_SIZE + "}")
-	private int batchSize;
-	
-	private final Pageable page;
+	private Pageable page;
 	
 	private boolean errorEncountered = false;
 	
@@ -32,7 +30,6 @@ public abstract class BaseQueueTask<T extends AbstractEntity, P extends BaseQueu
 	
 	public BaseQueueTask(P processor) {
 		this.processor = processor;
-		page = PageRequest.of(0, batchSize);
 	}
 	
 	@Override
@@ -51,6 +48,12 @@ public abstract class BaseQueueTask<T extends AbstractEntity, P extends BaseQueu
 		
 		do {
 			try {
+				if (page == null) {
+					Environment env = AppContext.getBean(Environment.class);
+					int batchSize = env.getProperty(PROP_TASK_BATCH_SIZE, Integer.class, DEFAULT_TASK_BATCH_SIZE);
+					page = PageRequest.of(0, batchSize);
+				}
+				
 				List<T> items = getNextBatch(page);
 				if (items.isEmpty()) {
 					if (LOG.isTraceEnabled()) {

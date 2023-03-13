@@ -19,7 +19,7 @@ under the License.
 -->
 <configuration xmlns="urn:activemq" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xsi:schemaLocation="urn:activemq /schema/artemis-configuration.xsd">
   <core xmlns="urn:activemq:core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:activemq:core ">
-    <name>426d4317f4cd</name>
+    <name>a8d6e7e2b83e</name>
     <persistence-enabled>true</persistence-enabled>
     <!-- this could be ASYNCIO, MAPPED, NIO
                ASYNCIO: Linux Libaio
@@ -149,6 +149,7 @@ under the License.
         <auto-create-addresses>true</auto-create-addresses>
         <auto-create-jms-queues>true</auto-create-jms-queues>
         <auto-create-jms-topics>true</auto-create-jms-topics>
+        <auto-delete-queues>false</auto-delete-queues>
       </address-setting>
     </address-settings>
     <addresses>

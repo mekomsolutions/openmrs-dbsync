@@ -1,6 +1,5 @@
 package org.openmrs.eip.dbsync.receiver.config;
 
-import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.BEAN_TASK_EXECUTOR;
 import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_THREAD_NUMBER;
 
 import java.util.List;
@@ -63,7 +62,7 @@ public class ReceiverConfig {
 	}
 	
 	@Bean(ReceiverConstants.BEAN_QUEUE_EXECUTOR)
-	public ThreadPoolExecutor getQueueExecutor(@Value("${" + PROP_THREAD_NUMBER + "}") Integer threads) {
+	public ThreadPoolExecutor getQueueExecutor(@Value("${" + PROP_THREAD_NUMBER + ":}") Integer threads) {
 		if (threads == null) {
 			threads = Runtime.getRuntime().availableProcessors();
 		}
@@ -71,7 +70,7 @@ public class ReceiverConfig {
 		return (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
 	}
 	
-	@Bean(BEAN_TASK_EXECUTOR)
+	@Bean(ReceiverConstants.BEAN_TASK_EXECUTOR)
 	public ScheduledThreadPoolExecutor getSiteExecutor(List<BaseQueueTask> tasks) {
 		return (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(tasks.size());
 	}

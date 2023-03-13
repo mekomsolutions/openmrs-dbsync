@@ -14,6 +14,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.eip.AppContext;
 import org.openmrs.eip.EIPException;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
@@ -45,12 +46,6 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 	
 	@Value("${hashes.update.tables:}")
 	private List<String> hashUpdateTables;
-	
-	private LifeCycleHandler lifeCycleHandler;
-	
-	public CamelListener(LifeCycleHandler lifeCycleHandler) {
-		this.lifeCycleHandler = lifeCycleHandler;
-	}
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -91,7 +86,7 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 					log.debug("Started sync message consumer");
 				}
 				
-				lifeCycleHandler.onStartup();
+				AppContext.getBean(LifeCycleHandler.class).onStartup();
 			}
 			
 		} else if (event instanceof CamelContextStoppingEvent) {
@@ -113,7 +108,7 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 				log.error("An error occurred while waiting for message consumer thread to terminate");
 			}
 			
-			lifeCycleHandler.onShutdown();
+			AppContext.getBean(LifeCycleHandler.class).onShutdown();
 		}
 	}
 	

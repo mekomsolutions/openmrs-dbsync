@@ -58,16 +58,16 @@ public class SyncedMessage extends AbstractEntity {
 	private Date dateReceived;
 	
 	@Column(name = "is_cached", nullable = false, updatable = false)
-	private boolean cached;
+	private boolean cached = false;
 	
 	@Column(name = "evicted_from_cache", nullable = false)
-	private boolean evictedFromCache;
+	private boolean evictedFromCache = false;
 	
 	@Column(name = "is_indexed", nullable = false, updatable = false)
-	private boolean indexed;
+	private boolean indexed = false;
 	
 	@Column(name = "search_index_updated", nullable = false)
-	private boolean searchIndexUpdated;
+	private boolean searchIndexUpdated = false;
 	
 	@Override
 	public String toString() {
