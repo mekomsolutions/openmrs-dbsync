@@ -38,6 +38,7 @@ import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
+import org.openmrs.eip.dbsync.utils.DateUtils;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,9 +194,11 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	}
 	
 	private void sendToActiveMQInternal(String entityPayload, String operation) throws Exception {
+		String dateSent = DateUtils.serialize(LocalDateTime.now());
 		String syncPayload = "{" + "\"tableToSyncModelClass\":\"" + getModelClass().getName() + "\"," + "\"model\":"
 		        + entityPayload + ",\"metadata\":{\"operation\":\"" + operation
-		        + "\", \"sourceIdentifier\":\"testSite\", \"dbSyncVersion\":\"" + SyncConstants.VERSION + "\"}}";
+		        + "\", \"sourceIdentifier\":\"testSite\", \"dbSyncVersion\":\"" + SyncConstants.VERSION
+		        + "\", \"dateSent\":\"" + dateSent + "\"}}";
 		
 		try (Session session = activeMQConn.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
 			try (MessageProducer producer = session.createProducer(session.createQueue(QUEUE_NAME))) {
