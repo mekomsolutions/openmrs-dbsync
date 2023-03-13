@@ -1,8 +1,8 @@
 package org.openmrs.eip.dbsync.receiver.route;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.openmrs.eip.dbsync.SyncTestConstants.CREATOR_UUID;
 
 import java.time.LocalDateTime;
@@ -16,23 +16,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.eip.dbsync.entity.Patient;
-import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.SyncMetadata;
 import org.openmrs.eip.dbsync.model.SyncModel;
+import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
 import org.openmrs.eip.dbsync.receiver.management.entity.ConflictQueueItem;
-import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 
 @TestPropertySource(properties = "camel.springboot.xml-routes=classpath:camel/receiver-db-sync-route.xml")
-@Sql(value = "classpath:sync_test_data.sql")
 public class ReceiverDbSyncRouteTest extends BaseReceiverRouteTest {
 	
 	private static final String ROUTE_ID = "receiver-db-sync";
@@ -43,31 +38,20 @@ public class ReceiverDbSyncRouteTest extends BaseReceiverRouteTest {
 	
 	private static final String EX_PROP_UUID = "entity-id";
 	
-	private static final String KEY_RESOURCE = "resource";
-	
-	private static final String KEY_UUID = "uuid";
-	
 	private static final String EX_MSG = "Cannot process the message because the entity has 1 message(s) in the DB sync conflict queue";
 	
-	@Autowired
-	protected AbstractEntityService<Person, PersonModel> personService;
-	
-	@Autowired
-	protected AbstractEntityService<Patient, PatientModel> patientService;
-	
-	@EndpointInject("mock:receiver-clear-db-cache")
-	protected MockEndpoint mockClearDbCacheEndpoint;
+	@EndpointInject("mock:load")
+	protected MockEndpoint mockLoadEndpoint;
 	
 	@Before
 	public void setup() throws Exception {
-		mockClearDbCacheEndpoint.reset();
+		mockLoadEndpoint.reset();
 		
 		advise(ROUTE_ID, new AdviceWithRouteBuilder() {
 			
 			@Override
 			public void configure() {
-				interceptSendToEndpoint("direct:receiver-clear-db-cache").skipSendToOriginalEndpoint()
-				        .to(mockClearDbCacheEndpoint);
+				interceptSendToEndpoint("openmrs:load").skipSendToOriginalEndpoint().to(mockLoadEndpoint);
 			}
 			
 		});
@@ -96,82 +80,76 @@ public class ReceiverDbSyncRouteTest extends BaseReceiverRouteTest {
 	@Test
 	public void shouldSaveTheEntityInTheDatabaseIfItHasNoConflicts() throws Exception {
 		final String uuid = "person-uuid";
-		assertNull(personService.getModel(uuid));
 		Exchange exchange = new DefaultExchange(camelContext);
 		PersonModel model = new PersonModel();
 		model.setUuid(uuid);
 		exchange.setProperty(EX_PROP_CLASS, model.getClass().getName());
 		exchange.setProperty(EX_PROP_UUID, uuid);
-		exchange.getIn().setBody(createSyncMessage(model));
-		mockClearDbCacheEndpoint.expectedMessageCount(1);
-		mockClearDbCacheEndpoint
-		        .expectedBodiesReceived("{\"" + KEY_RESOURCE + "\": \"person\", \"" + KEY_UUID + "\": \"" + uuid + "\"}");
-		
+		final String body = createSyncMessage(model);
+		exchange.getIn().setBody(body);
 		producerTemplate.send(URI, exchange);
+		mockLoadEndpoint.expectedMessageCount(1);
+		mockLoadEndpoint.expectedBodiesReceived(body);
 		
-		mockClearDbCacheEndpoint.assertIsSatisfied();
-		PersonModel savedPerson = personService.getModel(uuid);
-		assertNotNull(savedPerson);
+		mockLoadEndpoint.assertIsSatisfied();
+		assertTrue(exchange.getProperty(ReceiverConstants.EX_PROP_MSG_PROCESSED, Boolean.class));
 	}
 	
 	@Test
 	public void shouldFailIfTheEntityHasAnEventInTheConflictQueue() throws Exception {
 		final String uuid = "person-uuid";
 		addConflict(PersonModel.class.getName(), uuid);
-		assertNull(personService.getModel(uuid));
 		Exchange exchange = new DefaultExchange(camelContext);
 		PersonModel model = new PersonModel();
 		model.setUuid(uuid);
 		exchange.setProperty(EX_PROP_CLASS, model.getClass().getName());
 		exchange.setProperty(EX_PROP_UUID, uuid);
 		exchange.getIn().setBody(createSyncMessage(model));
-		mockClearDbCacheEndpoint.expectedMessageCount(0);
+		mockLoadEndpoint.expectedMessageCount(0);
 		
 		producerTemplate.send(URI, exchange);
 		
-		mockClearDbCacheEndpoint.assertIsSatisfied();
+		mockLoadEndpoint.assertIsSatisfied();
 		assertEquals(EX_MSG, getErrorMessage(exchange));
-		assertNull(personService.getModel(uuid));
+		assertNull(exchange.getProperty(ReceiverConstants.EX_PROP_MSG_PROCESSED));
 	}
 	
 	@Test
 	public void shouldFailIfTheEntityHasAnEventInTheConflictQueueForASubclassRow() throws Exception {
 		final String uuid = "person-uuid";
 		addConflict(PatientModel.class.getName(), uuid);
-		assertNull(personService.getModel(uuid));
 		Exchange exchange = new DefaultExchange(camelContext);
 		PersonModel model = new PersonModel();
 		model.setUuid(uuid);
 		exchange.setProperty(EX_PROP_CLASS, model.getClass().getName());
 		exchange.setProperty(EX_PROP_UUID, uuid);
 		exchange.getIn().setBody(createSyncMessage(model));
-		mockClearDbCacheEndpoint.expectedMessageCount(0);
+		mockLoadEndpoint.expectedMessageCount(0);
 		
 		producerTemplate.send(URI, exchange);
 		
-		mockClearDbCacheEndpoint.assertIsSatisfied();
+		mockLoadEndpoint.assertIsSatisfied();
 		assertEquals(EX_MSG, getErrorMessage(exchange));
-		assertNull(personService.getModel(uuid));
+		assertNull(exchange.getProperty(ReceiverConstants.EX_PROP_MSG_PROCESSED));
 	}
 	
 	@Test
 	public void shouldFailIfTheEntityHasAnEventInTheConflictQueueForAParentRow() throws Exception {
 		final String uuid = "person-uuid";
 		addConflict(PersonModel.class.getName(), uuid);
-		assertNull(patientService.getModel(uuid));
 		Exchange exchange = new DefaultExchange(camelContext);
 		PatientModel model = new PatientModel();
 		model.setUuid(uuid);
 		exchange.setProperty(EX_PROP_CLASS, model.getClass().getName());
 		exchange.setProperty(EX_PROP_UUID, uuid);
 		exchange.getIn().setBody(createSyncMessage(model));
-		mockClearDbCacheEndpoint.expectedMessageCount(0);
+		mockLoadEndpoint.expectedMessageCount(0);
 		
 		producerTemplate.send(URI, exchange);
 		
-		mockClearDbCacheEndpoint.assertIsSatisfied();
+		mockLoadEndpoint.assertIsSatisfied();
 		assertEquals(EX_MSG, getErrorMessage(exchange));
-		assertNull(patientService.getModel(uuid));
+		assertNull(exchange.getProperty(ReceiverConstants.EX_PROP_MSG_PROCESSED));
 	}
 	
 }

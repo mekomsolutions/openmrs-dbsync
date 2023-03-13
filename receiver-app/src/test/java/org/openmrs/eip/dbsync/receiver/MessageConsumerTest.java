@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openmrs.eip.AppContext;
 import org.openmrs.eip.EIPException;
 import org.openmrs.eip.Utils;
 import org.powermock.api.mockito.PowerMockito;
@@ -21,7 +22,7 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Utils.class)
+@PrepareForTest({ Utils.class, AppContext.class })
 public class MessageConsumerTest {
 	
 	private MessageConsumer consumer;
@@ -36,6 +37,7 @@ public class MessageConsumerTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		PowerMockito.mockStatic(Utils.class);
+		PowerMockito.mockStatic(AppContext.class);
 		consumer = new MessageConsumer(mockProducerTemplate);
 		Whitebox.setInternalState(MessageConsumer.class, Logger.class, mockLogger);
 	}

@@ -16,7 +16,7 @@ public class ReceiverConstants {
 	
 	public static final String ROUTE_ID_MSG_PROCESSOR = "receiver-msg-processor";
 	
-	public static final String BEAN_TASK_EXECUTOR = "taskExecutor";
+	public static final String BEAN_TASK_EXECUTOR = "tasksExecutor";
 	
 	public static final String BEAN_QUEUE_EXECUTOR = "queueExecutor";
 	

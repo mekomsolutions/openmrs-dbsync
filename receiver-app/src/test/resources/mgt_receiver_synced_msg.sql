@@ -1,0 +1,10 @@
+INSERT INTO receiver_synced_msg (id, model_class_name, identifier, operation, entity_payload, dbsync_version, date_sent, date_received, is_cached, evicted_from_cache, is_indexed, search_index_updated, date_created)
+VALUES (1, 'org.openmrs.eip.component.model.PersonModel', '1bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 00:00:00.000', 1, 1, 1, 1, '2020-08-22 00:00:00.002'),
+       (2, 'org.openmrs.eip.component.model.PersonModel', '2bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 00:00:00.002', 1, 1, 0, 0, '2020-08-22 00:00:00.000'),
+       (3, 'org.openmrs.eip.component.model.PersonModel', '3bfd940e-32dc-491f-8038-a8f3afe3e36c', 'u', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 00:00:00.000', 0, 0, 1, 1, '2020-08-22 00:00:00.001'),
+       (4, 'org.openmrs.eip.component.model.PersonModel', '3bfd940e-32dc-491f-8038-a8f3afe3e36c', 'u', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 00:00:00.001', 1, 0, 1, 0, '2020-08-22 00:00:00.002'),
+       (5, 'org.openmrs.eip.component.model.PersonModel', '5bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 01:00:00.000', 1, 0, 0, 0, '2020-08-22 00:00:00.000'),
+       (6, 'org.openmrs.eip.component.model.PersonModel', '6bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 01:00:00.000', 1, 0, 0, 0, '2020-08-22 00:00:00.001'),
+       (7, 'org.openmrs.eip.component.model.PersonModel', '7bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 01:00:00.000', 0, 0, 1, 0, '2020-08-22 00:00:00.002'),
+       (8, 'org.openmrs.eip.component.model.PersonModel', '8bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 01:00:00.000', 0, 0, 1, 0, '2020-08-22 00:00:00.000'),
+       (9, 'org.openmrs.eip.component.model.PersonModel', '9bfd940e-32dc-491f-8038-a8f3afe3e36c', 'c', '{}', '1.0', '2020-08-21 00:00:00', '2020-08-22 01:00:00.000', 0, 0, 1, 0, '2020-08-22 00:00:00.001');
