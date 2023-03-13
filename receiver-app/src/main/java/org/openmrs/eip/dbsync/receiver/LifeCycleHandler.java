@@ -3,8 +3,8 @@ package org.openmrs.eip.dbsync.receiver;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.BEAN_QUEUE_EXECUTOR;
 import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.BEAN_TASK_EXECUTOR;
-import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_DELAY_INDEX_UPDATER;
-import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_INITIAL_DELAY_INDEX_UPDATER;
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_DELAY_SYNC_MSG_TASKS;
+import static org.openmrs.eip.dbsync.receiver.ReceiverConstants.PROP_INITIAL_DELAY_SYNC_MSG_TASK;
 
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -35,11 +35,11 @@ public class LifeCycleHandler {
 	
 	private List<BaseQueueTask> tasks;
 	
-	@Value("${" + PROP_INITIAL_DELAY_INDEX_UPDATER + ":" + DEFAULT_INITIAL_DELAY + "}")
-	private long initialDelayIndexUpdater;
+	@Value("${" + PROP_INITIAL_DELAY_SYNC_MSG_TASK + ":" + DEFAULT_INITIAL_DELAY + "}")
+	private long initialDelayTasks;
 	
-	@Value("${" + PROP_DELAY_INDEX_UPDATER + ":" + DEFAULT_DELAY + "}")
-	private long delayIndexUpdater;
+	@Value("${" + PROP_DELAY_SYNC_MSG_TASKS + ":" + DEFAULT_DELAY + "}")
+	private long delayTasks;
 	
 	public LifeCycleHandler(@Qualifier(BEAN_TASK_EXECUTOR) ScheduledThreadPoolExecutor taskExecutor,
 	    @Qualifier(BEAN_QUEUE_EXECUTOR) ThreadPoolExecutor queueExecutor, List<BaseQueueTask> tasks) {
@@ -54,8 +54,7 @@ public class LifeCycleHandler {
 	public void onStartup() {
 		LOG.info("Starting tasks");
 		
-		tasks.forEach(
-		    t -> taskExecutor.scheduleWithFixedDelay(t, initialDelayIndexUpdater, delayIndexUpdater, MILLISECONDS));
+		tasks.forEach(t -> taskExecutor.scheduleWithFixedDelay(t, initialDelayTasks, delayTasks, MILLISECONDS));
 	}
 	
 	/**

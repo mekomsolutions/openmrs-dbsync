@@ -8,9 +8,9 @@ public class ReceiverConstants {
 	
 	public static final String PROP_TASK_BATCH_SIZE = "task.batch.size";
 	
-	public static final String PROP_INITIAL_DELAY_INDEX_UPDATER = "search.index.updater.initial.delay";
+	public static final String PROP_INITIAL_DELAY_SYNC_MSG_TASK = "synced.msg.task.initial.delay";
 	
-	public static final String PROP_DELAY_INDEX_UPDATER = "search.index.updater.delay";
+	public static final String PROP_DELAY_SYNC_MSG_TASKS = "synced.msg.task.delay";
 	
 	public static final int DEFAULT_TASK_BATCH_SIZE = 1000;
 	
@@ -25,6 +25,10 @@ public class ReceiverConstants {
 	public static final String ROUTE_ID_UPDATE_SEARCH_INDEX = "receiver-update-search-index";
 	
 	public static final String URI_UPDATE_SEARCH_INDEX = "direct:" + ROUTE_ID_UPDATE_SEARCH_INDEX;
+	
+	public static final String ROUTE_ID_CLEAR_CACHE = "receiver-clear-db-cache";
+	
+	public static final String URI_CLEAR_CACHE = "direct:" + ROUTE_ID_CLEAR_CACHE;
 	
 	public static final String PACKAGE = ReceiverConstants.class.getPackage().getName();
 	
