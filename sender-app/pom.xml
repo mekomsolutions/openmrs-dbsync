@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.openmrs.eip.dbsync</groupId>
         <artifactId>dbsync</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.3-SNAPSHOT</version>
     </parent>
     <artifactId>dbsync-sender</artifactId>
     <packaging>jar</packaging>
