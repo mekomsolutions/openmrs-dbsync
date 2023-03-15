@@ -6,7 +6,7 @@
     <groupId>org.openmrs.eip.dbsync</groupId>
     <artifactId>dbsync</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.2-SNAPSHOT</version>
+    <version>3.0.2</version>
 
     <modules>
         <module>api</module>
