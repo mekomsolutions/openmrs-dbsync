@@ -35,9 +35,8 @@ public class OpenmrsEntityManagerConfig {
 	@DependsOn(Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
 	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource) {
-		Map<String, String> properties=new HashMap<>();
-		properties.put("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
-		return builder.dataSource(dataSource).packages("org.openmrs.eip.dbsync.entity").persistenceUnit("openmrs").properties(properties).build();
+
+		return builder.dataSource(dataSource).packages("org.openmrs.eip.dbsync.entity").persistenceUnit("openmrs").build();
 	}
 	
 	@Primary
