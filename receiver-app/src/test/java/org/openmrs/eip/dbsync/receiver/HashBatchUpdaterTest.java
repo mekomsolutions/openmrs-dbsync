@@ -72,8 +72,8 @@ public class HashBatchUpdaterTest {
 	public void update_shouldUpdateHashesForAllRowsInTheSpecifiedTablesInParallel() {
 		updater = Mockito.spy(updater);
 		Mockito.doNothing().when(updater).checkForConflicts(anyList());
-		when(SyncUtils.getRepository(Person.class, mockAppContext)).thenReturn(mockPersonRepo);
-		when(SyncUtils.getRepository(Visit.class, mockAppContext)).thenReturn(mockVisitRepo);
+		when(SyncUtils.getRepository(Person.class)).thenReturn(mockPersonRepo);
+		when(SyncUtils.getRepository(Visit.class)).thenReturn(mockVisitRepo);
 		
 		Page mockPersonPage = Mockito.mock(Page.class);
 		when(mockPersonPage.isLast()).thenReturn(true);

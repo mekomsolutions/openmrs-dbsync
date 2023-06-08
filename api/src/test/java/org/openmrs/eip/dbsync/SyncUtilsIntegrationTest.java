@@ -14,9 +14,9 @@ public class SyncUtilsIntegrationTest extends BaseDbDrivenTest {
 	@Test
 	public void getRepository_shouldGetTheRepoForTheSpecifiedLightEntityType() {
 		assertTrue(
-		    PersonRepository.class.isAssignableFrom(SyncUtils.getRepository(Person.class, applicationContext).getClass()));
+		    PersonRepository.class.isAssignableFrom(SyncUtils.getRepository(Person.class).getClass()));
 		assertTrue(
-		    PatientRepository.class.isAssignableFrom(SyncUtils.getRepository(Patient.class, applicationContext).getClass()));
+		    PatientRepository.class.isAssignableFrom(SyncUtils.getRepository(Patient.class).getClass()));
 	}
 	
 }

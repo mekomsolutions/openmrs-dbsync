@@ -59,6 +59,7 @@ public abstract class BaseDbDrivenTest {
 	public static void startContainers() {
 		mysqlContainer.withEnv("MYSQL_ROOT_PASSWORD", "test");
 		mysqlContainer.withDatabaseName("openmrs");
+		mysqlContainer.withUrlParam("useSSL","false");
 		Startables.deepStart(Stream.of(mysqlContainer)).join();
 		MYSQL_PORT = mysqlContainer.getMappedPort(3306);
 	}

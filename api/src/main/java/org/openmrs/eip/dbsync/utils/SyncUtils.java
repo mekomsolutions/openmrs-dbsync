@@ -164,8 +164,7 @@ public class SyncUtils {
 	 * @param entityType entity type to match
 	 * @return OpenmrsRepository instance
 	 */
-	public static <E extends BaseEntity> OpenmrsRepository<E> getRepository(Class<E> entityType,
-	                                                                        ApplicationContext appContext) {
+	public static <E extends BaseEntity> OpenmrsRepository<E> getRepository(Class<E> entityType) {
 		return getJpaRepository(entityType, OpenmrsRepository.class);
 	}
 	
