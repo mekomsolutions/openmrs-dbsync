@@ -76,7 +76,7 @@ public class HashBatchUpdater {
 				entityRepoClass = Order.class;
 			}
 			
-			SyncEntityRepository repo = (SyncEntityRepository) SyncUtils.getRepository(entityRepoClass, appContext);
+			SyncEntityRepository repo = (SyncEntityRepository) SyncUtils.getRepository(entityRepoClass);
 			Page<BaseEntity> page = null;
 			
 			do {

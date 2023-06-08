@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.hamcrest.CoreMatchers;
@@ -16,9 +17,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.camel.fetchmodels.FetchModelsRuleEngine;
+import org.openmrs.eip.dbsync.entity.light.PatientLight;
 import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.PersonModel;
@@ -26,9 +31,15 @@ import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
+import org.openmrs.eip.dbsync.utils.HashUtils;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ SyncContext.class })
 public class OpenmrsExtractProducerTest {
 	
 	@Mock
@@ -55,7 +66,7 @@ public class OpenmrsExtractProducerTest {
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
-		
+		PowerMockito.mockStatic(SyncContext.class);
 		params = ProducerParams.builder().tableToSync(TableToSyncEnum.PERSON).build();
 		producer = new OpenmrsExtractProducer(endpoint, applicationContext, params);
 	}
@@ -91,9 +102,7 @@ public class OpenmrsExtractProducerTest {
 		model.setBasisIdentifier("1");
 		model.setBasisType("org.openmrs.Location");
 		when(applicationContext.getBean("fetchModelsRuleEngine")).thenReturn(ruleEngine);
-		final String beanName = "testRepo";
-		when(applicationContext.getBeanNamesForType(any(ResolvableType.class))).thenReturn(new String[] { beanName });
-		when(applicationContext.getBean(beanName)).thenReturn(mockEntityBasisMapRepo);
+		when(SyncContext.getBean(ResolvableType.forClassWithGenerics(OpenmrsRepository.class,PatientLight.class))).thenReturn(mockEntityBasisMapRepo);
 		when(ruleEngine.process(params)).thenReturn(Arrays.asList(model));
 		expectedException.expect(SyncException.class);
 		expectedException.expectMessage(CoreMatchers

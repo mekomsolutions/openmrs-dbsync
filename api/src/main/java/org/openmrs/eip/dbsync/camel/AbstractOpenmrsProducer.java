@@ -51,7 +51,7 @@ public abstract class AbstractOpenmrsProducer extends DefaultProducer {
 			throw new SyncException("Failed to load light entity class: " + lightEntityTypeName, e);
 		}
 		
-		return (OpenmrsRepository<LightEntity>) SyncUtils.getRepository(lightEntityType, applicationContext);
+		return (OpenmrsRepository<LightEntity>) SyncUtils.getRepository(lightEntityType);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public abstract class AbstractOpenmrsProducer extends DefaultProducer {
 	 */
 	protected <T extends LightEntity> T getLightEntity(String composedUuid) {
 		DecomposedUuid decomposedUuid = decomposeUuid(composedUuid).get();
-		OpenmrsRepository lightRepo = SyncUtils.getRepository(decomposedUuid.getEntityType(), applicationContext);
+		OpenmrsRepository lightRepo = SyncUtils.getRepository(decomposedUuid.getEntityType());
 		return (T) lightRepo.findByUuid(decomposedUuid.getUuid());
 	}
 	

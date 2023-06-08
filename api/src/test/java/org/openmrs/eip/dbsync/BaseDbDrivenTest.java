@@ -35,6 +35,7 @@ import org.testcontainers.lifecycle.Startables;
         ResetMocksTestExecutionListener.class, DeleteDataTestExecutionListener.class, SqlScriptsTestExecutionListener.class,
         TransactionalTestExecutionListener.class })
 @TestPropertySource(properties = "spring.jpa.properties.hibernate.hbm2ddl.auto=update")
+@TestPropertySource(properties = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL55Dialect")
 @TestPropertySource(properties = "camel.springboot.routes-collector-enabled=false")
 @TestPropertySource(properties = "spring.liquibase.enabled=false")
 public abstract class BaseDbDrivenTest {
@@ -59,6 +60,7 @@ public abstract class BaseDbDrivenTest {
 	public static void startContainers() {
 		mysqlContainer.withEnv("MYSQL_ROOT_PASSWORD", "test");
 		mysqlContainer.withDatabaseName("openmrs");
+		mysqlContainer.withUrlParam("useSSL","false");
 		Startables.deepStart(Stream.of(mysqlContainer)).join();
 		MYSQL_PORT = mysqlContainer.getMappedPort(3306);
 	}
