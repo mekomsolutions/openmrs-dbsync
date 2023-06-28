@@ -155,7 +155,7 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
    **DO NOT** set the `expire_logs_days` because you never want your logs to expire just in case the sync application is
    run for a while due to unforeseen circumstances.
 
-    For MySQL 8 Support, more info are available on [openmrs-eip](https://github.com/openmrs/openmrs-eip#mysql-8-support)  
+    For MySQL 8 Support, more info is available on the [openmrs-eip](https://github.com/openmrs/openmrs-eip#mysql-8-support) repository.
 
 2. #### Debezium user account
 
