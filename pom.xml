@@ -21,15 +21,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <javaCompilerVersion>1.8</javaCompilerVersion>
-        <eipVersion>3.2.0-SNAPSHOT</eipVersion>
-        <sprintBootVersion>2.3.0.RELEASE</sprintBootVersion>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <eipVersion>4.0.0</eipVersion>
+        <sprintBootVersion>3.1.4</sprintBootVersion>
         <camelVersion>3.3.0</camelVersion>
         <jsonassert.version>1.5.0</jsonassert.version>
         <bouncy-gpg.version>2.0.1</bouncy-gpg.version>
-        <lombok.version>1.18.8</lombok.version>
-        <hibernateVersion>5.4.21.Final</hibernateVersion>
-        <hibernateValidatorVersion>6.1.0.Final</hibernateValidatorVersion>
+        <lombok.version>1.18.30</lombok.version>
+        <hibernateVersion>6.3.1.Final</hibernateVersion>
+        <hibernateValidatorVersion>6.1.5.Final</hibernateValidatorVersion>
         <mockitoVersion>3.3.3</mockitoVersion>
         <testContainersVersion>1.15.2</testContainersVersion>
         <jsonVersion>20190722</jsonVersion>
@@ -63,6 +64,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.json</groupId>
@@ -140,6 +142,13 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
@@ -151,11 +160,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <source>${javaCompilerVersion}</source>
-                    <target>${javaCompilerVersion}</target>
-                </configuration>
+                <version>3.11.0</version>
+                <!--<configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
