@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.config;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.openmrs.eip.Constants;

@@ -1,10 +1,15 @@
 package org.openmrs.eip.dbsync.entity.light;
 
+import javax.validation.constraints.NotNull;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -12,13 +17,13 @@ import javax.validation.constraints.NotNull;
 @Table(name = "conditions")
 @AttributeOverride(name = "id", column = @Column(name = "condition_id"))
 public class ConditionLight extends VoidableLightEntity {
-
-    @NotNull
-    @Column(name = "clinical_status")
-    private String clinicalStatus;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "patient_id")
-    private PatientLight patient;
+	
+	@NotNull
+	@Column(name = "clinical_status")
+	private String clinicalStatus;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "patient_id")
+	private PatientLight patient;
 }

@@ -2,7 +2,7 @@ package org.openmrs.eip.dbsync.entity;
 
 import org.openmrs.eip.dbsync.entity.light.VoidableLightEntity;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class MockedLightEntity extends VoidableLightEntity {

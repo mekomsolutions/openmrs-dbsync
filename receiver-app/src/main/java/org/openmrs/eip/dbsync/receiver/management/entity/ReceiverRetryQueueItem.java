@@ -1,8 +1,8 @@
 package org.openmrs.eip.dbsync.receiver.management.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.openmrs.eip.app.management.entity.BaseRetryQueueItem;

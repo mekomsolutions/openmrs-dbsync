@@ -1,11 +1,17 @@
 package org.openmrs.eip.dbsync.entity.light;
 
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.NotNull;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -13,18 +19,18 @@ import java.time.LocalDateTime;
 @Table(name = "obs")
 @AttributeOverride(name = "id", column = @Column(name = "obs_id"))
 public class ObservationLight extends VoidableLightEntity {
-
-    @NotNull
-    @Column(name = "obs_datetime")
-    private LocalDateTime obsDatetime;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "concept_id")
-    private ConceptLight concept;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "person_id")
-    private PersonLight person;
+	
+	@NotNull
+	@Column(name = "obs_datetime")
+	private LocalDateTime obsDatetime;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "concept_id")
+	private ConceptLight concept;
+	
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "person_id")
+	private PersonLight person;
 }
