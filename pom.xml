@@ -155,7 +155,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.2.3.RELEASE</version>
+                <version>${sprintBootVersion}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
