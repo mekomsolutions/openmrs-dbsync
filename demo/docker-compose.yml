@@ -2,26 +2,28 @@ version: "3.3"
 
 services:
   mysql-central-openmrs:
-    image: mysql:5.7.31
+    image: mysql:8.0.42
     container_name: mysql-central-openmrs
     env_file:
       - db-openmrs.env
     ports:
       - "3307:3306"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./central-openmrs-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
       - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
       - ./openmrs_central_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
 
   mysql-central-dbsync:
-    image: mysql:5.7.31
+    image: mysql:8.0.42
     container_name: mysql-central-dbsync
     env_file:
       - db-dbsync.env
     ports:
       - "3407:3306"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./central-dbsync-my.cnf:/etc/mysql/my.cnf
 
   mysql-remote-openmrs:
@@ -32,11 +34,12 @@ services:
     ports:
       - "3308:3306"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./remote-openmrs-my.cnf:/etc/mysql/my.cnf
       - ./openmrs.sql:/docker-entrypoint-initdb.d/openmrs.sql
       - ./openmrs_common_config.sql:/docker-entrypoint-initdb.d/openmrs1.sql
       - ./openmrs_remote_config.sql:/docker-entrypoint-initdb.d/openmrs2.sql
-      - ./patients.sql:/docker-entrypoint-initdb.d/openmrs3.sql
+      #- ./patients.sql:/docker-entrypoint-initdb.d/openmrs3.sql
 
   mysql-remote-dbsync:
     image: mysql:5.7.31
@@ -46,6 +49,7 @@ services:
     ports:
       - "3408:3306"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./remote-dbsync-my.cnf:/etc/mysql/my.cnf
 
   artemis:
@@ -55,17 +59,18 @@ services:
       - "61616:61616"
       - "8161:8161"
     volumes:
+      - /etc/localtime:/etc/localtime
       - ./artemis-roles.properties:/var/lib/artemis/etc/artemis-roles.properties
       - ./artemis-users.properties:/var/lib/artemis/etc/artemis-users.properties
       - ./broker.xml:/var/lib/artemis/etc/broker.xml
 
-  keycloak:
-    image: jboss/keycloak
-    container_name: keycloak
-    ports:
-      - "8083:8080"
-    env_file:
-      - keycloak.env
+  #  keycloak:
+  #    image: jboss/keycloak
+  #    container_name: keycloak
+  #    ports:
+  #      - "8083:8080"
+  #    env_file:
+  #      - keycloak.env
   #  volumes:
   #    - ./keycloak-db:/opt/jboss/keycloak/standalone/data
 
@@ -85,9 +90,10 @@ services:
     depends_on:
       - mysql-central-openmrs
       - artemis
-      - keycloak
+    #  - keycloak
     volumes:
-      - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
+      - /etc/localtime:/etc/localtime
+      - ./openmrs_2.5.5.war:/usr/local/tomcat/webapps/openmrs.war
       - ./central-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
       - ./central-oauth2.properties:/root/.OpenMRS/oauth2.properties
       - ./modules:/root/.OpenMRS/modules
@@ -100,14 +106,15 @@ services:
   openmrs-remote:
     image: tomcat:7.0.109-jdk8-openjdk-slim
     container_name: openmrs-remote
-    environment:
-      TZ: "Africa/Kampala"
+    #environment:
+    #  TZ: "Africa/Kampala"
     depends_on:
       - mysql-remote-openmrs
       - artemis
-      - keycloak
+    #  - keycloak
     volumes:
-      - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war
+      - /etc/localtime:/etc/localtime
+      - ./openmrs_2.5.5.war:/usr/local/tomcat/webapps/openmrs.war
       - ./remote-runtime.properties:/root/.OpenMRS/openmrs-runtime.properties
       - ./remote-oauth2.properties:/root/.OpenMRS/oauth2.properties
       - ./modules:/root/.OpenMRS/modules
