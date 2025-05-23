@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 
 @EqualsAndHashCode(callSuper = true)

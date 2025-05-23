@@ -6,7 +6,7 @@ import org.openmrs.eip.dbsync.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data

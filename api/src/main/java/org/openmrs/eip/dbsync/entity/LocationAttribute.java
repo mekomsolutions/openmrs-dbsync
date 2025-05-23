@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.openmrs.eip.dbsync.entity.light.LocationAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.LocationLight;

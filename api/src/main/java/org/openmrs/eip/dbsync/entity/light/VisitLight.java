@@ -2,7 +2,7 @@ package org.openmrs.eip.dbsync.entity.light;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;

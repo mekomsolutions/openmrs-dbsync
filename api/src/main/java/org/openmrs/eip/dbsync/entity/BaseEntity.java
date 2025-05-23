@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
