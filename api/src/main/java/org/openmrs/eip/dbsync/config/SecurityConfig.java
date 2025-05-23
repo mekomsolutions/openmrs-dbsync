@@ -2,7 +2,7 @@ package org.openmrs.eip.dbsync.config;
 
 import java.security.Security;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;

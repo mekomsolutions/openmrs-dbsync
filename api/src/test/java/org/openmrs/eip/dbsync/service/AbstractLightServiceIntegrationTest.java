@@ -1,7 +1,5 @@
 package org.openmrs.eip.dbsync.service;
 
-import javax.transaction.Transactional;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
+
+import jakarta.transaction.Transactional;
 
 @Sql(scripts = "classpath:test_data.sql")
 public class AbstractLightServiceIntegrationTest extends BaseDbDrivenTest {
