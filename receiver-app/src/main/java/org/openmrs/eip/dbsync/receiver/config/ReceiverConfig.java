@@ -7,10 +7,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import javax.jms.ConnectionFactory;
-
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.openmrs.eip.dbsync.receiver.BaseQueueTask;
 import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
@@ -21,6 +19,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jms.connection.CachingConnectionFactory;
+
+import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @PropertySource("classpath:receiver-application.properties")
@@ -33,14 +33,14 @@ public class ReceiverConfig {
 	@Bean("receiverErrorHandler")
 	public DeadLetterChannelBuilder getReceiverErrorHandler() {
 		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-error-handler");
-		builder.setUseOriginalMessage(true);
+		builder.useOriginalMessage();
 		return builder;
 	}
 	
 	@Bean("receiverShutdownErrorHandler")
 	public DeadLetterChannelBuilder receiverShutdownErrorHandler() {
 		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-shutdown");
-		builder.setUseOriginalMessage(true);
+		builder.useOriginalMessage();
 		return builder;
 	}
 	

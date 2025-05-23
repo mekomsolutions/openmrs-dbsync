@@ -12,12 +12,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.EndpointInject;
@@ -49,6 +43,12 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
+
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 @Import(TestReceiverConfig.class)
 @SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql"),

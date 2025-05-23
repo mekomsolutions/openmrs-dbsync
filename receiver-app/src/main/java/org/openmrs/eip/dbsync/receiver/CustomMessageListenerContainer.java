@@ -1,13 +1,13 @@
 package org.openmrs.eip.dbsync.receiver;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-
 import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 /**
  * Custom {@link org.springframework.jms.listener.MessageListenerContainer} that only acknowledges
