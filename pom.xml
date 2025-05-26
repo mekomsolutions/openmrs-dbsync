@@ -23,13 +23,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <eipVersion>4.0.0</eipVersion>
+        <eipVersion>4.1.0</eipVersion>
         <sprintBootVersion>3.1.4</sprintBootVersion>
         <camelVersion>4.1.0</camelVersion>
         <jsonassert.version>1.5.0</jsonassert.version>
         <bouncy-gpg.version>2.0.1</bouncy-gpg.version>
         <lombok.version>1.18.30</lombok.version>
-        <hibernateVersion>6.3.1.Final</hibernateVersion>
         <hibernateValidatorVersion>6.1.5.Final</hibernateValidatorVersion>
         <mockitoVersion>3.3.3</mockitoVersion>
         <testContainersVersion>1.15.2</testContainersVersion>
@@ -44,16 +43,6 @@
                 <groupId>org.openmrs.eip</groupId>
                 <artifactId>commons-web</artifactId>
                 <version>${eipVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${sprintBootVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernateVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
