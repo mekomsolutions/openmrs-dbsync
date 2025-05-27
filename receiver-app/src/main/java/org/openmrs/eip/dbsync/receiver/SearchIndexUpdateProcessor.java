@@ -132,7 +132,7 @@ public class SearchIndexUpdateProcessor extends BaseToCamelEndpointSyncedMessage
 	
 	private List<String> executeQuery(String query) {
 		Exchange exchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).build();
-		CamelUtils.send("sql:" + query + "?dataSource=" + OPENMRS_DATASOURCE_NAME, exchange);
+		CamelUtils.send("sql:" + query + "?dataSource=#" + OPENMRS_DATASOURCE_NAME, exchange);
 		List<Map<String, String>> rows = exchange.getMessage().getBody(List.class);
 		List<String> uuids = new ArrayList(rows.size());
 		rows.forEach(r -> uuids.add(r.get("uuid")));
