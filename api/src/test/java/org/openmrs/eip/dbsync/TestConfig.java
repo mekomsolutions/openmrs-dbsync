@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import javax.sql.DataSource;
 
 import org.apache.camel.ProducerTemplate;

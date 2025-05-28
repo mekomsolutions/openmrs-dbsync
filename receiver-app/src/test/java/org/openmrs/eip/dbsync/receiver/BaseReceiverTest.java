@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
@@ -100,18 +101,19 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	@Before
 	public void beforeBaseReceiverTest() throws Exception {
 		mockOpenmrsRestEndpoint.reset();
-		camelContext.adviceWith(this.camelContext.getRouteDefinition("receiver-db-sync"), new AdviceWithRouteBuilder() {
-			
-			@Override
-			public void configure() {
-				weaveAddLast().process(exchange -> messagesLatch.countDown());
-				interceptSendToEndpoint("direct:receiver-update-search-index").skipSendToOriginalEndpoint()
-				        .to(mockOpenmrsRestEndpoint);
-				interceptSendToEndpoint("direct:receiver-clear-db-cache").skipSendToOriginalEndpoint()
-				        .to(mockOpenmrsRestEndpoint);
-			}
-			
-		});
+		AdviceWith.adviceWith(camelContext.getRouteDefinition("receiver-db-sync"), camelContext,
+		    new AdviceWithRouteBuilder() {
+			    
+			    @Override
+			    public void configure() {
+				    weaveAddLast().process(exchange -> messagesLatch.countDown());
+				    interceptSendToEndpoint("direct:receiver-update-search-index").skipSendToOriginalEndpoint()
+				            .to(mockOpenmrsRestEndpoint);
+				    interceptSendToEndpoint("direct:receiver-clear-db-cache").skipSendToOriginalEndpoint()
+				            .to(mockOpenmrsRestEndpoint);
+			    }
+			    
+		    });
 		
 		if (activeMqConnFactory == null) {
 			activeMqConnFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
