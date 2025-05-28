@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +22,7 @@ public class OpenmrsComponentTest {
 
     private OpenmrsComponent component;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

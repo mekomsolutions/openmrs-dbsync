@@ -3,7 +3,7 @@ package org.openmrs.eip.dbsync.sender;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PersonModel;

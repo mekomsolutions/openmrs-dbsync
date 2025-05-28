@@ -10,8 +10,8 @@ import static org.openmrs.eip.dbsync.SyncConstants.PROP_SYNC_EXCLUDE;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.openmrs.eip.dbsync.SyncConstants;
@@ -36,7 +36,7 @@ import org.springframework.core.env.Environment;
 @PrepareForTest(SyncContext.class)
 public class UtilsTest {
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		Whitebox.setInternalState(Utils.class, "typeAndIdsToExcludeMap", (Object) null);
 	}

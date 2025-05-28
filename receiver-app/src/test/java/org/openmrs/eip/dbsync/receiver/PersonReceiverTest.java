@@ -11,7 +11,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.model.PersonModel;
 

@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -57,7 +57,7 @@ public class HashUtilsTest {
 	@Mock
 	private Logger mockLogger;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		Whitebox.setInternalState(HashUtils.class, Logger.class, mockLogger);
 	}

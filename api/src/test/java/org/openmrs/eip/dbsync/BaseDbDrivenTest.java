@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.spring.CamelSpringRunner;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public abstract class BaseDbDrivenTest {
 	@Qualifier("openmrsDataSource")
 	protected DataSource openmrsDataSource;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void startContainers() {
 		mysqlContainer.withEnv("MYSQL_ROOT_PASSWORD", "test");
 		mysqlContainer.withDatabaseName("openmrs");

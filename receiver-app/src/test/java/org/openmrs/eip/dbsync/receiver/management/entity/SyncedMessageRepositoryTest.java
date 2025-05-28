@@ -6,7 +6,7 @@ import static org.openmrs.eip.Constants.MGT_TX_MGR_NAME;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.receiver.BaseReceiverDbDrivenTest;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;

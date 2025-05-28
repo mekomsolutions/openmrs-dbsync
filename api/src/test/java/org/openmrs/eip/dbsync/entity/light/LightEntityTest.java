@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity.light;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.MockedLightEntity;
 
 import java.time.LocalDateTime;

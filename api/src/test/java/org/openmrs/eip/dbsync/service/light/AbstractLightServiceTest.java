@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.entity.MockedLightEntity;
@@ -26,7 +26,7 @@ public class AbstractLightServiceTest {
 	
 	private static final String UUID = "uuid";
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		

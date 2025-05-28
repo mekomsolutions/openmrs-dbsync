@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.EncounterProvider;
 import org.openmrs.eip.dbsync.entity.light.EncounterLight;
 import org.openmrs.eip.dbsync.entity.light.EncounterRoleLight;

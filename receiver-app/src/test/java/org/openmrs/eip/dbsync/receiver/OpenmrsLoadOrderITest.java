@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.entity.light.CareSettingLight;
 import org.openmrs.eip.dbsync.entity.light.ConceptLight;

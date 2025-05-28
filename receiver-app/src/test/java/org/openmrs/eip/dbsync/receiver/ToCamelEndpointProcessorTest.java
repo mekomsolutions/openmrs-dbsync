@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.camel.ProducerTemplate;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -19,7 +19,7 @@ public class ToCamelEndpointProcessorTest {
 	@Mock
 	private ProducerTemplate mockTemplate;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 	}

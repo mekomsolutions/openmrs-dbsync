@@ -13,18 +13,14 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
-import jakarta.jms.QueueBrowser;
-import jakarta.jms.Session;
-import jakarta.jms.TextMessage;
-
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
@@ -44,6 +40,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 
+import jakarta.jms.QueueBrowser;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
+
 @Import(TestSenderConfig.class)
 @SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql") })
 public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> extends BaseWatcherRouteTest implements SyncTest<E, M> {
@@ -59,7 +59,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	@Autowired
 	protected AbstractEntityService<E, M> service;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void startArtemis() {
 		
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
@@ -74,7 +74,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void stopArtemis() throws Exception {
 		//TODO First stop the sender client
 		//activeMQConn.stop();
@@ -82,7 +82,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 		//artemisContainer.stop();
 	}
 	
-	@Before
+	@BeforeEach
 	public void beforeBaseSenderTest() throws Exception {
 		if (activeMqConnFactory == null) {
 			activeMqConnFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
@@ -95,7 +95,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 		activeMQConn.destroyDestination(new ActiveMQQueue(QUEUE_NAME));
 	}
 	
-	@After
+	@AfterEach
 	public void checkForErrors() {
 		List<SenderRetryQueueItem> errors = producerTemplate
 		        .requestBody("jpa:SenderRetryQueueItem?query=SELECT r FROM SenderRetryQueueItem r", null, List.class);

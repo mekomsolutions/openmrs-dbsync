@@ -9,8 +9,8 @@ import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.entity.Person;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -34,7 +34,7 @@ public class PersonServiceTest {
 
     private PersonService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

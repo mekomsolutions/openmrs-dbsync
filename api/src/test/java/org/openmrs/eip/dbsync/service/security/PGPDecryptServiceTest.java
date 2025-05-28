@@ -5,8 +5,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.config.SenderEncryptionProperties;
 import org.openmrs.eip.dbsync.config.ReceiverEncryptionProperties;
 import org.openmrs.eip.dbsync.exception.SyncException;
@@ -25,7 +25,7 @@ public class PGPDecryptServiceTest {
 
     private PGPDecryptService pgpDecryptService;
 
-    @Before
+    @BeforeEach
     public void init() {
         Security.addProvider(new BouncyCastleProvider());
 

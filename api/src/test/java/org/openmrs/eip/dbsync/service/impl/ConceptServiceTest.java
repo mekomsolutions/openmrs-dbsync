@@ -1,8 +1,8 @@
 package org.openmrs.eip.dbsync.service.impl;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.model.ConceptModel;
@@ -27,7 +27,7 @@ public class ConceptServiceTest {
 
     private ConceptService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

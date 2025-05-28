@@ -5,8 +5,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.entity.Patient;
@@ -26,7 +26,7 @@ public class EntityServiceFacadeTest {
 	
 	private EntityServiceFacade facade;
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		

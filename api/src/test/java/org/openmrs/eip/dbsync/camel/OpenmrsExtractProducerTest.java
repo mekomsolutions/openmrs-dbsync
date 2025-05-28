@@ -12,9 +12,9 @@ import org.apache.camel.support.DefaultExchange;
 import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -52,7 +52,7 @@ public class OpenmrsExtractProducerTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		

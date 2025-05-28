@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.service;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
 import org.openmrs.eip.dbsync.entity.light.PersonLight;

@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -59,7 +59,7 @@ public class HashBatchUpdaterTest {
 	@Mock
 	private EntityToModelMapper mockMapper;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		PowerMockito.mockStatic(SyncContext.class);
 		PowerMockito.mockStatic(SyncUtils.class);

@@ -5,7 +5,7 @@ import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_ORDER_GRP_ATTR_U
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.OrderGroupAttribute;
 import org.openmrs.eip.dbsync.model.OrderGroupAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;

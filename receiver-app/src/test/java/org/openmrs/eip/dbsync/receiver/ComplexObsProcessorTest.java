@@ -20,9 +20,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -65,7 +66,7 @@ public class ComplexObsProcessorTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		PowerMockito.mockStatic(SyncContext.class);
@@ -139,7 +140,7 @@ public class ComplexObsProcessorTest {
 		assertNotNull(storedHash.getDateChanged());
 	}
 	
-	@Test(expected = ConflictsFoundException.class)
+	@Test
 	public void save_ShouldFailIfTheExistingFileHasADifferentHashFromTheStoredOne() throws Exception {
 		byte[] bytes = "test".getBytes(StandardCharsets.UTF_8);
 		final String filename = "test.txt";
@@ -154,7 +155,9 @@ public class ComplexObsProcessorTest {
 		when(HashUtils.computeHashForFile(mockFile)).thenReturn("new-hash");
 		when(HashUtils.getStoredHash(filename, ComplexObsHash.class)).thenReturn(storedHash);
 		
-		processor.process(exchange);
+		Assertions.assertThrows(ConflictsFoundException.class, () -> {
+			processor.process(exchange);
+		});
 	}
 	
 	@Test

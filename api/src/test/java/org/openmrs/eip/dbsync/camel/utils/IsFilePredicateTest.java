@@ -3,8 +3,8 @@ package org.openmrs.eip.dbsync.camel.utils;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +13,7 @@ public class IsFilePredicateTest {
 
     private IsFilePredicate isFilePredicate;
 
-    @Before
+    @BeforeEach
     public void init() {
         isFilePredicate = new IsFilePredicate();
     }

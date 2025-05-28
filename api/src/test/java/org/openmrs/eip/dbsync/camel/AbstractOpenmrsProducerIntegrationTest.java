@@ -3,8 +3,8 @@ package org.openmrs.eip.dbsync.camel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.entity.light.PersonLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -17,7 +17,7 @@ public class AbstractOpenmrsProducerIntegrationTest extends BaseDbDrivenTest {
 	
 	private OpenmrsLoadProducer producer;
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		producer = new OpenmrsLoadProducer(null, applicationContext, null);
 	}

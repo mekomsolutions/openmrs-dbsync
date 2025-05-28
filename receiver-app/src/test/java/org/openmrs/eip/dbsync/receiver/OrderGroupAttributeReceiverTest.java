@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_ORDER_GRP_ATTR_UUID;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.OrderGroupAttribute;
 import org.openmrs.eip.dbsync.entity.light.OrderGroupAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.OrderGroupLight;

@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.mapper.operations;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
@@ -21,7 +21,7 @@ public class ForEachLinkedEntityFunctionTest {
 
     private ForEachLinkedEntityFunction<MockedEntity, MockedModel> function = new ForEachLinkedEntityFunction<>();
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
     }

@@ -18,9 +18,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -77,7 +78,7 @@ public class OpenmrsLoadProducerTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		PowerMockito.mockStatic(SyncContext.class);
@@ -286,7 +287,7 @@ public class OpenmrsLoadProducerTest {
 		assertNotNull(storedHash.getDateChanged());
 	}
 	
-	@Test(expected = ConflictsFoundException.class)
+	@Test
 	public void save_ShouldFailIfTheExistingEntityFromTheDbHasADifferentHashFromTheStoredOne() {
 		// Given
 		PersonModel model = new PersonModel();
@@ -303,8 +304,10 @@ public class OpenmrsLoadProducerTest {
 		when(HashUtils.computeHash(dbModel)).thenReturn("new-hash");
 		when(HashUtils.getStoredHash(model.getUuid(), PersonHash.class)).thenReturn(storedHash);
 		
-		// When
-		producer.process(exchange);
+		Assertions.assertThrows(ConflictsFoundException.class, () -> {
+			// When
+			producer.process(exchange);
+		});
 	}
 	
 	@Test

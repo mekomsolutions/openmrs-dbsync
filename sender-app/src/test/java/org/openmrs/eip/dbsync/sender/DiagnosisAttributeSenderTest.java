@@ -5,7 +5,7 @@ import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_DIAGNOSIS_ATTR_U
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.DiagnosisAttribute;
 import org.openmrs.eip.dbsync.model.DiagnosisAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;

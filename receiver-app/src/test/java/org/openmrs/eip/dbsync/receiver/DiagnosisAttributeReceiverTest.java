@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_DIAGNOSIS_ATTR_UUID;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.DiagnosisAttribute;
 import org.openmrs.eip.dbsync.entity.light.DiagnosisAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.DiagnosisLight;

@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.receiver;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.management.hash.repository.BaseHashRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.SyncUtils;

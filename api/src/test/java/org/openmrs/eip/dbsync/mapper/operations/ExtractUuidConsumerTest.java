@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.mapper.operations;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
 import org.openmrs.eip.dbsync.entity.MockedLightEntity;

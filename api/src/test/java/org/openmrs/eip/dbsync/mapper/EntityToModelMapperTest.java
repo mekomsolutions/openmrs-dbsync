@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.mapper;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.mapper.operations.Context;
@@ -35,7 +35,7 @@ public class EntityToModelMapperTest {
 
     private EntityToModelMapper<MockedEntity, MockedModel> mapper;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

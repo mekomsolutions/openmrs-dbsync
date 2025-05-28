@@ -3,8 +3,8 @@ package org.openmrs.eip.dbsync.camel.utils;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,7 @@ public class RemoveFileTagsExpressionTest {
 
     private RemoveFileTagsExpression removeFileTagsExpression;
 
-    @Before
+    @BeforeEach
     public void init() {
         removeFileTagsExpression = new RemoveFileTagsExpression();
     }

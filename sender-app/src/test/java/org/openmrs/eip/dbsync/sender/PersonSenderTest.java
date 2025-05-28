@@ -7,7 +7,7 @@ import static org.openmrs.eip.dbsync.SyncTestConstants.SOURCE_SITE_ID;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.SyncModel;

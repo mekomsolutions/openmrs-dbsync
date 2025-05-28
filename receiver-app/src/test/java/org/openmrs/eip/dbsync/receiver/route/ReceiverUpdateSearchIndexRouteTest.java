@@ -9,11 +9,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessDefinition;
-import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
@@ -39,7 +38,7 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 	@EndpointInject("mock:processor")
 	private MockEndpoint mockProcessor;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		mockProcessor.reset();
 		mockHttpEndpoint.reset();
@@ -55,7 +54,7 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 		
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		mockProcessor.assertIsSatisfied();
 		mockHttpEndpoint.assertIsSatisfied();

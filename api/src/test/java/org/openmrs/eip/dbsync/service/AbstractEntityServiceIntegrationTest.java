@@ -3,8 +3,8 @@ package org.openmrs.eip.dbsync.service;
 import java.time.LocalDateTime;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.BaseDbDrivenTest;
 import org.openmrs.eip.dbsync.entity.light.PersonLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -28,7 +28,7 @@ public class AbstractEntityServiceIntegrationTest extends BaseDbDrivenTest {
 	
 	private AbstractEntityService userService;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		personService = applicationContext.getBean(PersonService.class);
 		patientService = applicationContext.getBean(PatientService.class);

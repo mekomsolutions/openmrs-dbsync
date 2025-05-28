@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.entity.light.MockedAttributeTypeLight;
@@ -21,7 +21,7 @@ public class AbstractAttributeTypeLightServiceTest {
 
     private MockedAttributeTypeLightService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

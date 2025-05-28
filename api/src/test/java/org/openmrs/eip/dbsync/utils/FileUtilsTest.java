@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.exception.SyncException;
 
 import java.io.IOException;

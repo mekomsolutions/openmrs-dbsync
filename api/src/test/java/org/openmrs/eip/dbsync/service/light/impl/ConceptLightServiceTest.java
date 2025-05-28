@@ -4,8 +4,8 @@ import org.openmrs.eip.dbsync.entity.light.ConceptClassLight;
 import org.openmrs.eip.dbsync.entity.light.ConceptDatatypeLight;
 import org.openmrs.eip.dbsync.entity.light.ConceptLight;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -28,7 +28,7 @@ public class ConceptLightServiceTest {
 
     private ConceptLightService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

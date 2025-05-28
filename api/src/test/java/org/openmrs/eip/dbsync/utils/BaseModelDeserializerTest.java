@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
@@ -19,7 +19,7 @@ public class BaseModelDeserializerTest {
     private ObjectMapper mapper;
     private BaseModelDeserializer deserializer;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mapper = new ObjectMapper();
         deserializer = new BaseModelDeserializer();

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.PersonAttribute;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
 import org.openmrs.eip.dbsync.entity.light.PersonAttributeTypeLight;

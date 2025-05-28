@@ -2,8 +2,8 @@ package org.openmrs.eip.dbsync.service.light.impl;
 
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
@@ -20,7 +20,7 @@ public class UserLightServiceTest {
 
     private UserLightService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
 

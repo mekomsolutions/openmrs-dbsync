@@ -6,8 +6,8 @@ import static org.openmrs.eip.dbsync.receiver.MessageConsumer.GET_JPA_URI;
 import java.util.List;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -33,7 +33,7 @@ public class MessageConsumerTest {
 	@Mock
 	private Logger mockLogger;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		PowerMockito.mockStatic(Utils.class);

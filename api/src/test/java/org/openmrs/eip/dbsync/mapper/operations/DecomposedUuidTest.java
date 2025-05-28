@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.mapper.operations;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.exception.SyncException;
 

@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.camel.OpenmrsLoadProducer;
@@ -49,13 +49,13 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseReceiverDbDrivenTest
 	@Autowired
 	private AbstractEntityService<Provider, ProviderModel> providerService;
 	
-	@Before
+	@BeforeEach
 	public void init() {
 		exchange = new DefaultExchange(camelContext);
 		producer = new OpenmrsLoadProducer(null, applicationContext, null);
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void afterClass() {
 		SyncContext.setUser(null);
 	}

@@ -18,11 +18,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.eip.BaseDbBackedCamelTest;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
@@ -75,7 +75,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	@EndpointInject("mock:openmrs-rest")
 	private MockEndpoint mockOpenmrsRestEndpoint;
 	
-	@BeforeClass
+	@BeforeAll
 	public static void startArtemis() throws Exception {
 		Whitebox.setInternalState(ReceiverContext.class, "isStopping", false);
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
@@ -90,7 +90,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
 	}
 	
-	@AfterClass
+	@AfterAll
 	public static void stopArtemis() throws Exception {
 		//TODO First stop the receiver route that gets messages from ActiveMQ
 		//activeMQConn.stop();
@@ -98,7 +98,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		//artemisContainer.stop();
 	}
 	
-	@Before
+	@BeforeEach
 	public void beforeBaseReceiverTest() throws Exception {
 		mockOpenmrsRestEndpoint.reset();
 		AdviceWith.adviceWith(camelContext.getRouteDefinition("receiver-db-sync"), camelContext,
@@ -145,7 +145,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		}
 	}
 	
-	@After
+	@AfterEach
 	public void checkForErrors() throws Exception {
 		//ensure the item didn't end up in the error queue
 		List<ReceiverRetryQueueItem> errors = producerTemplate

@@ -14,8 +14,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PatientModel;
@@ -43,7 +43,7 @@ public class ReceiverDbSyncRouteTest extends BaseReceiverRouteTest {
 	@EndpointInject("mock:load")
 	protected MockEndpoint mockLoadEndpoint;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		mockLoadEndpoint.reset();
 		

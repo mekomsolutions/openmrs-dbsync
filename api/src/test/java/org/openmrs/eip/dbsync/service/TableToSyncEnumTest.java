@@ -2,7 +2,8 @@ package org.openmrs.eip.dbsync.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.MockedModel;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
 import org.openmrs.eip.dbsync.entity.Person;
@@ -36,15 +37,17 @@ public class TableToSyncEnumTest {
 		assertEquals(TableToSyncEnum.PERSON, result);
 	}
 	
-	@Test(expected = SyncException.class)
+	@Test
 	public void getTableToSyncEnum_with_model_class_should_throw_exception() {
 		// Given
 		Class<MockedModel> personModelClass = MockedModel.class;
 		
-		// When
-		TableToSyncEnum result = TableToSyncEnum.getTableToSyncEnum(personModelClass);
-		
-		// Then
+		Assertions.assertThrows(SyncException.class, () -> {
+			// When
+			TableToSyncEnum result = TableToSyncEnum.getTableToSyncEnum(personModelClass);
+			
+			// Then
+		});
 	}
 	
 	@Test
@@ -59,15 +62,17 @@ public class TableToSyncEnumTest {
 		assertEquals(PersonModel.class, result);
 	}
 	
-	@Test(expected = SyncException.class)
+	@Test
 	public void getModelClass_should_throw_exception() {
 		// Given
 		MockedEntity mockedEntity = new MockedEntity(1L, "uuid");
 		
-		// When
-		TableToSyncEnum.getModelClass(mockedEntity);
-		
-		// Then
+		Assertions.assertThrows(SyncException.class, () -> {
+			// When
+			TableToSyncEnum.getModelClass(mockedEntity);
+			
+			// Then
+		});
 	}
 	
 	@Test
@@ -82,13 +87,14 @@ public class TableToSyncEnumTest {
 		assertEquals(PersonHash.class, result);
 	}
 	
-	@Test(expected = SyncException.class)
+	@Test
 	public void getHashClass_shouldFailIfNoHashClassIsFound() {
 		// Given
 		MockedEntity mockedEntity = new MockedEntity(1L, "uuid");
-		
-		// When
-		TableToSyncEnum.getModelClass(mockedEntity);
+		Assertions.assertThrows(SyncException.class, () -> {
+			// When
+			TableToSyncEnum.getModelClass(mockedEntity);
+		});
 	}
 	
 	@Test

@@ -5,7 +5,7 @@ import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_REF_ORDER_UUID;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.entity.ReferralOrder;
 import org.openmrs.eip.dbsync.model.OrderModel;
