@@ -48,7 +48,7 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 			@Override
 			public void configure() {
 				weaveByType(ProcessDefinition.class).replace().to(mockProcessor);
-				weaveByToUri("{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate").replace().to(mockHttpEndpoint);
+				weaveById("update-search-index").replace().to(mockHttpEndpoint);
 			}
 		});
 		

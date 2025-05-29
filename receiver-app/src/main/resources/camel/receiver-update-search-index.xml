@@ -47,7 +47,7 @@
             <constant>POST</constant>
         </setHeader>
 
-        <to uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
+        <to id="update-search-index" uri="{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate" />
 
         <log loggingLevel="DEBUG" message="End: route with id ${routeId}" />
     </route>

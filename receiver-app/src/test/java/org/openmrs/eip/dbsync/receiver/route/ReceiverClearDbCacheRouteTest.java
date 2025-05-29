@@ -48,7 +48,7 @@ public class ReceiverClearDbCacheRouteTest extends BaseReceiverRouteTest {
 			@Override
 			public void configure() {
 				weaveByType(ProcessDefinition.class).replace().to(mockProcessor);
-				weaveByToUri("{{openmrs.baseUrl}}/ws/rest/v1/cleardbcache").replace().to(mockHttpEndpoint);
+				weaveById("clear-db-cache").replace().to(mockHttpEndpoint);
 			}
 		});
 		
