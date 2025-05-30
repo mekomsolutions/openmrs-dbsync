@@ -10,10 +10,13 @@ import static org.openmrs.eip.dbsync.SyncConstants.PROP_SYNC_EXCLUDE;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -26,19 +29,25 @@ import org.openmrs.eip.dbsync.model.ReferralOrderModel;
 import org.openmrs.eip.dbsync.model.TestOrderModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.springframework.core.env.Environment;
 
-@RunWith(PowerMockRunner.class)
+@ExtendWith(MockitoExtension.class)
 @PrepareForTest(SyncContext.class)
 public class UtilsTest {
 	
+	private static MockedStatic<SyncContext> mockSyncContext;
+	
 	@BeforeEach
 	public void setup() {
+		mockSyncContext = Mockito.mockStatic(SyncContext.class);
 		Whitebox.setInternalState(Utils.class, "typeAndIdsToExcludeMap", (Object) null);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		mockSyncContext.close();
 	}
 	
 	public String getTestEntityPayLoad(String voidReason) {
@@ -147,7 +156,6 @@ public class UtilsTest {
 	@Test
 	public void skipSync_shouldReturnFalseForANonExcludedEntity() {
 		Environment mockEnv = Mockito.mock(Environment.class);
-		PowerMockito.mockStatic(SyncContext.class);
 		when(SyncContext.getBean(Environment.class)).thenReturn(mockEnv);
 		when(mockEnv.getProperty(PROP_SYNC_EXCLUDE)).thenReturn(null);
 		assertFalse(Utils.skipSync(UserModel.class.getName(), "some-uuid"));
@@ -156,7 +164,6 @@ public class UtilsTest {
 	@Test
 	public void skipSync_shouldReturnTrueForAnExcludedEntity() {
 		Environment mockEnv = Mockito.mock(Environment.class);
-		PowerMockito.mockStatic(SyncContext.class);
 		when(SyncContext.getBean(Environment.class)).thenReturn(mockEnv);
 		final String id1 = "entity-uuid-1";
 		final String id2 = "entity-uuid-2";
@@ -172,7 +179,6 @@ public class UtilsTest {
 	@Test
 	public void skipSync_shouldReturnTrueForAnExcludedEntityIgnoringCase() {
 		Environment mockEnv = Mockito.mock(Environment.class);
-		PowerMockito.mockStatic(SyncContext.class);
 		when(SyncContext.getBean(Environment.class)).thenReturn(mockEnv);
 		final String id1 = "entity-uuid-1";
 		final String toExclude = "person:" + id1;

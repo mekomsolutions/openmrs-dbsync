@@ -6,24 +6,26 @@ import static org.openmrs.eip.dbsync.receiver.MessageConsumer.GET_JPA_URI;
 import java.util.List;
 
 import org.apache.camel.ProducerTemplate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.AppContext;
 import org.openmrs.eip.EIPException;
 import org.openmrs.eip.Utils;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ Utils.class, AppContext.class })
+@ExtendWith(MockitoExtension.class)
 public class MessageConsumerTest {
+	
+	private static MockedStatic<Utils> mockUtils;
+	
+	private static MockedStatic<AppContext> mockAppContext;
 	
 	private MessageConsumer consumer;
 	
@@ -35,15 +37,21 @@ public class MessageConsumerTest {
 	
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		PowerMockito.mockStatic(Utils.class);
-		PowerMockito.mockStatic(AppContext.class);
+		mockUtils = Mockito.mockStatic(Utils.class);
+		mockAppContext = Mockito.mockStatic(AppContext.class);
 		consumer = new MessageConsumer(mockProducerTemplate);
 		Whitebox.setInternalState(MessageConsumer.class, Logger.class, mockLogger);
 	}
 	
+	@AfterEach
+	public void tearDown() {
+		mockUtils.close();
+		mockAppContext.close();
+	}
+	
 	@Test
 	public void run_shouldFailIfTheConsumerEncountersAnException() {
+		Whitebox.setInternalState(ReceiverContext.class, "isStopping", false);
 		EIPException e = new EIPException("test");
 		Mockito.when(mockProducerTemplate.requestBody(GET_JPA_URI, null, List.class)).thenThrow(e);
 		
@@ -51,8 +59,7 @@ public class MessageConsumerTest {
 		
 		verify(mockLogger).error("Stopping message consumer thread because an error occurred", e);
 		verify(mockLogger).info("Shutting down the application because of an exception in the sync message consumer");
-		PowerMockito.verifyStatic(Utils.class);
-		Utils.shutdown();
+		mockUtils.verify(() -> Utils.shutdown());
 	}
 	
 }

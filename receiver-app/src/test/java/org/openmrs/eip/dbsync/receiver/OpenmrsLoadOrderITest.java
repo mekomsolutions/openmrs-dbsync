@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.entity.light.CareSettingLight;
@@ -18,7 +18,7 @@ import org.openmrs.eip.dbsync.model.OrderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-@Ignore
+@Disabled
 public class OpenmrsLoadOrderITest extends OpenmrsLoadEndpointITest<Order, OrderModel> {
 	
 	@Test

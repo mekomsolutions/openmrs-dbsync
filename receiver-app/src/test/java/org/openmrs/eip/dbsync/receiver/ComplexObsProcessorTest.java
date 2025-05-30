@@ -1,6 +1,5 @@
 package org.openmrs.eip.dbsync.receiver;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -20,32 +19,33 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.management.hash.entity.ComplexObsHash;
 import org.openmrs.eip.dbsync.utils.HashUtils;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.springframework.core.env.Environment;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ SyncContext.class, HashUtils.class })
+@ExtendWith(MockitoExtension.class)
 public class ComplexObsProcessorTest {
 	
 	private final static String COMPLEX_OBS_DIR = "/some/path";
+	
+	private static MockedStatic<SyncContext> mockSyncContext;
+	
+	private static MockedStatic<HashUtils> mockHashUtils;
 	
 	@Mock
 	private ProducerTemplate mockProducerTemplate;
@@ -63,20 +63,22 @@ public class ComplexObsProcessorTest {
 	
 	private Exchange exchange;
 	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
 	@BeforeEach
 	public void init() {
-		MockitoAnnotations.initMocks(this);
-		PowerMockito.mockStatic(SyncContext.class);
-		PowerMockito.mockStatic(HashUtils.class);
+		mockSyncContext = Mockito.mockStatic(SyncContext.class);
+		mockHashUtils = Mockito.mockStatic(HashUtils.class);
 		exchange = new DefaultExchange(new DefaultCamelContext());
 		processor = new ComplexObsProcessor();
 		when(SyncContext.getBean(ProducerTemplate.class)).thenReturn(mockProducerTemplate);
 		Whitebox.setInternalState(ComplexObsProcessor.class, Logger.class, mockLogger);
 		when(SyncContext.getBean(Environment.class)).thenReturn(mockEnv);
 		when(mockEnv.getProperty(SyncConstants.PROP_COMPLEX_OBS_DIR)).thenReturn(COMPLEX_OBS_DIR);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		mockSyncContext.close();
+		mockHashUtils.close();
 	}
 	
 	@Test
@@ -167,10 +169,8 @@ public class ComplexObsProcessorTest {
 		message.setHeader(Exchange.FILE_NAME_ONLY, filename);
 		exchange.setMessage(message);
 		when(HashUtils.getComplexObsFile(filename)).thenReturn(mockFile);
-		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(equalTo("Failed to find the existing hash for an existing complex obs file"));
-		
-		processor.process(exchange);
+		SyncException e = Assertions.assertThrows(SyncException.class, () -> processor.process(exchange));
+		Assertions.assertEquals("Failed to find the existing hash for an existing complex obs file", e.getMessage());
 	}
 	
 	@Test
