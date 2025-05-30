@@ -7,17 +7,22 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openmrs.eip.dbsync.utils.HashUtils.createOrUpdateHash;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.entity.Person;
@@ -32,18 +37,21 @@ import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.openmrs.eip.dbsync.utils.SyncUtils;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ SyncContext.class, HashUtils.class, SyncUtils.class })
+@ExtendWith(MockitoExtension.class)
 public class HashBatchUpdaterTest {
 	
 	private static final int BATCH_SIZE = 50;
+	
+	private static MockedStatic<SyncContext> mockSyncContext;
+	
+	private static MockedStatic<HashUtils> mockHashUtils;
+	
+	private static MockedStatic<SyncUtils> mockSyncUtils;
 	
 	private HashBatchUpdater updater;
 	
@@ -59,13 +67,24 @@ public class HashBatchUpdaterTest {
 	@Mock
 	private EntityToModelMapper mockMapper;
 	
+	@Mock
+	private ExecutorService mockExecutor;
+	
 	@BeforeEach
 	public void setup() {
-		PowerMockito.mockStatic(SyncContext.class);
-		PowerMockito.mockStatic(SyncUtils.class);
-		PowerMockito.mockStatic(HashUtils.class);
+		mockSyncContext = Mockito.mockStatic(SyncContext.class);
+		mockSyncUtils = Mockito.mockStatic(SyncUtils.class);
+		mockHashUtils = Mockito.mockStatic(HashUtils.class);
 		when(SyncContext.getBean(EntityToModelMapper.class)).thenReturn(mockMapper);
 		updater = new HashBatchUpdater(BATCH_SIZE, mockAppContext);
+		Whitebox.setInternalState(updater, ExecutorService.class, mockExecutor);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		mockSyncContext.close();
+		mockHashUtils.close();
+		mockSyncUtils.close();
 	}
 	
 	@Test
@@ -79,7 +98,7 @@ public class HashBatchUpdaterTest {
 		when(mockPersonPage.isLast()).thenReturn(true);
 		when(mockPersonRepo.findAll(any(Pageable.class))).thenReturn(mockPersonPage);
 		List<Person> persons = new ArrayList();
-		Map<Person, PersonModel> personModelMap = new HashMap();
+		Map<Person, PersonModel> personAndModelMap = new HashMap();
 		for (int i = 0; i < BATCH_SIZE; i++) {
 			final String uuid = "person-uuid-" + i;
 			Person person = new Person();
@@ -87,7 +106,7 @@ public class HashBatchUpdaterTest {
 			persons.add(person);
 			PersonModel model = new PersonModel();
 			model.setUuid(uuid);
-			personModelMap.put(person, model);
+			personAndModelMap.put(person, model);
 			when(mockMapper.apply(person)).thenReturn(model);
 		}
 		when(mockPersonPage.getContent()).thenReturn(persons);
@@ -96,7 +115,7 @@ public class HashBatchUpdaterTest {
 		when(mockVisitPage.isLast()).thenReturn(true);
 		when(mockVisitRepo.findAll(any(Pageable.class))).thenReturn(mockVisitPage);
 		List<Visit> visits = new ArrayList();
-		Map<Visit, VisitModel> visitModelMap = new HashMap();
+		Map<Visit, VisitModel> visitAndModelMap = new HashMap();
 		for (int i = 0; i < BATCH_SIZE; i++) {
 			final String uuid = "person-uuid-" + i;
 			Visit visit = new Visit();
@@ -104,10 +123,15 @@ public class HashBatchUpdaterTest {
 			visits.add(visit);
 			VisitModel model = new VisitModel();
 			model.setUuid(uuid);
-			visitModelMap.put(visit, model);
+			visitAndModelMap.put(visit, model);
 			when(mockMapper.apply(visit)).thenReturn(model);
 		}
 		when(mockVisitPage.getContent()).thenReturn(visits);
+		Mockito.doAnswer(invocation -> {
+			Runnable runnable = invocation.getArgument(0);
+			runnable.run();
+			return null;
+		}).when(mockExecutor).execute(any(Runnable.class));
 		
 		updater.update(asList(TableToSyncEnum.PERSON, TableToSyncEnum.VISIT));
 		
@@ -119,18 +143,14 @@ public class HashBatchUpdaterTest {
 			verify(mockMapper).apply(visit);
 		}
 		
-		PowerMockito.verifyStatic(HashUtils.class, times(BATCH_SIZE));
-		HashUtils.createOrUpdateHash(any(BaseModel.class), eq(PersonHash.class));
-		PowerMockito.verifyStatic(HashUtils.class, times(BATCH_SIZE));
-		HashUtils.createOrUpdateHash(any(BaseModel.class), eq(VisitHash.class));
+		mockHashUtils.verify(() -> createOrUpdateHash(any(BaseModel.class), eq(PersonHash.class)), times(BATCH_SIZE));
+		mockHashUtils.verify(() -> createOrUpdateHash(any(BaseModel.class), eq(VisitHash.class)), times(BATCH_SIZE));
 		
 		for (Person person : persons) {
-			PowerMockito.verifyStatic(HashUtils.class);
-			HashUtils.createOrUpdateHash(personModelMap.get(person), PersonHash.class);
+			mockHashUtils.verify(() -> createOrUpdateHash(eq(personAndModelMap.get(person)), eq(PersonHash.class)));
 		}
 		for (Visit visit : visits) {
-			PowerMockito.verifyStatic(HashUtils.class);
-			HashUtils.createOrUpdateHash(visitModelMap.get(visit), VisitHash.class);
+			mockHashUtils.verify(() -> createOrUpdateHash(eq(visitAndModelMap.get(visit)), eq(VisitHash.class)));
 		}
 	}
 	

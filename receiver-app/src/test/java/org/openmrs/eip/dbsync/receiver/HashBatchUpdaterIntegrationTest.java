@@ -6,10 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Rule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.openmrs.eip.BaseDbBackedCamelTest;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
@@ -32,9 +30,6 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	
 	@Autowired
 	private PatientRepository patientRepo;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Test
 	public void getNextPage_shouldGetTheFirstPageOfEntitiesIfPreviousPageIsNull() {
@@ -80,19 +75,17 @@ public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	
 	@Test
 	public void update_shouldFailIfThereAreUnResolvedConflicts() {
-		expectedException.expect(ConflictsFoundException.class);
-		expectedException.expectMessage(CoreMatchers.equalTo("Found 3 conflicts, first resolve them"));
-		
-		new HashBatchUpdater(1, applicationContext).update(null);
+		ConflictsFoundException e = Assertions.assertThrows(ConflictsFoundException.class,
+		    () -> new HashBatchUpdater(1, applicationContext).update(null));
+		assertEquals(e.getMessage(), "Found 3 conflicts, first resolve them");
 	}
 	
 	@Test
 	public void update_shouldFailIfThereAreUnResolvedConflictsForAnyOfTheSpecifiedEntityTypes() {
-		expectedException.expect(ConflictsFoundException.class);
-		expectedException.expectMessage(CoreMatchers
-		        .equalTo("Found 2 conflicts for " + VisitModel.class.getSimpleName() + " entities, first resolve them"));
-		
-		new HashBatchUpdater(1, applicationContext).update(Collections.singletonList(TableToSyncEnum.VISIT));
+		ConflictsFoundException e = Assertions.assertThrows(ConflictsFoundException.class,
+		    () -> new HashBatchUpdater(1, applicationContext).update(Collections.singletonList(TableToSyncEnum.VISIT)));
+		assertEquals(e.getMessage(),
+		    "Found 2 conflicts for " + VisitModel.class.getSimpleName() + " entities, first resolve them");
 	}
 	
 	@Test
