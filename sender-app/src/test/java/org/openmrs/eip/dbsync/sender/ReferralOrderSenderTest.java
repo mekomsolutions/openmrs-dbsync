@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.sender;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_REF_ORDER_UUID;
 
 import java.util.List;

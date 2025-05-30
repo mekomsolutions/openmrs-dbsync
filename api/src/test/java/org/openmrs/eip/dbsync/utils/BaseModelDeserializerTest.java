@@ -12,7 +12,7 @@ import org.openmrs.eip.dbsync.model.SyncModel;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BaseModelDeserializerTest {
 

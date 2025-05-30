@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.camel;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 

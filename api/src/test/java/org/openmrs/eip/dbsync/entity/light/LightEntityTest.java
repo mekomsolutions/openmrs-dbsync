@@ -5,7 +5,7 @@ import org.openmrs.eip.dbsync.entity.MockedLightEntity;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class LightEntityTest {
 

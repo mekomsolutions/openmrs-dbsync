@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
 import org.openmrs.eip.dbsync.MockedModel;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContextTest {
 

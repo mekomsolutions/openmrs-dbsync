@@ -11,7 +11,7 @@ import org.openmrs.eip.dbsync.service.light.AbstractLightService;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserLightServiceTest {
 

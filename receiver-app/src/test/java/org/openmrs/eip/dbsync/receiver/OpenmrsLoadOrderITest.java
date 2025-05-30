@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.receiver;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;

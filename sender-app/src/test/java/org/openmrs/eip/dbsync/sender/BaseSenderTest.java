@@ -1,7 +1,7 @@
 package org.openmrs.eip.dbsync.sender;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.ARTEMIS_ETC;
 import static org.openmrs.eip.dbsync.SyncTestConstants.QUEUE_NAME;
 import static org.openmrs.eip.dbsync.SyncTestConstants.SOURCE_SITE_ID;

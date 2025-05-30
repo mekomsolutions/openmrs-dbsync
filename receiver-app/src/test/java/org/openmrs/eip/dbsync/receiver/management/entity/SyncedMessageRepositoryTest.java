@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.receiver.management.entity;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openmrs.eip.Constants.MGT_DATASOURCE_NAME;
 import static org.openmrs.eip.Constants.MGT_TX_MGR_NAME;
 

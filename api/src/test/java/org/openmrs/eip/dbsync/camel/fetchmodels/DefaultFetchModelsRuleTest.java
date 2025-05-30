@@ -8,7 +8,7 @@ import org.openmrs.eip.dbsync.camel.ProducerParams;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.service.facade.EntityServiceFacade;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.verify;
 
 public class DefaultFetchModelsRuleTest {

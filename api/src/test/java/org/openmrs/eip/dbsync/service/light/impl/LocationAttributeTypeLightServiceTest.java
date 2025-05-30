@@ -7,7 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.openmrs.eip.dbsync.entity.light.LocationAttributeTypeLight;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LocationAttributeTypeLightServiceTest {
 

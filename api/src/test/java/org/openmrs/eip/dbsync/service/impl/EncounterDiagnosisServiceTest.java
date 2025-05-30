@@ -12,7 +12,7 @@ import org.openmrs.eip.dbsync.mapper.EntityToModelMapper;
 import org.openmrs.eip.dbsync.mapper.ModelToEntityMapper;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EncounterDiagnosisServiceTest {
 

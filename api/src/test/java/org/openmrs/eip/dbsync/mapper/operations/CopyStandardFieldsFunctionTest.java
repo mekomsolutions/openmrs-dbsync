@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.MockedEntity;
 import org.openmrs.eip.dbsync.MockedModel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CopyStandardFieldsFunctionTest {
 
