@@ -21,11 +21,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.management.hash.entity.BaseHashEntity;
 import org.openmrs.eip.dbsync.management.hash.entity.VisitHash;
@@ -33,14 +36,10 @@ import org.openmrs.eip.dbsync.management.hash.repository.BaseHashRepository;
 import org.openmrs.eip.dbsync.model.BaseModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.model.VisitModel;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ FileUtils.class, SyncUtils.class })
+@ExtendWith(MockitoExtension.class)
 public class HashUtilsTest {
 	
 	private final String EXPECTED_HASH = "05558ccafade5c5194e6849f87dfad95";
@@ -51,6 +50,10 @@ public class HashUtilsTest {
 	
 	private final String UUID = "818b4ee6-8d68-4849-975d-80ab98016677";
 	
+	private static MockedStatic<FileUtils> mockFileUtils;
+	
+	private static MockedStatic<SyncUtils> mockSyncUtils;
+	
 	@Mock
 	private BaseHashRepository mockHashRepo;
 	
@@ -59,7 +62,15 @@ public class HashUtilsTest {
 	
 	@BeforeEach
 	public void setup() {
+		mockFileUtils = Mockito.mockStatic(FileUtils.class);
+		mockSyncUtils = Mockito.mockStatic(SyncUtils.class);
 		Whitebox.setInternalState(HashUtils.class, Logger.class, mockLogger);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		mockFileUtils.close();
+		mockSyncUtils.close();
 	}
 	
 	@Test
@@ -116,7 +127,6 @@ public class HashUtilsTest {
 	
 	@Test
 	public void computeHashForFile_shouldCalculateTheHashForTheContentsOfTheSpecifiedFile() throws IOException {
-		PowerMockito.mockStatic(FileUtils.class);
 		File mockFile = Mockito.mock(File.class);
 		when(FileUtils.readFileToByteArray(mockFile)).thenReturn("test".getBytes(UTF_8));
 		assertEquals("098f6bcd4621d373cade4e832627b4f6", HashUtils.computeHashForFile(mockFile));
@@ -132,7 +142,6 @@ public class HashUtilsTest {
 		final String uuid = "visit-uuid";
 		BaseModel model = new VisitModel();
 		model.setUuid(uuid);
-		PowerMockito.mockStatic(SyncUtils.class);
 		when(SyncUtils.getJpaRepository(VisitHash.class, BaseHashRepository.class)).thenReturn(mockHashRepo);
 		
 		BaseHashEntity hash = HashUtils.createOrUpdateHash(model, null);
@@ -154,7 +163,6 @@ public class HashUtilsTest {
 		final String oldHash = "old-hash";
 		existingHash.setHash(oldHash);
 		assertNull(existingHash.getDateChanged());
-		PowerMockito.mockStatic(SyncUtils.class);
 		when(SyncUtils.getJpaRepository(VisitHash.class, BaseHashRepository.class)).thenReturn(mockHashRepo);
 		Mockito.when(mockHashRepo.findByIdentifier(uuid)).thenReturn(existingHash);
 		
