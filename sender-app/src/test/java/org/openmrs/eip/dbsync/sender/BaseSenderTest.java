@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.eip.dbsync.SyncConstants;
@@ -99,7 +99,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	public void checkForErrors() {
 		List<SenderRetryQueueItem> errors = producerTemplate
 		        .requestBody("jpa:SenderRetryQueueItem?query=SELECT r FROM SenderRetryQueueItem r", null, List.class);
-		Assert.assertEquals("Found " + errors.size() + " error(s) in the sender error queue", 0, errors.size());
+		Assertions.assertEquals(0, errors.size(), "Found " + errors.size() + " error(s) in the sender error queue");
 	}
 	
 	/**

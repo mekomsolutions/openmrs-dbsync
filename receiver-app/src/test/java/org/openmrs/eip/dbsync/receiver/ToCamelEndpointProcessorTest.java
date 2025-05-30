@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.ProducerTemplate;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -57,7 +57,7 @@ public class ToCamelEndpointProcessorTest {
 	public void transformBody_shouldReturnTheSameItem() {
 		SyncedMessage msg = new SyncedMessage();
 		
-		Assert.assertEquals(msg, processor.transformBody(msg));
+		Assertions.assertEquals(msg, processor.transformBody(msg));
 	}
 	
 }

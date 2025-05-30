@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.PersonAttribute;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
@@ -28,7 +28,7 @@ public class PersonAttributeLoadTest extends OpenmrsLoadEndpointITest<PersonAttr
 		
 		producerTemplate.send("openmrs:load", exchange);
 		
-		Assert.assertEquals("1", repository.findByUuid(attribUuid).getValue());
+		Assertions.assertEquals("1", repository.findByUuid(attribUuid).getValue());
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class PersonAttributeLoadTest extends OpenmrsLoadEndpointITest<PersonAttr
 		
 		producerTemplate.send("openmrs:load", exchange);
 		
-		Assert.assertEquals(value, repository.findByUuid(attribUuid).getValue());
+		Assertions.assertEquals(value, repository.findByUuid(attribUuid).getValue());
 	}
 	
 	@Test
@@ -57,7 +57,7 @@ public class PersonAttributeLoadTest extends OpenmrsLoadEndpointITest<PersonAttr
 		producerTemplate.send("openmrs:load", exchange);
 		
 		Exception exception = exchange.getException(SyncException.class);
-		Assert.assertEquals("No entity of type org.openmrs.Location found with uuid " + value, exception.getMessage());
+		Assertions.assertEquals("No entity of type org.openmrs.Location found with uuid " + value, exception.getMessage());
 	}
 	
 	private SyncModel getModel(String attributeTypeUuid, String attribUuid, String value) {

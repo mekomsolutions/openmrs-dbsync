@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.service.impl;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,7 +35,7 @@ public class EntityBasisMapServiceTest {
 	
 	@Test
 	public void getTableToSync() {
-		Assert.assertEquals(TableToSyncEnum.DATAFILTER_ENTITY_BASIS_MAP, service.getTableToSync());
+		Assertions.assertEquals(TableToSyncEnum.DATAFILTER_ENTITY_BASIS_MAP, service.getTableToSync());
 	}
 	
 }

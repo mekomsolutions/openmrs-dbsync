@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public class BaseMetaDataEntityTest {
         entity.setDateRetired(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
         SomeEntity other = new SomeEntity();
         other.setDateRetired(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
-        Assert.assertFalse(entity.wasModifiedAfter(other));
+        Assertions.assertFalse(entity.wasModifiedAfter(other));
     }
 
     @Test
@@ -25,7 +25,7 @@ public class BaseMetaDataEntityTest {
         entity.setDateRetired(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
         SomeEntity other = new SomeEntity();
         other.setDateRetired(LocalDateTime.of(2020, 12, 3, 12, 12, 11));
-        Assert.assertTrue(entity.wasModifiedAfter(other));
+        Assertions.assertTrue(entity.wasModifiedAfter(other));
     }
 
 }

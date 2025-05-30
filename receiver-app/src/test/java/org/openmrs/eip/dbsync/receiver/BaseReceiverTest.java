@@ -18,7 +18,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -150,7 +150,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 		//ensure the item didn't end up in the error queue
 		List<ReceiverRetryQueueItem> errors = producerTemplate
 		        .requestBody("jpa:ReceiverRetryQueueItem?query=SELECT r FROM ReceiverRetryQueueItem r", null, List.class);
-		Assert.assertEquals("Found " + errors.size() + " error(s) in the receiver error queue", 0, errors.size());
+		Assertions.assertEquals(0, errors.size(), "Found " + errors.size() + " error(s) in the receiver error queue");
 	}
 	
 	/**

@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.service.impl;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openmrs.eip.dbsync.model.PatientModel;
 import org.openmrs.eip.dbsync.model.PersonModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -43,7 +43,7 @@ public class PersonServiceTest {
 
     @Test
     public void getTableToSync() {
-        Assert.assertEquals(TableToSyncEnum.PERSON, service.getTableToSync());
+        Assertions.assertEquals(TableToSyncEnum.PERSON, service.getTableToSync());
     }
 
     @Test

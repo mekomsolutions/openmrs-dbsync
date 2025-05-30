@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.PersonAttribute;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
@@ -57,7 +57,7 @@ public class PersonAttributeExtractTest extends OpenmrsExtractEndpointITest<Pers
 		producerTemplate.send("openmrs:extract?tableToSync=" + PERSON_ATTRIBUTE + "&uuid=" + attributeUuid, exchange);
 		
 		Exception exception = exchange.getException(SyncException.class);
-		Assert.assertEquals("No entity of type org.openmrs.Location found with id 101", exception.getMessage());
+		Assertions.assertEquals("No entity of type org.openmrs.Location found with id 101", exception.getMessage());
 	}
 	
 	private String getExpectedJson(String attributeTypeUuid, String attribUuid, String value) {

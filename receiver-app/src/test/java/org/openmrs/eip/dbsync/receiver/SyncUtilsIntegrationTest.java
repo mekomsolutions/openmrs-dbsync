@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.receiver;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.management.hash.repository.BaseHashRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
@@ -18,7 +18,7 @@ public class SyncUtilsIntegrationTest extends BaseReceiverDbDrivenTest {
 			if (!SyncUtils.getSyncedTableToSyncEnums().contains(tableToSyncEnum)) {
 				continue;
 			}
-			Assert.assertNotNull(SyncUtils.getJpaRepository(tableToSyncEnum.getHashClass(), BaseHashRepository.class));
+			Assertions.assertNotNull(SyncUtils.getJpaRepository(tableToSyncEnum.getHashClass(), BaseHashRepository.class));
 		}
 	}
 	

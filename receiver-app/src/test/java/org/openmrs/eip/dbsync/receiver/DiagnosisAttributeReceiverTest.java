@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_DIAGNOSIS_ATTR_UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.DiagnosisAttribute;
 import org.openmrs.eip.dbsync.entity.light.DiagnosisAttributeTypeLight;
@@ -18,7 +18,7 @@ public class DiagnosisAttributeReceiverTest extends BaseReceiverTest<DiagnosisAt
 	
 	@Test
 	public void shouldSaveAnEntityInTheDbIfItDoesNotExist() throws Exception {
-		Assert.assertNull(service.getModel(DIAGNOSIS_ATTR_UUID));
+		Assertions.assertNull(service.getModel(DIAGNOSIS_ATTR_UUID));
 		DiagnosisAttributeModel model = new DiagnosisAttributeModel();
 		model.setUuid(DIAGNOSIS_ATTR_UUID);
 		model.setReferencedEntityUuid(DiagnosisLight.class.getName() + "(ec229794-76e1-11f8-8cd8-0242ac1c555d)");
@@ -38,7 +38,7 @@ public class DiagnosisAttributeReceiverTest extends BaseReceiverTest<DiagnosisAt
 		DiagnosisAttributeModel model = service.getModel(EXISTING_DIAGNOSIS_ATTR_UUID);
 		assertNotNull(model);
 		final String newValue = "new value";
-		Assert.assertNotEquals(newValue, model.getValueReference());
+		Assertions.assertNotEquals(newValue, model.getValueReference());
 		final long originalCount = repository.count();
 		model.setValueReference(newValue);
 		

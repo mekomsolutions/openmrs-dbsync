@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ public class BaseDataEntityTest {
         order.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
         Order other = new Order();
         other.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
-        Assert.assertFalse(order.wasModifiedAfter(other));
+        Assertions.assertFalse(order.wasModifiedAfter(other));
     }
 
     @Test
@@ -22,7 +22,7 @@ public class BaseDataEntityTest {
         order.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
         Order other = new Order();
         other.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 11));
-        Assert.assertTrue(order.wasModifiedAfter(other));
+        Assertions.assertTrue(order.wasModifiedAfter(other));
     }
 
 }

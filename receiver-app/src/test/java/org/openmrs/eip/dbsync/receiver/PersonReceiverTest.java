@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Person;
 import org.openmrs.eip.dbsync.model.PersonModel;
@@ -21,7 +21,7 @@ public class PersonReceiverTest extends BaseReceiverTest<Person, PersonModel> {
 	
 	@Test
 	public void shouldSaveAnEntityInTheDbIfItDoesNotExist() throws Exception {
-		Assert.assertNull(service.getModel(PERSON_UUID));
+		Assertions.assertNull(service.getModel(PERSON_UUID));
 		PersonModel model = new PersonModel();
 		model.setUuid(PERSON_UUID);
 		model.setGender("M");
@@ -43,8 +43,8 @@ public class PersonReceiverTest extends BaseReceiverTest<Person, PersonModel> {
 		PersonModel person = service.getModel(EXISTING_PERSON_UUID);
 		assertNotNull(person);
 		final String newGender = "F";
-		Assert.assertNotEquals(newGender, person.getGender());
-		Assert.assertFalse(person.isDead());
+		Assertions.assertNotEquals(newGender, person.getGender());
+		Assertions.assertFalse(person.isDead());
 		final long originalCount = repository.count();
 		person.setGender(newGender);
 		person.setDead(true);
@@ -56,7 +56,7 @@ public class PersonReceiverTest extends BaseReceiverTest<Person, PersonModel> {
 		person = service.getModel(EXISTING_PERSON_UUID);
 		assertNotNull(person);
 		assertEquals(newGender, person.getGender());
-		Assert.assertTrue(person.isDead());
+		Assertions.assertTrue(person.isDead());
 	}
 	
 	@Test

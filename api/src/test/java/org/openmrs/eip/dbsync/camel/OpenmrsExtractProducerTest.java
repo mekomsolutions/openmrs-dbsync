@@ -11,7 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
@@ -75,11 +75,11 @@ public class OpenmrsExtractProducerTest {
 		
 		// Then
 		List<SyncModel> syncModels = exchange.getIn().getBody(List.class);
-		Assert.assertEquals(2, syncModels.size());
-		Assert.assertEquals("uuid1", syncModels.get(0).getModel().getUuid());
-		Assert.assertNotNull(syncModels.get(0).getMetadata());
-		Assert.assertEquals("uuid2", syncModels.get(1).getModel().getUuid());
-		Assert.assertNotNull(syncModels.get(1).getMetadata());
+		Assertions.assertEquals(2, syncModels.size());
+		Assertions.assertEquals("uuid1", syncModels.get(0).getModel().getUuid());
+		Assertions.assertNotNull(syncModels.get(0).getMetadata());
+		Assertions.assertEquals("uuid2", syncModels.get(1).getModel().getUuid());
+		Assertions.assertNotNull(syncModels.get(1).getMetadata());
 		
 	}
 	

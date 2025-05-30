@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.service.impl;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,6 +36,6 @@ public class AllergyServiceTest {
 
     @Test
     public void getTableToSync() {
-        Assert.assertEquals(TableToSyncEnum.ALLERGY, service.getTableToSync());
+        Assertions.assertEquals(TableToSyncEnum.ALLERGY, service.getTableToSync());
     }
 }

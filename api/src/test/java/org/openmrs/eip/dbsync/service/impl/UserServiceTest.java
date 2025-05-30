@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.service.impl;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,7 +34,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void getTableToSync() {
-		Assert.assertEquals(TableToSyncEnum.USERS, service.getTableToSync());
+		Assertions.assertEquals(TableToSyncEnum.USERS, service.getTableToSync());
 	}
 	
 }

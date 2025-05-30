@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_ORDER_ATTR_UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.OrderAttribute;
 import org.openmrs.eip.dbsync.entity.light.OrderAttributeTypeLight;
@@ -18,7 +18,7 @@ public class OrderAttributeReceiverTest extends BaseReceiverTest<OrderAttribute,
 	
 	@Test
 	public void shouldSaveAnEntityInTheDbIfItDoesNotExist() throws Exception {
-		Assert.assertNull(service.getModel(ORDER_ATTR_UUID));
+		Assertions.assertNull(service.getModel(ORDER_ATTR_UUID));
 		OrderAttributeModel model = new OrderAttributeModel();
 		model.setUuid(ORDER_ATTR_UUID);
 		model.setReferencedEntityUuid(OrderLight.class.getName() + "(" + "17170d8e-d201-4d94-ae89-0be0b0b6d8bb" + ")");
@@ -39,7 +39,7 @@ public class OrderAttributeReceiverTest extends BaseReceiverTest<OrderAttribute,
 		OrderAttributeModel model = service.getModel(EXISTING_ORDER_ATTR_UUID);
 		assertNotNull(model);
 		final String newValue = "new value";
-		Assert.assertNotEquals(newValue, model.getValueReference());
+		Assertions.assertNotEquals(newValue, model.getValueReference());
 		final long originalCount = repository.count();
 		model.setValueReference(newValue);
 		

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.openmrs.eip.dbsync.SyncTestConstants.EXISTING_REF_ORDER_UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.Order;
 import org.openmrs.eip.dbsync.entity.ReferralOrder;
@@ -35,7 +35,7 @@ public class ReferralOrderReceiverTest extends BaseReceiverTest<Order, OrderMode
 	
 	@Test
 	public void shouldSaveAnEntityInTheDbIfItDoesNotExist() throws Exception {
-		Assert.assertNull(service.getModel(PERSON_UUID));
+		Assertions.assertNull(service.getModel(PERSON_UUID));
 		ReferralOrderModel model = new ReferralOrderModel();
 		model.setUuid(PERSON_UUID);
 		model.setPatientUuid(PatientLight.class.getName() + "(1d279794-76e9-11e9-8cd9-0242ac1c000c)");
@@ -68,8 +68,8 @@ public class ReferralOrderReceiverTest extends BaseReceiverTest<Order, OrderMode
 		assertNotNull(order);
 		final String newLaterality = "LEFT";
 		final int repeats = 3;
-		Assert.assertNotEquals(newLaterality, order.getLaterality());
-		Assert.assertNotEquals(repeats, order.getNumberOfRepeats().intValue());
+		Assertions.assertNotEquals(newLaterality, order.getLaterality());
+		Assertions.assertNotEquals(repeats, order.getNumberOfRepeats().intValue());
 		final long originalCount = repository.count();
 		order.setLaterality(newLaterality);
 		order.setNumberOfRepeats(repeats);

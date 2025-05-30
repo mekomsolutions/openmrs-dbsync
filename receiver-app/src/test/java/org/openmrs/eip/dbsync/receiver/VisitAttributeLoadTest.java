@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNull;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.VisitAttribute;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -27,7 +27,7 @@ public class VisitAttributeLoadTest extends OpenmrsLoadEndpointITest<VisitAttrib
 		
 		producerTemplate.send("openmrs:load", exchange);
 		
-		Assert.assertEquals(value, repository.findByUuid(attribUuid).getValueReference());
+		Assertions.assertEquals(value, repository.findByUuid(attribUuid).getValueReference());
 	}
 	
 	private SyncModel getModel(String attributeTypeUuid, String attribUuid, String value) {

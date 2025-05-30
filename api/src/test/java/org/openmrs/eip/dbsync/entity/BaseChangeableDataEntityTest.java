@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.entity;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,11 +13,11 @@ public class BaseChangeableDataEntityTest {
         condition.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
         Condition other = new Condition();
         other.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
-        Assert.assertFalse(condition.wasModifiedAfter(other));
+        Assertions.assertFalse(condition.wasModifiedAfter(other));
 
         other.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 11));
         other.setDateChanged(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
-        Assert.assertFalse(condition.wasModifiedAfter(other));
+        Assertions.assertFalse(condition.wasModifiedAfter(other));
     }
 
     @Test
@@ -26,11 +26,11 @@ public class BaseChangeableDataEntityTest {
         condition.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
         Condition other = new Condition();
         other.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 12));
-        Assert.assertTrue(condition.wasModifiedAfter(other));
+        Assertions.assertTrue(condition.wasModifiedAfter(other));
 
         condition.setDateVoided(LocalDateTime.of(2020, 12, 3, 12, 12, 11));
         condition.setDateChanged(LocalDateTime.of(2020, 12, 3, 12, 12, 13));
-        Assert.assertTrue(condition.wasModifiedAfter(other));
+        Assertions.assertTrue(condition.wasModifiedAfter(other));
     }
 
 }

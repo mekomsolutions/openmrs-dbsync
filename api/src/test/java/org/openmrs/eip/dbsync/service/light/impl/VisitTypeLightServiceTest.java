@@ -1,6 +1,6 @@
 package org.openmrs.eip.dbsync.service.light.impl;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ public class VisitTypeLightServiceTest {
         VisitTypeLight result = service.createPlaceholderEntity(uuid);
 
         // Then
-        Assert.assertEquals(getExpectedLocation(), service.createPlaceholderEntity(uuid));
+        Assertions.assertEquals(getExpectedLocation(), service.createPlaceholderEntity(uuid));
     }
 
     private VisitTypeLight getExpectedLocation() {
