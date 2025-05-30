@@ -16,4 +16,9 @@ public class TestReceiverConfig {
 		return new TestReceiverBeanPostProcessor();
 	}
 	
+	@Bean
+	public CamelListener testCamelListener() {
+		return new CamelListener(false);
+	}
+	
 }

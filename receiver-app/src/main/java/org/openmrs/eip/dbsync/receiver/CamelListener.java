@@ -30,9 +30,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.stereotype.Component;
 
-@Component
 public class CamelListener extends EventNotifierSupport implements ApplicationContextAware {
 	
 	protected static final Logger log = LoggerFactory.getLogger(CamelListener.class);
@@ -41,11 +39,17 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 	
 	private ApplicationContext applicationContext;
 	
+	private boolean requirePlaceholderUser;
+	
 	@Value("${hashes.update:false}")
 	private boolean updateHashes;
 	
 	@Value("${hashes.update.tables:}")
 	private List<String> hashUpdateTables;
+	
+	public CamelListener(boolean requirePlaceholderUser) {
+		this.requirePlaceholderUser = requirePlaceholderUser;
+	}
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -75,10 +79,13 @@ public class CamelListener extends EventNotifierSupport implements ApplicationCo
 				exampleUser.setUsername(username);
 				Example<User> example = Example.of(exampleUser, ExampleMatcher.matchingAll().withIgnoreCase());
 				Optional<User> optional = SyncContext.getBean(UserRepository.class).findOne(example);
-				User user = optional.orElseThrow(() -> new EIPException("No user found with username: " + username));
-				SyncContext.setUser(SyncContext.getBean(UserLightRepository.class).findById(user.getId()).get());
+				if (requirePlaceholderUser) {
+					User u = optional.orElseThrow(() -> new EIPException("No user found with username: " + username));
+					SyncContext.setUser(SyncContext.getBean(UserLightRepository.class).findById(u.getId()).get());
+					log.info("Placeholder user uuid: {}", SyncContext.getUser().getUuid());
+				}
 				
-				log.info("Starting sync message consumer, batch size: " + ReceiverContext.MAX_COUNT);
+				log.info("Starting sync message consumer, batch size: {}", ReceiverContext.MAX_COUNT);
 				
 				executor.execute(new MessageConsumer(SyncContext.getBean(ProducerTemplate.class)));
 				
