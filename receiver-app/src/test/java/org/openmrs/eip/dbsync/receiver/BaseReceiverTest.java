@@ -18,18 +18,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openmrs.eip.BaseDbBackedCamelTest;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.BaseModel;
+import org.openmrs.eip.dbsync.receiver.config.ReceiverConfig;
+import org.openmrs.eip.dbsync.receiver.config.ReceiverTaskConfig;
 import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.openmrs.eip.dbsync.repository.SyncEntityRepository;
 import org.openmrs.eip.dbsync.service.AbstractEntityService;
@@ -38,6 +39,7 @@ import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -51,10 +53,11 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 
-@Import(TestReceiverConfig.class)
+@Import({ TestReceiverSyncConfig.class, ReceiverConfig.class, ReceiverTaskConfig.class })
 @SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql"),
         @Sql(value = "classpath:sync_test_data_mgt.sql", config = @SqlConfig(dataSource = "mngtDataSource", transactionManager = "mngtTransactionManager")) })
-public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseDbBackedCamelTest implements SyncTest<E, M> {
+@TestPropertySource(properties = "camel.springboot.routes-collector-enabled=true")
+public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseReceiverDbDrivenTest implements SyncTest<E, M> {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);
 	
@@ -76,7 +79,7 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	private MockEndpoint mockOpenmrsRestEndpoint;
 	
 	@BeforeAll
-	public static void startArtemis() throws Exception {
+	public static void setupClass() throws Exception {
 		Whitebox.setInternalState(ReceiverContext.class, "isStopping", false);
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
 		    ARTEMIS_ETC + "artemis-roles.properties");
@@ -91,11 +94,12 @@ public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel
 	}
 	
 	@AfterAll
-	public static void stopArtemis() throws Exception {
+	public static void tearDownClass() throws Exception {
 		//TODO First stop the receiver route that gets messages from ActiveMQ
 		//activeMQConn.stop();
 		//activeMQConn.close();
 		//artemisContainer.stop();
+		//Whitebox.setInternalState(ReceiverContext.class, "isStopping", false);
 	}
 	
 	@BeforeEach

@@ -8,13 +8,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 /**
  * Deletes synced messages that have been fully processed i.e. those where both the cache has been
  * cleared and the search index updated
  */
-@Component("cleanerProcessor")
 public class CleanerProcessor extends BaseQueueProcessor<SyncedMessage> {
 	
 	protected SyncedMessageRepository repo;

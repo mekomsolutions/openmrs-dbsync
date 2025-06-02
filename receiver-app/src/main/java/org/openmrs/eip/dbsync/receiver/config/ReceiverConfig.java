@@ -14,18 +14,13 @@ import org.openmrs.eip.dbsync.receiver.BaseQueueTask;
 import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 import jakarta.jms.ConnectionFactory;
 
-@Configuration
 @PropertySource("classpath:receiver-application.properties")
-@EnableJpaRepositories(entityManagerFactoryRef = "mngtEntityManager", transactionManagerRef = "mngtTransactionManager", basePackages = {
-        "org.openmrs.eip.dbsync.management.hash.repository", "org.openmrs.eip.dbsync.receiver.management.repository" })
 public class ReceiverConfig {
 	
 	private static final long REDELIVERY_DELAY = 300000;

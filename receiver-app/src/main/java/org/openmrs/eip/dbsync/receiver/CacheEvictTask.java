@@ -5,13 +5,11 @@ import java.util.List;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 
 /**
  * Reads a batch of messages in the synced queue that require OpenMRS cache eviction and forwards
  * them to the {@link CacheEvictProcessor}.
  */
-@Component("cacheEvictTask")
 public class CacheEvictTask extends BaseSyncedMessageTask<CacheEvictProcessor> {
 	
 	public CacheEvictTask(CacheEvictProcessor processor, SyncedMessageRepository repo) {

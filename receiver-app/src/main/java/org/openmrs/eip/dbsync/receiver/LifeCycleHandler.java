@@ -15,12 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * Handles context events emitted by the camel and spring
  */
-@Component
 public class LifeCycleHandler {
 	
 	protected static final Logger LOG = LoggerFactory.getLogger(LifeCycleHandler.class);

@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 /**
  * Processes sync messages that require updating the OpenMRS search index.
  */
-@Component("searchIndexUpdateProcessor")
 public class SearchIndexUpdateProcessor extends BaseToCamelEndpointSyncedMessageProcessor {
 	
 	public SearchIndexUpdateProcessor(ProducerTemplate producerTemplate,

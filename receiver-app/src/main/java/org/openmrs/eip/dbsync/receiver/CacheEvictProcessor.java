@@ -17,14 +17,12 @@ import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Processes synced messages that require eviction from the OpenMRS cache.
  */
-@Component("cacheEvictProcessor")
 public class CacheEvictProcessor extends BaseToCamelEndpointSyncedMessageProcessor {
 	
 	public CacheEvictProcessor(ProducerTemplate producerTemplate,
