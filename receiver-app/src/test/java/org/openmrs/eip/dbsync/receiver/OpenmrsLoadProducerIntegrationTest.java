@@ -31,8 +31,10 @@ import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
-@Sql(scripts = "classpath:test_data_it.sql")
+
+@SqlGroup({ @Sql("classpath:test_data.sql"), @Sql(value = "classpath:test_data_it.sql"), })
 public class OpenmrsLoadProducerIntegrationTest extends BaseReceiverDbDrivenTest {
 	
 	private static final String USER_UUID = "user_uuid";
