@@ -9,35 +9,22 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.openmrs.eip.dbsync.receiver.BaseQueueTask;
 import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 import jakarta.jms.ConnectionFactory;
 
+@Import(ReceiverCamelConfig.class)
 @PropertySource("classpath:receiver-application.properties")
 public class ReceiverConfig {
 	
 	private static final long REDELIVERY_DELAY = 300000;
-	
-	@Bean("receiverErrorHandler")
-	public DeadLetterChannelBuilder getReceiverErrorHandler() {
-		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-error-handler");
-		builder.useOriginalMessage();
-		return builder;
-	}
-	
-	@Bean("receiverShutdownErrorHandler")
-	public DeadLetterChannelBuilder receiverShutdownErrorHandler() {
-		DeadLetterChannelBuilder builder = new DeadLetterChannelBuilder("direct:receiver-shutdown");
-		builder.useOriginalMessage();
-		return builder;
-	}
 	
 	@Bean("activeMqConnFactory")
 	public ConnectionFactory getConnectionFactory(Environment env) {

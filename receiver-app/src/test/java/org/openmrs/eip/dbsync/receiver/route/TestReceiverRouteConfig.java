@@ -2,10 +2,13 @@ package org.openmrs.eip.dbsync.receiver.route;
 
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.openmrs.eip.TestConstants;
+import org.openmrs.eip.dbsync.receiver.config.ReceiverCamelConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
+@Import(ReceiverCamelConfig.class)
 public class TestReceiverRouteConfig {
 	
 	@Bean
