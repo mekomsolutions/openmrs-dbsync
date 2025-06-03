@@ -35,7 +35,7 @@ public class UserExtractTest extends OpenmrsExtractEndpointITest<User, UserModel
 		        + "\"dateCreated\":\"2005-01-01T00:00:00Z\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
 		        + "\"retired\":false," + "\"retiredByUuid\":null," + "\"dateRetired\":null," + "\"retireReason\":null,"
 		        + "\"systemId\":\"admin\"," + "\"username\":null," + "\"personUuid\":\"" + PersonLight.class.getName()
-		        + "(dd279794-76e9-11e9-8cd9-0242ac1c000b)\"}}";
+		        + "(ba3b12d1-5c4f-415f-871b-b98a22137604)\"}}";
 	}
 	
 }

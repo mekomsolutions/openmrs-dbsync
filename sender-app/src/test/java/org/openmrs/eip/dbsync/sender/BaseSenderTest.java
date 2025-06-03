@@ -45,7 +45,7 @@ import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 
 @Import(TestSenderConfig.class)
-@SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql") })
+@SqlGroup({ @Sql(value = "classpath:sync_test_data.sql") })
 public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> extends BaseWatcherRouteTest implements SyncTest<E, M> {
 	
 	protected static GenericContainer artemisContainer = new GenericContainer(SyncTestConstants.ARTEMIS_IMAGE);

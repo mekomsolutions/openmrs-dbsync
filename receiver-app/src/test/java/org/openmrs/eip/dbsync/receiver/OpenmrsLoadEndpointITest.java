@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
-@SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql"), })
+@SqlGroup({ @Sql("classpath:test_data_it.sql")})
 public abstract class OpenmrsLoadEndpointITest<E extends BaseEntity> extends BaseReceiverDbDrivenTest {
 	
 	@Autowired

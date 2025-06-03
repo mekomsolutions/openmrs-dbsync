@@ -18,13 +18,13 @@ public class OpenmrsLoadPersonITest extends OpenmrsLoadEndpointITest<Person> {
 		// Given
 		Exchange exchange = new DefaultExchange(camelContext);
 		exchange.getIn().setBody(getPersonModel());
-		assertEquals(5, repository.count());
+		assertEquals(3, repository.count());
 		
 		// When
 		producerTemplate.send("openmrs:load", exchange);
 		
 		// Then
-		assertEquals(6, repository.count());
+		assertEquals(4, repository.count());
 	}
 	
 	private SyncModel getPersonModel() {

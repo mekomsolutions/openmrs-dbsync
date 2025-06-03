@@ -16,6 +16,12 @@ VALUES (3, 'M', 2, '2020-06-19 00:00:00', '2020-06-19', '12:12:12', 0, 0, 0, 0, 
 INSERT INTO patient(patient_id,creator,date_created,voided,allergy_status)
 values (4, 2, '2022-05-18 00:00:00', 0, 'Unknown');
 
+insert into encounter_type(encounter_type_id,name,creator,date_created,retired,uuid)
+values (1, 'Initial', 2, '2021-06-23 00:00:00', 0, '1f279794-31e9-11e9-8cf7-0242ac1c177e');
+
+insert into encounter(encounter_id,encounter_type,patient_id,encounter_datetime,creator,date_created,voided,uuid)
+values (1, 1, 4, '2022-06-23 00:00:00', 2, '2022-06-23 01:00:00', 0, '1a859794-76e9-11e9-8cf7-0242ac1c166e');
+
 INSERT INTO encounter_diagnosis (diagnosis_id,patient_id,encounter_id,certainty,dx_rank,creator,date_created,voided,uuid)
 VALUES (1, 4, 1, 'CONFIRMED', 1, 2, '2022-05-18 00:00:00', 0, 'ec229794-76e1-11f8-8cd8-0242ac1c555d');
 
@@ -25,6 +31,12 @@ VALUES (1, 'Comments', 0, 2, '2022-01-01 00:00:00', 0, '1b229794-76e1-11f9-8cd8-
 INSERT INTO diagnosis_attribute(diagnosis_attribute_id,diagnosis_id,attribute_type_id,value_reference,creator,date_created,voided,uuid)
 VALUES (1, 1, 1, 'None', 2, '2022-05-18 00:00:00', 0, '8afd940e-32da-491f-8038-a8f3afe3e35a');
 
+insert into order_set(order_set_id,name,operator,creator,date_created,retired,uuid)
+values (1, 'Chemo', 'ANY', 2, '2021-06-23 00:00:00', 0, '1a379794-31e9-11e9-8cf7-0242ac1c177b');
+
+insert into order_group(order_group_id,encounter_id,patient_id,order_set_id,creator,date_created,voided,uuid)
+values (1, 1, 4, 1, 2, '2021-06-23 00:00:00', 0, '1c819794-31e9-11e9-9cf7-0242ac1c177a');
+
 INSERT INTO order_group_attribute_type (order_group_attribute_type_id,name,min_occurs,creator,date_created,retired,uuid)
 VALUES (1, 'Comments', 0, 2, '2022-01-01 00:00:00', 0, '2c229794-76e1-11f9-8cd8-0242ac1c555f');
 
@@ -33,6 +45,15 @@ VALUES (1, 1, 1, 'None', 2, '2022-05-18 00:00:00', 0, '7bfd940e-32da-491f-8038-a
 
 INSERT INTO care_setting (care_setting_id,name,care_setting_type,creator,date_created,retired,uuid)
 VALUES  (1, 'Out-Patient', 'OUTPATIENT', 2, '2020-03-05 00:00:00', 1, '638bcfc0-360a-44a3-9539-e8718cd6e4d8');
+
+INSERT INTO concept_datatype (concept_datatype_id, name,creator,date_created,retired,uuid)
+VALUES  (1, 'N/A', 2, '2020-03-05 00:00:00', 0, '4e6dcb16-d43e-46bb-b6bf-7088b9b82139');
+
+INSERT INTO concept_class (concept_class_id,name,creator,date_created,retired,uuid)
+VALUES  (1, 'Misc', 2, '2020-03-05 00:00:00', 0, 'f4464518-f5e2-4aab-a54e-1f1a2ec6d431');
+
+insert into concept(concept_id,datatype_id,class_id,is_set,creator,date_created,retired,uuid)
+values (1, 1, 1, 0, 2, '2021-06-23 00:00:00', 0, '1e279794-76e9-11e9-9cd8-0242ac1c111f');
 
 insert into order_frequency(order_frequency_id,concept_id,creator,date_created,retired,uuid)
 values (1, 1, 2, '2022-05-18 00:00:00', 0, '1c93d0cc-6534-48ea-bebc-4aeeda9471a6');

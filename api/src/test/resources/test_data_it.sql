@@ -1,7 +1,12 @@
 set foreign_key_checks = 0;
+INSERT INTO person (person_id,gender,birthdate_estimated,deathdate_estimated,dead,voided,creator,date_created,uuid)
+VALUES  (3, 'M', 0, 0, 0 , 0, 1, now(), 'ca3b12d1-5c4f-415f-871b-b98a22137604');
 insert into users(uuid, user_id, system_id, creator, date_created, person_id, retired)
-values ('user_uuid', 3, 'admin', 3, '2005-01-01 00:00:00', 1, false);
+values ('user_uuid', 3, 'admin', 3, '2005-01-01 00:00:00', 3, false);
 set foreign_key_checks = 1;
+
+insert into provider(provider_id,creator,date_created,retired,uuid)
+values (2, 3, '2021-06-23 00:00:00', 0, '1f659794-76e9-11e9-8cf7-0242ac1c122e');
 
 insert into person(person_id, gender, birthdate, birthdate_estimated, dead, death_date, cause_of_death, creator, date_created, changed_by, date_changed, voided, voided_by, date_voided, void_reason, uuid, deathdate_estimated, birthtime)
 values (5, 'M', NULL, false, false, NULL, NULL, 3, '2005-01-01 00:00:00', NULL, NULL, false, NULL, NULL, NULL, 'dd279794-76e9-11e9-8cd9-0242ac1c000b', false, '13:01:45'),
@@ -18,9 +23,6 @@ values(6, 5, 1, '2021-06-22 01:00:00', '2021-06-22 02:00:00', 3, '2021-06-22 00:
 
 insert into patient(patient_id,creator,date_created,voided,allergy_status)
 values (6, 3, '2021-06-23 00:00:00', 0, 'Unknown');
-
-insert into provider(provider_id,creator,date_created,retired,uuid)
-values (2, 3, '2021-06-23 00:00:00', 0, '1f659794-76e9-11e9-8cf7-0242ac1c122e');
 
 insert into encounter_type(encounter_type_id,name,creator,date_created,retired,uuid)
 values (1, 'Initial', 3, '2021-06-23 00:00:00', 0, '1f279794-31e9-11e9-8cf7-0242ac1c177e');

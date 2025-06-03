@@ -31,10 +31,8 @@ import org.openmrs.eip.dbsync.service.AbstractEntityService;
 import org.openmrs.eip.dbsync.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 
-
-@SqlGroup({ @Sql("classpath:test_data.sql"), @Sql(value = "classpath:test_data_it.sql"), })
+@Sql(value = "classpath:test_data_it.sql")
 public class OpenmrsLoadProducerIntegrationTest extends BaseReceiverDbDrivenTest {
 	
 	private static final String USER_UUID = "user_uuid";
@@ -74,7 +72,7 @@ public class OpenmrsLoadProducerIntegrationTest extends BaseReceiverDbDrivenTest
 		model.setSystemId(systemId);
 		model.setCreatorUuid(creator);
 		model.setDateCreated(LocalDateTime.now());
-		model.setPersonUuid(PersonLight.class.getName() + "(person-uuid)");
+		model.setPersonUuid(PersonLight.class.getName() + "(ca3b12d1-5c4f-415f-871b-b98a22137604)");
 		SyncMetadata metadata = new SyncMetadata();
 		metadata.setSourceIdentifier(siteId);
 		SyncModel syncModel = new SyncModel(model.getClass(), model, metadata);

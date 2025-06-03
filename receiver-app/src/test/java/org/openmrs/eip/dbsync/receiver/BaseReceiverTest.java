@@ -54,7 +54,7 @@ import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
 
 @Import({ TestReceiverSyncConfig.class, ReceiverConfig.class, ReceiverTaskConfig.class })
-@SqlGroup({ @Sql("classpath:test_data_it.sql"), @Sql(value = "classpath:sync_test_data.sql"),
+@SqlGroup({ @Sql(value = "classpath:sync_test_data.sql"),
         @Sql(value = "classpath:sync_test_data_mgt.sql", config = @SqlConfig(dataSource = "mngtDataSource", transactionManager = "mngtTransactionManager")) })
 @TestPropertySource(properties = "camel.springboot.routes-collector-enabled=true")
 public abstract class BaseReceiverTest<E extends BaseEntity, M extends BaseModel> extends BaseReceiverDbDrivenTest implements SyncTest<E, M> {

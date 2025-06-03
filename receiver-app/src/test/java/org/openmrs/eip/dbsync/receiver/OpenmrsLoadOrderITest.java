@@ -23,11 +23,11 @@ public class OpenmrsLoadOrderITest extends OpenmrsLoadEndpointITest<Order> {
 	public void load() {
 		Exchange exchange = new DefaultExchange(camelContext);
 		exchange.getIn().setBody(getOrderModel());
-		assertEquals(2, repository.count());
+		assertEquals(0, repository.count());
 		
 		producerTemplate.send("openmrs:load", exchange);
 		
-		assertEquals(3, repository.count());
+		assertEquals(1, repository.count());
 	}
 	
 	private SyncModel getOrderModel() {
