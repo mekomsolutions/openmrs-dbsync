@@ -14,7 +14,7 @@ import org.openmrs.eip.dbsync.model.PatientProgramAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest<PatientProgramAttribute, PatientProgramAttributeModel> {
+public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest<PatientProgramAttribute> {
 	
 	private static final String UUID = "218b4ff6-8d68-4845-975d-80ab98016679";
 	
@@ -32,7 +32,7 @@ public class PatientProgramAttributeLoadTest extends OpenmrsLoadEndpointITest<Pa
 	private SyncModel getModel() {
 		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + PatientProgramAttributeModel.class.getName()
 		        + "\"," + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
-		        + "(1)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\"," + "\"changedByUuid\":null,"
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\"," + "\"changedByUuid\":null,"
 		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
 		        + "\"voidReason\":null," + "\"referencedEntityUuid\":\"" + PatientProgramLight.class.getName()
 		        + "(1a819794-31e9-11e9-9cf7-0452ac1c177f)\"," + "\"attributeTypeUuid\":\""

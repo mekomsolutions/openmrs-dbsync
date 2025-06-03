@@ -15,7 +15,7 @@ import org.openmrs.eip.dbsync.model.PersonAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class PersonAttributeLoadTest extends OpenmrsLoadEndpointITest<PersonAttribute, PersonAttributeModel> {
+public class PersonAttributeLoadTest extends OpenmrsLoadEndpointITest<PersonAttribute> {
 	
 	@Test
 	public void load_shouldConvertTheValueToAnIdIfFormatIsAnOpenmrsType() {

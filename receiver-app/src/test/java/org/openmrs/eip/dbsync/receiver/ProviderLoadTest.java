@@ -12,7 +12,7 @@ import org.openmrs.eip.dbsync.model.ProviderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class ProviderLoadTest extends OpenmrsLoadEndpointITest<Provider, ProviderModel> {
+public class ProviderLoadTest extends OpenmrsLoadEndpointITest<Provider> {
 	
 	private static final String UUID = "2f659794-76e9-11e9-8cf7-0242ac1c122d";
 	

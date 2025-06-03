@@ -13,7 +13,7 @@ import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class EntityBasisMapLoadTest extends OpenmrsLoadEndpointITest<EntityBasisMap, EntityBasisMapModel> {
+public class EntityBasisMapLoadTest extends OpenmrsLoadEndpointITest<EntityBasisMap> {
 	
 	private static final String UUID = "68686c5c-725c-454b-baf2-e298128960b9";
 	
@@ -33,8 +33,8 @@ public class EntityBasisMapLoadTest extends OpenmrsLoadEndpointITest<EntityBasis
 	
 	private SyncModel getEntityBasisMapModel() {
 		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + EntityBasisMapModel.class.getName() + "\","
-		        + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
-		        + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\","
+		        + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2019-05-28T13:42:31+00:00\","
 		        + "\"entityIdentifier\":\"ed279794-76e9-11e9-8cd9-0242ac1c000b\","
 		        + "\"entityType\":\"org.openmrs.Patient\"," + "\"basisIdentifier\":\"1f279794-31e9-11e9-8cf7-0242ac1c177e\","
 		        + "\"basisType\":\"org.openmrs.EncounterType\"},\"metadata\":{\"operation\":\"c\"}}");

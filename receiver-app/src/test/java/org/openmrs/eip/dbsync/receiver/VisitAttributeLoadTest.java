@@ -14,7 +14,7 @@ import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.VisitAttributeModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class VisitAttributeLoadTest extends OpenmrsLoadEndpointITest<VisitAttribute, VisitAttributeModel> {
+public class VisitAttributeLoadTest extends OpenmrsLoadEndpointITest<VisitAttribute> {
 	
 	@Test
 	public void load_shouldLoadTheVisitAttributeType() {

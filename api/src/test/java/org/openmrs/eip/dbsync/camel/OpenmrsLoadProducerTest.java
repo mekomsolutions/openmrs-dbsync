@@ -1,6 +1,5 @@
 package org.openmrs.eip.dbsync.camel;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -18,14 +17,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
@@ -41,17 +41,17 @@ import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.service.facade.EntityServiceFacade;
 import org.openmrs.eip.dbsync.service.light.AbstractLightService;
 import org.openmrs.eip.dbsync.utils.HashUtils;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ SyncContext.class, HashUtils.class })
+@ExtendWith(MockitoExtension.class)
 public class OpenmrsLoadProducerTest {
+	
+	private static MockedStatic<SyncContext> mockSyncContext;
+	
+	private static MockedStatic<HashUtils> mockHashUtils;
 	
 	@Mock
 	private OpenmrsEndpoint endpoint;
@@ -75,18 +75,20 @@ public class OpenmrsLoadProducerTest {
 	@Mock
 	private OpenmrsRepository<EntityBasisMap> mockEntityBasisMapRepo;
 	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
 	@BeforeEach
 	public void init() {
-		MockitoAnnotations.initMocks(this);
-		PowerMockito.mockStatic(SyncContext.class);
-		PowerMockito.mockStatic(HashUtils.class);
+		mockSyncContext = Mockito.mockStatic(SyncContext.class);
+		mockHashUtils = Mockito.mockStatic(HashUtils.class);
 		exchange = new DefaultExchange(new DefaultCamelContext());
 		producer = new OpenmrsLoadProducer(endpoint, applicationContext, ProducerParams.builder().build());
 		when(SyncContext.getBean(ProducerTemplate.class)).thenReturn(mockProducerTemplate);
 		Whitebox.setInternalState(OpenmrsLoadProducer.class, Logger.class, mockLogger);
+	}
+	
+	@AfterEach
+	public void tearDown() {
+		mockSyncContext.close();
+		mockHashUtils.close();
 	}
 	
 	@Test
@@ -390,10 +392,8 @@ public class OpenmrsLoadProducerTest {
 		when(applicationContext.getBean("entityServiceFacade")).thenReturn(serviceFacade);
 		PersonModel dbModel = new PersonModel();
 		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
-		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(equalTo("Failed to find the existing hash for an existing entity"));
-		
-		producer.process(exchange);
+		SyncException e = Assertions.assertThrows(SyncException.class, () -> producer.process(exchange));
+		assertEquals("Failed to find the existing hash for an existing entity", e.getMessage());
 	}
 	
 	@Test
@@ -477,11 +477,9 @@ public class OpenmrsLoadProducerTest {
 		when(serviceFacade.getModel(TableToSyncEnum.PERSON, model.getUuid())).thenReturn(dbModel);
 		when(SyncContext.getBean(any(ResolvableType.class))).thenReturn(mockEntityBasisMapRepo);
 		
-		expectedException.expect(SyncException.class);
-		expectedException.expectMessage(
-		    equalTo("No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier()));
-		
-		producer.process(exchange);
+		SyncException e = Assertions.assertThrows(SyncException.class, () -> producer.process(exchange));
+		assertEquals("No entity of type " + model.getEntityType() + " found with uuid " + model.getEntityIdentifier(),
+		    e.getMessage());
 	}
 	
 }

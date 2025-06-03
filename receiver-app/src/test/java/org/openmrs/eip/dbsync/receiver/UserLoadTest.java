@@ -13,7 +13,7 @@ import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.UserModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class UserLoadTest extends OpenmrsLoadEndpointITest<User, UserModel> {
+public class UserLoadTest extends OpenmrsLoadEndpointITest<User> {
 	
 	private static final String UUID = "118b4ee6-8d68-4845-975d-80ab98016679";
 	

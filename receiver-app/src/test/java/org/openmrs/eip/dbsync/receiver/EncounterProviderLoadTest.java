@@ -15,7 +15,7 @@ import org.openmrs.eip.dbsync.model.EncounterProviderModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 
-public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest<EncounterProvider, EncounterProviderModel> {
+public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest<EncounterProvider> {
 	
 	private static final String UUID = "218b4ee6-8d68-4845-975d-80ab98016679";
 	
@@ -31,12 +31,14 @@ public class EncounterProviderLoadTest extends OpenmrsLoadEndpointITest<Encounte
 	}
 	
 	private SyncModel getEncounterProviderModel() {
-		return JsonUtils.unmarshalSyncModel("{\"tableToSyncModelClass\":\"" + EncounterProviderModel.class.getName() + "\","
-		        + "\"model\":{" + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(1)\","
-		        + "\"dateCreated\":\"2021-06-23T00:00:00+00:00\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
-		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
-		        + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
-		        + "\"providerUuid\":\"" + ProviderLight.class.getName() + "(1)\"," + "\"encounterRoleUuid\":\""
-		        + EncounterRoleLight.class.getName() + "(1)\"}, \"metadata\":{\"operation\":\"c\"}}");
+		return JsonUtils.unmarshalSyncModel(
+		    "{\"tableToSyncModelClass\":\"" + EncounterProviderModel.class.getName() + "\"," + "\"model\":{" + "\"uuid\":\""
+		            + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(user_uuid)\","
+		            + "\"dateCreated\":\"2021-06-23T00:00:00+00:00\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
+		            + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
+		            + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
+		            + "\"providerUuid\":\"" + ProviderLight.class.getName() + "(2b3b12d1-5c4f-415f-871b-b98a22137606)\","
+		            + "\"encounterRoleUuid\":\"" + EncounterRoleLight.class.getName()
+		            + "(1a789794-31e9-11e9-8cf7-0242ac1c177f)\"}, \"metadata\":{\"operation\":\"c\"}}");
 	}
 }
