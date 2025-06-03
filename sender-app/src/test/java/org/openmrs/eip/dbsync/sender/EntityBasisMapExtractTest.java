@@ -7,14 +7,13 @@ import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
-import org.openmrs.eip.dbsync.entity.module.datafilter.EntityBasisMap;
 import org.openmrs.eip.dbsync.model.SyncModel;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-public class EntityBasisMapExtractTest extends OpenmrsExtractEndpointITest<EntityBasisMap, EntityBasisMapModel> {
+public class EntityBasisMapExtractTest extends BaseOpenmrsExtractEndpointITest {
 	
 	@Test
 	public void extract_shouldReadAndSerializeAnEntityFromTheDatabase() throws JSONException {
@@ -30,7 +29,7 @@ public class EntityBasisMapExtractTest extends OpenmrsExtractEndpointITest<Entit
 	private String getExpectedJson() {
 		return "{\"tableToSyncModelClass\":\"" + EntityBasisMapModel.class.getName() + "\"," + "\"model\":{"
 		        + "\"uuid\":\"0b2da012-e8fa-4491-8aab-66e4524552b4\"," + "\"creatorUuid\":\"" + UserLight.class.getName()
-		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-23T00:00:00Z\","
+		        + "(user_uuid)\"," + "\"dateCreated\":\"2021-06-23T00:00:00" + TZ_OFFSET + "\","
 		        + "\"entityIdentifier\":\"ed279794-76e9-11e9-8cd9-0242ac1c000b\","
 		        + "\"entityType\":\"org.openmrs.Patient\"," + "\"basisIdentifier\":\"1f279794-31e9-11e9-8cf7-0242ac1c177e\","
 		        + "\"basisType\":\"org.openmrs.EncounterType\"}}";

@@ -6,7 +6,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-import org.openmrs.eip.dbsync.entity.PersonAddress;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
 import org.openmrs.eip.dbsync.model.PersonAddressModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
@@ -14,7 +13,7 @@ import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-public class OpenmrsExtractPersonAddressITest extends OpenmrsExtractEndpointITest<PersonAddress, PersonAddressModel> {
+public class OpenmrsExtractPersonAddressITest extends BaseOpenmrsExtractEndpointITest {
 	
 	private static final String UUID = "uuid_person_address";
 	
@@ -32,8 +31,9 @@ public class OpenmrsExtractPersonAddressITest extends OpenmrsExtractEndpointITes
 	private String getExpectedJson() {
 		return "{" + "\"tableToSyncModelClass\":\"" + PersonAddressModel.class.getName() + "\"," + "\"model\":{"
 		        + "\"uuid\":\"" + UUID + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(user_uuid)\","
-		        + "\"dateCreated\":\"2005-01-01T00:00:00Z\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
-		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
-		        + "\"address\":{" + "\"address1\":\"chemin perdu\"," + "\"cityVillage\":\"ville\"" + "}" + "}" + "}";
+		        + "\"dateCreated\":\"2005-01-01T00:00:00" + TZ_OFFSET + "\"," + "\"changedByUuid\":null,"
+		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
+		        + "\"voidReason\":null," + "\"address\":{" + "\"address1\":\"chemin perdu\"," + "\"cityVillage\":\"ville\""
+		        + "}" + "}" + "}";
 	}
 }

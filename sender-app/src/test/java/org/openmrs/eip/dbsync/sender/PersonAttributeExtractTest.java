@@ -11,7 +11,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openmrs.eip.dbsync.entity.PersonAttribute;
 import org.openmrs.eip.dbsync.entity.light.PatientLight;
 import org.openmrs.eip.dbsync.entity.light.PersonAttributeTypeLight;
 import org.openmrs.eip.dbsync.entity.light.UserLight;
@@ -19,7 +18,7 @@ import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.PersonAttributeModel;
 import org.openmrs.eip.dbsync.model.SyncModel;
 
-public class PersonAttributeExtractTest extends OpenmrsExtractEndpointITest<PersonAttribute, PersonAttributeModel> {
+public class PersonAttributeExtractTest extends BaseOpenmrsExtractEndpointITest {
 	
 	@Test
 	public void extract_shouldConvertTheValueToAUuidIfFormatIsAnOpenmrsType() throws JSONException {
@@ -64,10 +63,10 @@ public class PersonAttributeExtractTest extends OpenmrsExtractEndpointITest<Pers
 		return "{\"tableToSyncModelClass\":\"" + PersonAttributeModel.class.getName() + "\"," + "\"model\":{" + "\"uuid\":\""
 		        + attribUuid + "\"," + "\"creatorUuid\":\"" + UserLight.class.getName() + "(user_uuid)\","
 		        + "\"personUuid\":\"" + PatientLight.class.getName() + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\","
-		        + "\"dateCreated\":\"2021-06-23T00:00:00Z\"," + "\"changedByUuid\":null," + "\"dateChanged\":null,"
-		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
-		        + "\"personAttributeTypeUuid\":\"" + PersonAttributeTypeLight.class.getName() + "(" + attributeTypeUuid
-		        + ")\",\"value\":\"" + value + "\"}}";
+		        + "\"dateCreated\":\"2021-06-23T00:00:00" + TZ_OFFSET + "\"," + "\"changedByUuid\":null,"
+		        + "\"dateChanged\":null," + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null,"
+		        + "\"voidReason\":null," + "\"personAttributeTypeUuid\":\"" + PersonAttributeTypeLight.class.getName() + "("
+		        + attributeTypeUuid + ")\",\"value\":\"" + value + "\"}}";
 	}
 	
 }
