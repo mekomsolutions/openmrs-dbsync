@@ -13,13 +13,11 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = "camel.springboot.xml-routes=classpath*:camel/" + ReceiverClearDbCacheRouteTest.ROUTE_ID
         + ".xml")
 @TestPropertySource(properties = "logging.level." + ReceiverClearDbCacheRouteTest.ROUTE_ID + "=DEBUG")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ReceiverClearDbCacheRouteTest extends BaseReceiverRouteTest {
 	
 	protected static final String ROUTE_ID = "receiver-clear-db-cache";
@@ -56,8 +54,23 @@ public class ReceiverClearDbCacheRouteTest extends BaseReceiverRouteTest {
 	
 	@AfterEach
 	public void tearDown() throws Exception {
-		mockProcessor.assertIsSatisfied();
-		mockHttpEndpoint.assertIsSatisfied();
+		try {
+			mockProcessor.assertIsSatisfied();
+			mockHttpEndpoint.assertIsSatisfied();
+		}
+		finally {
+			advise(ROUTE_ID, new AdviceWithRouteBuilder() {
+				
+				@Override
+				public void configure() {
+					//weaveByType(ProcessDefinition.class).replace().to(mockProcessor);
+					//weaveById("update-search-index").replace().to(mockHttpEndpoint);
+					weaveByToUri("mock://processor").replace().process("oauthProcessor");
+					weaveByToUri("mock://http").replace().to("{{openmrs.baseUrl}}/ws/rest/v1/cleardbcache")
+					        .id("clear-db-cache");
+				}
+			});
+		}
 	}
 	
 	@Test
