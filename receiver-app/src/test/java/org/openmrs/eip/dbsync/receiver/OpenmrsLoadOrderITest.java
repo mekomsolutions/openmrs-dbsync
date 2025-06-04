@@ -37,7 +37,7 @@ public class OpenmrsLoadOrderITest extends OpenmrsLoadEndpointITest<Order> {
 		        + "\"voided\":false," + "\"voidedByUuid\":null," + "\"dateVoided\":null," + "\"voidReason\":null,"
 		        + "\"orderTypeUuid\":\"" + OrderTypeLight.class.getName() + "(2e93d0cc-6534-48ed-bebc-4aeeda9471a5)\","
 		        + "\"conceptUuid\":\"" + ConceptLight.class.getName() + "(1e279794-76e9-11e9-9cd8-0242ac1c111f)\","
-		        + "\"ordererUuid\":\"" + ProviderLight.class.getName() + "(2b3b12d1-5c4f-415f-871b-b98a22137606)\","
+		        + "\"ordererUuid\":\"" + ProviderLight.class.getName() + "(1f659794-76e9-11e9-8cf7-0242ac1c122e)\","
 		        + "\"encounterUuid\":\"" + EncounterLight.class.getName() + "(1a859794-76e9-11e9-8cf7-0242ac1c166e)\","
 		        + "\"patientUuid\":\"" + PatientLight.class.getName() + "(ed279794-76e9-11e9-8cd9-0242ac1c000b)\","
 		        + "\"careSettingUuid\":\"" + CareSettingLight.class.getName() + "(638bcfc0-360a-44a3-9539-e8718cd6e4d8)\","
