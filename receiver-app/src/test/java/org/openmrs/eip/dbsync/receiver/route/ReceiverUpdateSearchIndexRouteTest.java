@@ -30,10 +30,16 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 	
 	public static final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
 	
-	@EndpointInject("mock:http")
+	public static final String UPDATE_ENDPOINT_ID = "update-search-index";
+	
+	public static final String MOCK_PROCESSOR_ENDPOINT = "mock://processor";
+	
+	public static final String MOCK_HTTP_ENDPOINT = "mock://http";
+	
+	@EndpointInject(MOCK_HTTP_ENDPOINT)
 	private MockEndpoint mockHttpEndpoint;
 	
-	@EndpointInject("mock:processor")
+	@EndpointInject(MOCK_PROCESSOR_ENDPOINT)
 	private MockEndpoint mockProcessor;
 	
 	@BeforeEach
@@ -46,7 +52,7 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 			@Override
 			public void configure() {
 				weaveByType(ProcessDefinition.class).replace().to(mockProcessor);
-				weaveById("update-search-index").replace().to(mockHttpEndpoint);
+				weaveById(UPDATE_ENDPOINT_ID).replace().to(mockHttpEndpoint);
 			}
 		});
 		
@@ -59,15 +65,14 @@ public class ReceiverUpdateSearchIndexRouteTest extends BaseReceiverRouteTest {
 			mockHttpEndpoint.assertIsSatisfied();
 		}
 		finally {
+			//Drop the advice
 			advise(ROUTE_ID, new AdviceWithRouteBuilder() {
 				
 				@Override
 				public void configure() {
-					//weaveByType(ProcessDefinition.class).replace().to(mockProcessor);
-					//weaveById("update-search-index").replace().to(mockHttpEndpoint);
-					weaveByToUri("mock://processor").replace().process("oauthProcessor");
-					weaveByToUri("mock://http").replace().to("{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate")
-					        .id("update-search-index");
+					weaveByToUri(MOCK_PROCESSOR_ENDPOINT).replace().process("oauthProcessor");
+					weaveByToUri(MOCK_HTTP_ENDPOINT).replace().to("{{openmrs.baseUrl}}/ws/rest/v1/searchindexupdate")
+					        .id(UPDATE_ENDPOINT_ID);
 				}
 			});
 		}
