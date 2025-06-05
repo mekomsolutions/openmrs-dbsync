@@ -12,9 +12,14 @@ import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(transactionManager = MGT_TX_MGR_NAME)
+@TestExecutionListeners(TransactionalTestExecutionListener.class)
 @Sql(scripts = "classpath:mgt_receiver_synced_msg.sql", config = @SqlConfig(dataSource = MGT_DATASOURCE_NAME, transactionManager = MGT_TX_MGR_NAME))
 public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 	
@@ -88,6 +93,31 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		assertEquals(2, msgs.size());
 		assertEquals(1l, msgs.get(0).getId().longValue());
 		assertEquals(2l, msgs.get(1).getId().longValue());
+	}
+	
+	@Test
+	public void getMaxId_shouldReturnTheMaximumId() {
+		assertEquals(9l, repo.getMaxId().longValue());
+	}
+	
+	@Test
+	public void markAsEvictedFromCache_shouldUpdatedAllSuccessfulRowsForCachedEntitiesUpToMaxId() {
+		final Pageable page = Pageable.ofSize(Long.valueOf(repo.count()).intValue());
+		assertEquals(3, repo.getBatchOfMessagesForEviction(page).size());
+		
+		repo.markAsEvictedFromCache(4l);
+		
+		assertEquals(2, repo.getBatchOfMessagesForEviction(page).size());
+	}
+	
+	@Test
+	public void markAsReIndexed_shouldUpdatedAllSuccessfulRowsForCachedEntitiesUpToMaxId() {
+		final Pageable page = Pageable.ofSize(Long.valueOf(repo.count()).intValue());
+		assertEquals(3, repo.getBatchOfMessagesForIndexing(page).size());
+		
+		repo.markAsReIndexed(7l);
+		
+		assertEquals(2, repo.getBatchOfMessagesForIndexing(page).size());
 	}
 	
 }
