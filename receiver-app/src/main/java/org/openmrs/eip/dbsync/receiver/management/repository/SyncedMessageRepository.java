@@ -23,7 +23,7 @@ public interface SyncedMessageRepository extends JpaRepository<SyncedMessage, Lo
 	String CACHE_UPDATE_QUERY = "UPDATE SyncedMessage SET evictedFromCache = true WHERE id <= :maxId AND cached = true";
 	
 	String INDEX_UPDATE_QUERY = "UPDATE SyncedMessage SET searchIndexUpdated = true WHERE id <= :maxId AND "
-	        + "indexed = true";
+	        + "indexed = true AND (cached = false OR evictedFromCache = true)";
 	
 	/**
 	 * Gets a batch of messages ordered by ascending date created for cached entities for which

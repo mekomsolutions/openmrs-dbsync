@@ -1,12 +1,14 @@
 package org.openmrs.eip.dbsync.receiver.management.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openmrs.eip.Constants.MGT_DATASOURCE_NAME;
 import static org.openmrs.eip.Constants.MGT_TX_MGR_NAME;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.openmrs.eip.dbsync.TestUtils;
 import org.openmrs.eip.dbsync.receiver.BaseReceiverDbDrivenTest;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,9 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForEviction(page);
 		
 		assertEquals(3, msgs.size());
-		assertEquals(5l, msgs.get(0).getId().longValue());
-		assertEquals(6l, msgs.get(1).getId().longValue());
-		assertEquals(4l, msgs.get(2).getId().longValue());
+		assertEquals(5L, msgs.get(0).getId().longValue());
+		assertEquals(6L, msgs.get(1).getId().longValue());
+		assertEquals(4L, msgs.get(2).getId().longValue());
 	}
 	
 	@Test
@@ -45,8 +47,8 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForEviction(PageRequest.of(0, 2));
 		
 		assertEquals(2, msgs.size());
-		assertEquals(5l, msgs.get(0).getId().longValue());
-		assertEquals(6l, msgs.get(1).getId().longValue());
+		assertEquals(5L, msgs.get(0).getId().longValue());
+		assertEquals(6L, msgs.get(1).getId().longValue());
 	}
 	
 	@Test
@@ -56,9 +58,9 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForIndexing(page);
 		
 		assertEquals(3, msgs.size());
-		assertEquals(8l, msgs.get(0).getId().longValue());
-		assertEquals(9l, msgs.get(1).getId().longValue());
-		assertEquals(7l, msgs.get(2).getId().longValue());
+		assertEquals(8L, msgs.get(0).getId().longValue());
+		assertEquals(9L, msgs.get(1).getId().longValue());
+		assertEquals(7L, msgs.get(2).getId().longValue());
 	}
 	
 	@Test
@@ -68,8 +70,8 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForIndexing(PageRequest.of(0, 2));
 		
 		assertEquals(2, msgs.size());
-		assertEquals(8l, msgs.get(0).getId().longValue());
-		assertEquals(9l, msgs.get(1).getId().longValue());
+		assertEquals(8L, msgs.get(0).getId().longValue());
+		assertEquals(9L, msgs.get(1).getId().longValue());
 	}
 	
 	@Test
@@ -79,9 +81,9 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForRemoval(page);
 		
 		assertEquals(3, msgs.size());
-		assertEquals(1l, msgs.get(0).getId().longValue());
-		assertEquals(2l, msgs.get(1).getId().longValue());
-		assertEquals(3l, msgs.get(2).getId().longValue());
+		assertEquals(1L, msgs.get(0).getId().longValue());
+		assertEquals(2L, msgs.get(1).getId().longValue());
+		assertEquals(3L, msgs.get(2).getId().longValue());
 	}
 	
 	@Test
@@ -91,33 +93,57 @@ public class SyncedMessageRepositoryTest extends BaseReceiverDbDrivenTest {
 		List<SyncedMessage> msgs = repo.getBatchOfMessagesForRemoval(PageRequest.of(0, 2));
 		
 		assertEquals(2, msgs.size());
-		assertEquals(1l, msgs.get(0).getId().longValue());
-		assertEquals(2l, msgs.get(1).getId().longValue());
+		assertEquals(1L, msgs.get(0).getId().longValue());
+		assertEquals(2L, msgs.get(1).getId().longValue());
 	}
 	
 	@Test
 	public void getMaxId_shouldReturnTheMaximumId() {
-		assertEquals(9l, repo.getMaxId().longValue());
+		assertEquals(9L, repo.getMaxId().longValue());
 	}
 	
 	@Test
 	public void markAsEvictedFromCache_shouldUpdatedAllSuccessfulRowsForCachedEntitiesUpToMaxId() {
 		final Pageable page = Pageable.ofSize(Long.valueOf(repo.count()).intValue());
 		assertEquals(3, repo.getBatchOfMessagesForEviction(page).size());
+		List<Long> toEvictMsgIds = repo.findAll().stream().filter(m -> m.isCached() && !m.isEvictedFromCache())
+		        .map(SyncedMessage::getId).toList();
+		assertEquals(3, toEvictMsgIds.size());
+		assertTrue(toEvictMsgIds.contains(4L));
+		assertTrue(toEvictMsgIds.contains(5L));
+		assertTrue(toEvictMsgIds.contains(6L));
 		
-		repo.markAsEvictedFromCache(4l);
+		repo.markAsEvictedFromCache(5L);
 		
-		assertEquals(2, repo.getBatchOfMessagesForEviction(page).size());
+		TestUtils.flushAndStart();
+		assertEquals(1, repo.getBatchOfMessagesForEviction(page).size());
+		toEvictMsgIds = repo.findAll().stream().filter(m -> m.isCached() && !m.isEvictedFromCache())
+		        .map(SyncedMessage::getId).toList();
+		assertEquals(1, toEvictMsgIds.size());
+		assertTrue(toEvictMsgIds.contains(6L));
 	}
 	
 	@Test
-	public void markAsReIndexed_shouldUpdatedAllSuccessfulRowsForCachedEntitiesUpToMaxId() {
+	public void markAsReIndexed_shouldUpdatedAllSuccessfulRowsForIndexedEntitiesUpToMaxId() {
 		final Pageable page = Pageable.ofSize(Long.valueOf(repo.count()).intValue());
 		assertEquals(3, repo.getBatchOfMessagesForIndexing(page).size());
+		List<Long> toIndexMsgIds = repo.findAll().stream().filter(m -> m.isIndexed() && !m.isSearchIndexUpdated())
+		        .map(SyncedMessage::getId).toList();
+		assertEquals(4, toIndexMsgIds.size());
+		assertTrue(toIndexMsgIds.contains(4L));
+		assertTrue(toIndexMsgIds.contains(7L));
+		assertTrue(toIndexMsgIds.contains(8L));
+		assertTrue(toIndexMsgIds.contains(9L));
 		
-		repo.markAsReIndexed(7l);
+		repo.markAsReIndexed(8L);
 		
-		assertEquals(2, repo.getBatchOfMessagesForIndexing(page).size());
+		TestUtils.flushAndStart();
+		assertEquals(1, repo.getBatchOfMessagesForIndexing(page).size());
+		toIndexMsgIds = repo.findAll().stream().filter(m -> m.isIndexed() && !m.isSearchIndexUpdated())
+		        .map(SyncedMessage::getId).toList();
+		assertEquals(2, toIndexMsgIds.size());
+		assertTrue(toIndexMsgIds.contains(4L));
+		assertTrue(toIndexMsgIds.contains(9L));
 	}
 	
 }
