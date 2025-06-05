@@ -24,12 +24,16 @@ import org.openmrs.eip.dbsync.receiver.CacheEvictTask;
 import org.openmrs.eip.dbsync.receiver.CleanerProcessor;
 import org.openmrs.eip.dbsync.receiver.CleanerTask;
 import org.openmrs.eip.dbsync.receiver.LifeCycleHandler;
+import org.openmrs.eip.dbsync.receiver.PatientIndexerTask;
+import org.openmrs.eip.dbsync.receiver.PatientIndexerTaskScheduler;
 import org.openmrs.eip.dbsync.receiver.SearchIndexUpdateProcessor;
 import org.openmrs.eip.dbsync.receiver.SearchIndexUpdateTask;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 public class ReceiverTaskConfig {
 	
 	@Bean
@@ -66,6 +70,11 @@ public class ReceiverTaskConfig {
 	@Bean
 	public CleanerTask cleanerTask(CleanerProcessor processor, SyncedMessageRepository repo) {
 		return new CleanerTask(processor, repo);
+	}
+	
+	@Bean
+	public PatientIndexerTaskScheduler patientIndexerTaskScheduler(PatientIndexerTask patientIndexerTask) {
+		return new PatientIndexerTaskScheduler(patientIndexerTask);
 	}
 	
 	@Bean
