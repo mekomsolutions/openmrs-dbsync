@@ -11,16 +11,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class PatientIndexerTask {
+public class FullIndexerTask {
 	
 	private CamelContext camelContext;
 	
-	public PatientIndexerTask(CamelContext camelContext) {
+	public FullIndexerTask(CamelContext camelContext) {
 		this.camelContext = camelContext;
 	}
 	
 	public void start() {
-		log.info("Running patient indexer task");
+		log.info("Running full indexer task");
 		
 		//TODO Skip task if table is empty i.e. if maxId is null;
 		if (log.isDebugEnabled()) {
@@ -33,7 +33,7 @@ public class PatientIndexerTask {
 		}
 		//TODO
 		
-		log.info("patient indexer task completed successfully");
+		log.info("Full indexer task completed successfully");
 	}
 	
 }

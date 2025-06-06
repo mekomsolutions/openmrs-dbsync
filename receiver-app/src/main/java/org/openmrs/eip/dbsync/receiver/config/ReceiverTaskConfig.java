@@ -23,9 +23,9 @@ import org.openmrs.eip.dbsync.receiver.CacheEvictProcessor;
 import org.openmrs.eip.dbsync.receiver.CacheEvictTask;
 import org.openmrs.eip.dbsync.receiver.CleanerProcessor;
 import org.openmrs.eip.dbsync.receiver.CleanerTask;
+import org.openmrs.eip.dbsync.receiver.FullIndexerTask;
+import org.openmrs.eip.dbsync.receiver.FullIndexerTaskScheduler;
 import org.openmrs.eip.dbsync.receiver.LifeCycleHandler;
-import org.openmrs.eip.dbsync.receiver.PatientIndexerTask;
-import org.openmrs.eip.dbsync.receiver.PatientIndexerTaskScheduler;
 import org.openmrs.eip.dbsync.receiver.SearchIndexUpdateProcessor;
 import org.openmrs.eip.dbsync.receiver.SearchIndexUpdateTask;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
@@ -73,8 +73,8 @@ public class ReceiverTaskConfig {
 	}
 	
 	@Bean
-	public PatientIndexerTaskScheduler patientIndexerTaskScheduler(PatientIndexerTask patientIndexerTask) {
-		return new PatientIndexerTaskScheduler(patientIndexerTask);
+	public FullIndexerTaskScheduler fullIndexerTask(FullIndexerTask fullIndexerTask) {
+		return new FullIndexerTaskScheduler(fullIndexerTask);
 	}
 	
 	@Bean

@@ -41,7 +41,7 @@ public class ReceiverConstants {
 	public static final int MAX_QUEUED_TASK_MULTIPLIER = 2;
 	
 	public static final ObjectMapper MAPPER = new ObjectMapper();
-
-    public static final String PROP_PATIENT_INDEXER_CRON = "patient.indexer.schedule.cron";
+	
+	public static final String PROP_FULL_INDEXER_CRON = "full.indexer.schedule.cron";
 	
 }
