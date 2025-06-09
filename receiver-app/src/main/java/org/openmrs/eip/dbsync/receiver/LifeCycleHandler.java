@@ -39,6 +39,9 @@ public class LifeCycleHandler {
 	@Value("${" + PROP_DELAY_SYNC_MSG_TASKS + ":" + DEFAULT_DELAY + "}")
 	private long delayTasks;
 	
+	@Value("${" + ReceiverConstants.PROP_FULL_INDEXER_CRON + ":-}")
+	private String fullIndexerCron;
+	
 	public LifeCycleHandler(@Qualifier(BEAN_TASK_EXECUTOR) ScheduledThreadPoolExecutor taskExecutor,
 	    @Qualifier(BEAN_QUEUE_EXECUTOR) ThreadPoolExecutor queueExecutor, List<BaseQueueTask> tasks) {
 		this.taskExecutor = taskExecutor;
@@ -52,7 +55,14 @@ public class LifeCycleHandler {
 	public void onStartup() {
 		LOG.info("Starting tasks");
 		
-		tasks.forEach(t -> taskExecutor.scheduleWithFixedDelay(t, initialDelayTasks, delayTasks, MILLISECONDS));
+		for (BaseQueueTask t : tasks) {
+			if (!"-".equals(fullIndexerCron) && (t instanceof CacheEvictTask || t instanceof SearchIndexUpdateTask)) {
+				LOG.info("Full indexer is enabled, auto disabling {}", t.getTaskName());
+				continue;
+			}
+			
+			taskExecutor.scheduleWithFixedDelay(t, initialDelayTasks, delayTasks, MILLISECONDS);
+		}
 	}
 	
 	/**

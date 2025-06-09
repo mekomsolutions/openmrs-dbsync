@@ -73,7 +73,7 @@ public class ReceiverTaskConfig {
 	}
 	
 	@Bean
-	public FullIndexerTaskScheduler fullIndexerTask(FullIndexerTask fullIndexerTask) {
+	public FullIndexerTaskScheduler fullIndexerTaskScheduler(FullIndexerTask fullIndexerTask) {
 		return new FullIndexerTaskScheduler(fullIndexerTask);
 	}
 	

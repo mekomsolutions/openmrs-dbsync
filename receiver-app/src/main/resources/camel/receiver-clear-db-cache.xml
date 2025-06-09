@@ -38,7 +38,15 @@
             <simple>${exchangeProperty.originalBody}</simple>
         </setBody>
 
-        <log message="Removing the entity from OpenMRS DB cache -> ${body}" />
+        <choice>
+            <when>
+                <simple>${body} != null</simple>
+                <log message="Removing the entity from OpenMRS DB cache -> ${body}" />
+            </when>
+            <otherwise>
+                <log message="Clearing OpenMRS DB cache" />
+            </otherwise>
+        </choice>
 
         <setHeader name="Content-Type">
             <constant>application/json</constant>

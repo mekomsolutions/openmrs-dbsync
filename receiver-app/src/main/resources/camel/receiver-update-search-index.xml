@@ -38,7 +38,7 @@
             <simple>${exchangeProperty.originalBody}</simple>
         </setBody>
 
-        <log message="Rebuilding search Index for ${body}" />
+        <log message="Rebuilding search Index with payload -> ${body}" />
 
         <setHeader name="Content-Type">
             <constant>application/json</constant>
