@@ -13,7 +13,9 @@ package org.openmrs.eip.dbsync.receiver.management.service.impl;
 import org.openmrs.eip.dbsync.management.BaseManagementService;
 import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
 import org.openmrs.eip.dbsync.receiver.management.service.ReceiverService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReceiverServiceImpl extends BaseManagementService implements ReceiverService {
 	
 	private SyncedMessageRepository syncedMsgRepo;

@@ -11,9 +11,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
 import org.openmrs.eip.dbsync.receiver.BaseQueueTask;
 import org.openmrs.eip.dbsync.receiver.ReceiverConstants;
-import org.openmrs.eip.dbsync.receiver.management.repository.SyncedMessageRepository;
-import org.openmrs.eip.dbsync.receiver.management.service.ReceiverService;
-import org.openmrs.eip.dbsync.receiver.management.service.impl.ReceiverServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -58,11 +55,6 @@ public class ReceiverConfig {
 	@Bean(ReceiverConstants.BEAN_TASK_EXECUTOR)
 	public ScheduledThreadPoolExecutor getSiteExecutor(List<BaseQueueTask> tasks) {
 		return (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(tasks.size());
-	}
-	
-	@Bean
-	public ReceiverService receiverService(SyncedMessageRepository syncedMsgRepo) {
-		return new ReceiverServiceImpl(syncedMsgRepo);
 	}
 	
 }
