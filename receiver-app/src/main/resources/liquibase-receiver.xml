@@ -959,4 +959,11 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="wluyima" id="20250612-1216">
+        <comment>
+            Changing date_created and date_changed column datatypes to datetime for all tables used to store hashes
+        </comment>
+        <customChange class="org.openmrs.eip.dbsync.receiver.management.ModifyDateDatatypeChangeSet" />
+    </changeSet>
+
 </databaseChangeLog>
