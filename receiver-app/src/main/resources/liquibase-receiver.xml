@@ -959,7 +959,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet author="wluyima" id="20250612-1216">
+    <changeSet author="wluyima" id="20250612-1216" dbms="!h2">
         <comment>
             Changing date_created and date_changed column datatypes to datetime for all tables used to store hashes
         </comment>
