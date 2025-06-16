@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
-import static org.openmrs.eip.dbsync.DbSyncHttpClient.PATH;
+import static org.openmrs.eip.dbsync.OpenMrsHttpClient.PATH;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -24,7 +24,7 @@ import org.mockserver.model.MediaType;
 import org.openmrs.eip.EIPException;
 import org.powermock.reflect.Whitebox;
 
-public class DbSyncHttpClientTest {
+public class OpenMrsHttpClientTest {
 	
 	private static final String HOST = "127.0.0.1";
 	
@@ -40,7 +40,7 @@ public class DbSyncHttpClientTest {
 	
 	private static final String AUTH = "Basic " + getEncoder().encodeToString((USER + ":" + PASSWORD).getBytes());
 	
-	private DbSyncHttpClient client;
+	private OpenMrsHttpClient client;
 	
 	@BeforeAll
 	public static void baseMockServerBackedBeforeAll() {
@@ -50,7 +50,7 @@ public class DbSyncHttpClientTest {
 	
 	@BeforeEach
 	public void setup() {
-		client = new DbSyncHttpClient();
+		client = new OpenMrsHttpClient();
 		Whitebox.setInternalState(client, "baseUrl", URL_PREFIX + mockServer.getPort());
 		Whitebox.setInternalState(client, "username", USER);
 		Whitebox.setInternalState(client, "password", PASSWORD.toCharArray());

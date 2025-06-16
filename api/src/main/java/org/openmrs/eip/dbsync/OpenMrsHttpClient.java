@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * Sends http calls to the OpenMRS instance.
  */
 @Component
-public class DbSyncHttpClient {
+public class OpenMrsHttpClient {
 	
 	protected static final String PATH = "/ws/rest/v1/";
 	

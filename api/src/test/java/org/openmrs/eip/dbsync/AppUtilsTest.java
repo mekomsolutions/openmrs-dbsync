@@ -37,7 +37,7 @@ import jakarta.persistence.ManyToOne;
 public class AppUtilsTest {
 	
 	@Mock
-	private DbSyncHttpClient mockClient;
+	private OpenMrsHttpClient mockClient;
 	
 	@Test
 	public void adjustJpaMappings_shouldAdjustTheJpaMappingsForOpenMrs25() throws Exception {

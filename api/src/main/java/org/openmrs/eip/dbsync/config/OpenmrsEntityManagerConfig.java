@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 
 import org.openmrs.eip.Constants;
 import org.openmrs.eip.dbsync.AppUtils;
-import org.openmrs.eip.dbsync.DbSyncHttpClient;
+import org.openmrs.eip.dbsync.OpenMrsHttpClient;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -31,7 +31,7 @@ public class OpenmrsEntityManagerConfig {
 	@DependsOn(Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
 	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource,
-	                                                            DbSyncHttpClient httpClient)
+	                                                            OpenMrsHttpClient httpClient)
 	    throws Exception {
 		AppUtils.adjustJpaMappings(httpClient);
 		return builder.dataSource(dataSource).packages("org.openmrs.eip.dbsync.entity").persistenceUnit("openmrs").build();

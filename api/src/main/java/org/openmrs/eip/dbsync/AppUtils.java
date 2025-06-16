@@ -24,6 +24,8 @@ public class AppUtils {
 	
 	public static final int EXECUTOR_SHUTDOWN_TIMEOUT = 15;
 	
+	private static boolean skipJpaMappingAdjustment = false;
+	
 	/**
 	 * Shuts down the specified {@link ExecutorService}
 	 * 
@@ -51,7 +53,7 @@ public class AppUtils {
 	 * Adjusts the JPA mappings for persistent classes based on the OpenMRS version, should fail for an
 	 * OpenMRS version that is not supported.
 	 */
-	public static void adjustJpaMappings(DbSyncHttpClient client) throws Exception {
+	public static void adjustJpaMappings(OpenMrsHttpClient client) throws Exception {
 		byte[] response = client.sendGetRequest("systeminformation");
 		final ObjectMapper mapper = new ObjectMapper();
 		Map<String, Map<String, Object>> info = (Map) mapper.readValue(response, Map.class).get("systemInfo");
