@@ -3,13 +3,14 @@ Sender and Receiver applications to sync data between OpenMRS databases.
 
 ## Table Of Contents
 1. [Introduction](#introduction)
-2. [Requirements](#requirements)
+2. [Development Requirements](#development-requirements)
 3. [Assumptions](#assumptions)
 5. [Installation](#installation)
-    1. [JMS Server](#jms-server)
-    2. [Building OpenMRS EIP](#building-openmrs-eip)
-    3. [Receiver](#receiver)
-    4. [Sender](#sender)
+    1. [Requirements](#requirements)
+    3. [JMS Server](#jms-server)
+    4. [Building OpenMRS EIP](#building-openmrs-eip)
+    5. [Receiver](#receiver)
+    6. [Sender](#sender)
 6. [Security](#security)
 7. [DB Sync Technical Overview](#db-sync-technical-overview)
     1. [Sender Overview](#sender-overview)
@@ -27,10 +28,10 @@ provide a way for a sender and receiver applications to exchange sync data.
 Please try to make sure you install the required applications in the order laid out in the installation section i.e.
 JMS Server, receiver and then sender(s).
 
-## Requirements
-- A unix operating system (Never been tested on windows)
+## Development Requirements
+- A unix operating system (Never been tried on windows)
 - [Apache Maven](http://maven.apache.org/install.html)
-- [OpenJDK 8](https://openjdk.java.net/install/)
+- [JDK 17](https://openjdk.java.net/install/)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Assumptions
@@ -79,6 +80,10 @@ database and sender sync application so that it also sync to the centralized dat
 is kept as a read-only instance.
 
 ## Installation
+
+### Requirements
+- OpenMRS 2.5 or 2.6
+- Java 17
 
 ### JMS Server
 In this guide we recommend [ArtemisMQ](https://activemq.apache.org/components/artemis/documentation/) as the preferred
@@ -152,10 +157,15 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
    section from the debezium docs, you will need some of the values you set when configuring the sender application,
    the server-id needs to match the value of `debezium.db.serverId` property in the sender `application.properties` file.
 
-   **DO NOT** set the `expire_logs_days` because you never want your logs to expire just in case the sync application is
-   run for a while due to unforeseen circumstances
+2. #### Auto expiry of binary logs
+   For MySQL 5, **DO NOT** set the `expire_logs_days` because you never want your logs to expire just in case the sync 
+   application is run for a while due to unforeseen circumstances, the default value of 0 ensures this.
+   
+   As of MySQL 8, `expire_logs_days` is deprecated, it was replaced with `binlog_expire_logs_seconds` which defaults to 
+   30 days, we strongly recommend that you increase this value to at least 6 months to avoid prematurely losing older 
+   binary logs.
 
-2. #### Debezium user account
+3. #### Debezium user account
 
    First we need to create a user account the debezium MySQL connector will use to read the sender site's Openmrs MySQl DB.
    This is just a standard practice so that the account is assigned just the privileges it needs to read the MySQL bin-log
@@ -163,7 +173,7 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
    section from the debezium docs, you will need the created user account details when configuring the sender application.
    i.e. `debezium.db.user` and `debezium.db.password` properties in the sender `application.properties` file.
 
-3. #### Installing the Sender Application
+4. #### Installing the Sender Application
     1. Create an installation directory for your sender app.
     2. Copy to the installation directory the `dbsync-sender-app-{VERSION}-exe.jar` file that was generated when you 
        built OpenMRS EIP above, this file should be located in the `dbsync-sender-app/target` folder.

@@ -1,12 +1,11 @@
 package org.openmrs.eip.dbsync.config;
 
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.openmrs.eip.Constants;
+import org.openmrs.eip.dbsync.AppUtils;
+import org.openmrs.eip.dbsync.DbSyncHttpClient;
 import org.openmrs.eip.dbsync.SyncConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
@@ -19,20 +18,22 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import jakarta.persistence.EntityManagerFactory;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "openmrsEntityManager", transactionManagerRef = "openmrsTransactionManager", basePackages = {
         "org.openmrs.eip.dbsync.repository" })
 public class OpenmrsEntityManagerConfig {
 	
-	private static final Logger log = LoggerFactory.getLogger(OpenmrsEntityManagerConfig.class);
-	
 	@Primary
 	@Bean(name = "openmrsEntityManager")
 	@DependsOn(Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public LocalContainerEntityManagerFactoryBean entityManager(final EntityManagerFactoryBuilder builder,
-	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource) {
-		
+	                                                            @Qualifier(SyncConstants.OPENMRS_DATASOURCE_NAME) final DataSource dataSource,
+	                                                            DbSyncHttpClient httpClient)
+	    throws Exception {
+		AppUtils.adjustJpaMappings(httpClient);
 		return builder.dataSource(dataSource).packages("org.openmrs.eip.dbsync.entity").persistenceUnit("openmrs").build();
 	}
 	

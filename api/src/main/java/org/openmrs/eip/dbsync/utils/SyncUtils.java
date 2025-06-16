@@ -204,7 +204,10 @@ public class SyncUtils {
 	 */
 	public static void makeTransient(String property, Class<? extends BaseEntity> entityClass,
 	                                 List<Class<? extends Annotation>> annotationClasses) {
-		log.info("Making {}.{} transient", entityClass.getSimpleName(), property);
+		if (log.isDebugEnabled()) {
+			log.debug("Making {}.{} transient", entityClass.getSimpleName(), property);
+		}
+		
 		Field field = null;
 		Method method = null;
 		Boolean fieldAccessible = null;
