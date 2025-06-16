@@ -2,11 +2,15 @@ package org.openmrs.eip.dbsync.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,9 +18,12 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.eip.Constants;
+import org.openmrs.eip.EIPException;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncContext;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
+import org.openmrs.eip.dbsync.entity.PatientIdentifier;
+import org.openmrs.eip.dbsync.entity.TransientAnnotation;
 import org.openmrs.eip.dbsync.exception.SyncException;
 import org.openmrs.eip.dbsync.model.module.datafilter.EntityBasisMapModel;
 import org.openmrs.eip.dbsync.repository.OpenmrsRepository;
@@ -26,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import jakarta.persistence.Transient;
 
 public class SyncUtils {
 	
@@ -183,6 +192,49 @@ public class SyncUtils {
 		}
 		
 		return (R) repo;
+	}
+	
+	/**
+	 * Transforms the specified property to being transient by removing the specified JPA annotations
+	 * and adding the @{@link Transient} annotation.
+	 * 
+	 * @param property the property name to match
+	 * @param entityClass the class from which to remote the property
+	 * @param annotationClasses a list of JPA annotations to remove
+	 */
+	public static void makeTransient(String property, Class<? extends BaseEntity> entityClass,
+	                                 List<Class<? extends Annotation>> annotationClasses) {
+		log.info("Making {}.{} transient", entityClass.getSimpleName(), property);
+		Field field = null;
+		Method method = null;
+		Boolean fieldAccessible = null;
+		Boolean methodAccessible = null;
+		try {
+			field = PatientIdentifier.class.getDeclaredField("patientProgram");
+			fieldAccessible = field.isAccessible();
+			field.setAccessible(true);
+			method = Field.class.getDeclaredMethod("declaredAnnotations");
+			methodAccessible = method.isAccessible();
+			method.setAccessible(true);
+			Map<Class<? extends Annotation>, Annotation> map = (Map) method.invoke(field);
+			annotationClasses.stream().forEach(a -> map.remove(a));
+			map.put(Transient.class, new TransientAnnotation());
+			if (log.isDebugEnabled()) {
+				log.debug("Successfully made {}.{} transient", entityClass.getSimpleName(), property);
+			}
+		}
+		catch (ReflectiveOperationException e) {
+			throw new EIPException("Failed to make " + entityClass.getSimpleName() + "." + property + " transient", e);
+		}
+		finally {
+			if (fieldAccessible != null) {
+				field.setAccessible(fieldAccessible);
+			}
+			
+			if (methodAccessible != null) {
+				method.setAccessible(methodAccessible);
+			}
+		}
 	}
 	
 }
