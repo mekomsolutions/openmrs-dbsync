@@ -5,8 +5,10 @@ import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ import org.testcontainers.lifecycle.Startables;
 @TestPropertySource(properties = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect")
 @TestPropertySource(properties = "camel.springboot.routes-collector-enabled=false")
 @TestPropertySource(properties = "spring.liquibase.enabled=false")
+@TestPropertySource(properties = "openmrs.baseUrl=")
+@TestPropertySource(properties = "openmrs.username=")
+@TestPropertySource(properties = "openmrs.password=")
 public abstract class BaseDbDrivenTest {
 	
 	private static final Logger log = LoggerFactory.getLogger(BaseDbDrivenTest.class);
@@ -57,12 +62,18 @@ public abstract class BaseDbDrivenTest {
 	protected DataSource openmrsDataSource;
 	
 	@BeforeAll
-	public static void startContainers() {
+	public static void beforeBaseDbBackedTestClass() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", true);
 		mysqlContainer.withEnv("MYSQL_ROOT_PASSWORD", "test");
 		mysqlContainer.withDatabaseName("openmrs");
 		mysqlContainer.withUrlParam("useSSL", "false");
 		Startables.deepStart(Stream.of(mysqlContainer)).join();
 		MYSQL_PORT = mysqlContainer.getMappedPort(3306);
+	}
+	
+	@AfterAll
+	public static void afterBaseDbBackedTestClass() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", false);
 	}
 	
 }

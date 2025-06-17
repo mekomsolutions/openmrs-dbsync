@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.openmrs.eip.dbsync.AppUtils;
 import org.openmrs.eip.dbsync.SyncConstants;
 import org.openmrs.eip.dbsync.SyncTest;
 import org.openmrs.eip.dbsync.SyncTestConstants;
@@ -32,6 +33,7 @@ import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.JsonUtils;
 import org.openmrs.eip.mysql.watcher.management.entity.SenderRetryQueueItem;
 import org.openmrs.eip.mysql.watcher.route.BaseWatcherRouteTest;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -60,8 +62,8 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	protected AbstractEntityService<E, M> service;
 	
 	@BeforeAll
-	public static void startArtemis() {
-		
+	public static void beforeBaseSenderTest() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", true);
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-roles.properties"),
 		    ARTEMIS_ETC + "artemis-roles.properties");
 		artemisContainer.withCopyFileToContainer(MountableFile.forClasspathResource("artemis-users.properties"),
@@ -75,7 +77,8 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	}
 	
 	@AfterAll
-	public static void stopArtemis() throws Exception {
+	public static void afterBaseSenderTest() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", false);
 		//TODO First stop the sender client
 		//activeMQConn.stop();
 		//activeMQConn.close();
@@ -83,7 +86,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	}
 	
 	@BeforeEach
-	public void beforeBaseSenderTest() throws Exception {
+	public void beforeEachBaseSenderTest() throws Exception {
 		if (activeMqConnFactory == null) {
 			activeMqConnFactory = new ActiveMQConnectionFactory("tcp://localhost:" + artemisPort);
 		}
@@ -96,7 +99,7 @@ public abstract class BaseSenderTest<E extends BaseEntity, M extends BaseModel> 
 	}
 	
 	@AfterEach
-	public void checkForErrors() {
+	public void afterEachBaseSenderTest() {
 		List<SenderRetryQueueItem> errors = producerTemplate
 		        .requestBody("jpa:SenderRetryQueueItem?query=SELECT r FROM SenderRetryQueueItem r", null, List.class);
 		Assertions.assertEquals(0, errors.size(), "Found " + errors.size() + " error(s) in the sender error queue");

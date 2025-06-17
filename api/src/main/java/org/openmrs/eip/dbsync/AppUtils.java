@@ -54,17 +54,20 @@ public class AppUtils {
 	 * OpenMRS version that is not supported.
 	 */
 	public static void adjustJpaMappings(OpenMrsHttpClient client) throws Exception {
-		byte[] response = client.sendGetRequest("systeminformation");
-		final ObjectMapper mapper = new ObjectMapper();
-		Map<String, Map<String, Object>> info = (Map) mapper.readValue(response, Map.class).get("systemInfo");
-		final String openmrsFullVersion = info.get("SystemInfo.title.openmrsInformation")
-		        .get("SystemInfo.OpenMRSInstallation.openmrsVersion").toString();
-		if (openmrsFullVersion.startsWith("2.5")) {
-			List<Class<? extends Annotation>> annotations = List.of(JoinColumn.class, ManyToOne.class);
-			SyncUtils.makeTransient("patientProgram", PatientIdentifier.class, annotations);
-		} else if (!openmrsFullVersion.startsWith("2.6")) {
-			final String openmrsVersion = StringUtils.split(openmrsFullVersion, " ")[0];
-			throw new EIPException("DB sync does not support OpenMRS version " + openmrsVersion);
+		//This check is only here to allow tests to run without an OpenMRS instance
+		if (!skipJpaMappingAdjustment) {
+			byte[] response = client.sendGetRequest("systeminformation");
+			final ObjectMapper mapper = new ObjectMapper();
+			Map<String, Map<String, Object>> info = (Map) mapper.readValue(response, Map.class).get("systemInfo");
+			final String openmrsFullVersion = info.get("SystemInfo.title.openmrsInformation")
+			        .get("SystemInfo.OpenMRSInstallation.openmrsVersion").toString();
+			if (openmrsFullVersion.startsWith("2.5")) {
+				List<Class<? extends Annotation>> annotations = List.of(JoinColumn.class, ManyToOne.class);
+				SyncUtils.makeTransient("patientProgram", PatientIdentifier.class, annotations);
+			} else if (!openmrsFullVersion.startsWith("2.6")) {
+				final String openmrsVersion = StringUtils.split(openmrsFullVersion, " ")[0];
+				throw new EIPException("DB sync does not support OpenMRS version " + openmrsVersion);
+			}
 		}
 	}
 	

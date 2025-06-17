@@ -6,15 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.BaseDbBackedCamelTest;
+import org.openmrs.eip.dbsync.AppUtils;
 import org.openmrs.eip.dbsync.entity.BaseEntity;
 import org.openmrs.eip.dbsync.exception.ConflictsFoundException;
 import org.openmrs.eip.dbsync.model.VisitModel;
 import org.openmrs.eip.dbsync.repository.PatientRepository;
 import org.openmrs.eip.dbsync.service.TableToSyncEnum;
 import org.openmrs.eip.dbsync.utils.SyncUtils;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -28,10 +32,23 @@ import org.springframework.test.context.jdbc.SqlConfig;
 @Sql(value = "classpath:mgt_receiver_conflicts.sql", config = @SqlConfig(dataSource = "mngtDataSource", transactionManager = "mngtTransactionManager"))
 @TestPropertySource(properties = "logging.level.org.hibernate.tool.schema.internal.ExceptionHandlerLoggedImpl=ERROR")
 @TestPropertySource(properties = "spring.mngt-datasource.jdbcUrl=jdbc:h2:mem:test;DB_CLOSE_DELAY=30;LOCK_TIMEOUT=10000;MODE=LEGACY")
+@TestPropertySource(properties = "openmrs.baseUrl=")
+@TestPropertySource(properties = "openmrs.username=")
+@TestPropertySource(properties = "openmrs.password=")
 public class HashBatchUpdaterIntegrationTest extends BaseDbBackedCamelTest {
 	
 	@Autowired
 	private PatientRepository patientRepo;
+	
+	@BeforeAll
+	public static void beforeAll() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", true);
+	}
+	
+	@AfterAll
+	public static void afterAll() {
+		Whitebox.setInternalState(AppUtils.class, "skipJpaMappingAdjustment", false);
+	}
 	
 	@Test
 	public void getNextPage_shouldGetTheFirstPageOfEntitiesIfPreviousPageIsNull() {
