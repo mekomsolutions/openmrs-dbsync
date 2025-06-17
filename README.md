@@ -18,6 +18,10 @@ Sender and Receiver applications to sync data between OpenMRS databases.
        1. [Conflict Resolution In The Receiver](#conflict-resolution-in-the-receiver)
        2. [Updating Entity Hashes](#updating-entity-hashes)
        3. [Known Issues](#known-issues)
+8. [Upgrading DB Sync](#upgrading-db-sync)
+   1. [Upgrading to 4.0.0 from 3.1.x](#upgrading-to-400-from-31x)
+   2. [Receiver Upgrade](#receiver-upgrade)
+   3. [Sender Upgrade](#sender-upgrade)
 
 ## Introduction
 This installation guide is for those intending to set up database synchronization between 2 OpenMRS databases.
@@ -295,3 +299,44 @@ The database services (MySQL/PostgreSQL) should use the `endpoint_mode` called `
 
 - endpoint_mode: [https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode](https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode)
 - TCP issue: [https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179](https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179)
+
+# Upgrading DB Sync
+When upgrading, we **STRONGLY** recommend to always start with the receiver application before any senders.
+
+## Upgrading to 4.0.0 from 3.1.x
+
+### Receiver
+The documentation for each property can be found in the [receiver application.properties file](receiver-app/configuration/application.properties)
+
+#### New Properties
+full.indexer.schedule.cron
+
+#### Removed Properties
+spring.mngt-datasource.dialect
+
+### Sender
+The documentation for each property can be found in the [sender application.properties file](sender-app/configuration/application.properties)
+
+#### New Properties
+openmrs.baseUrl
+openmrs.username
+openmrs.password
+
+#### Removed Properties
+spring.mngt-datasource.dialect
+
+## Receiver Upgrade
+1. Stop the receiver OpenMRS instance and any other applications using the database.
+2. Stop the DB sync receiver instance.
+3. Back up both the receiver OpenMRS and management databases.
+4. Replace the receiver's jar file with that of the version you're trying to upgrade to.
+5. Update the receiver's application properties file based on the new and removed properties.
+6. Start the DB sync receiver instance.
+
+## Sender Upgrade
+1. Stop the sender OpenMRS instance and any other applications using the database.
+2. Stop the DB sync sender instance.
+3. Back up both the sender OpenMRS and management databases.
+4. Replace the sender's jar file with that of the version you're trying to upgrade to.
+5. Update the sender's application properties file based on the new and removed properties.
+6. Start the DB sync sender instance.
