@@ -148,7 +148,7 @@ properties that take directory paths as values e.g. log file, complex obs data d
    installation directory.
 6. Launch the receiver app by navigating to its installation directory from the terminal and run the command below.
 ```shell
-java -jar dbsync-receiver-app-{VERSION}-exe.jar
+java -jar dbsync-receiver-{VERSION}-exe.jar
 ```
 Make sure no errors are reported when the application starts, you can find the logs in the configured directory which
 defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to your installation directory.
@@ -192,7 +192,7 @@ defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to y
        is resolved.
     7. Launch the sender app by navigating to its installation directory from the terminal and run the command below.
     ```shell
-    java -jar dbsync-sender-app-{VERSION}-exe.jar
+    java -jar dbsync-sender-{VERSION}-exe.jar
     ```
 Make sure no errors are reported when the application starts, you can find the logs in the configured directory which
 defaults to `{eip.home}/logs/openmrs-eip.log`, where {eip.home} is the path to your installation directory.
@@ -309,34 +309,32 @@ When upgrading, we **STRONGLY** recommend to always start with the receiver appl
 The documentation for each property can be found in the [receiver application.properties file](receiver-app/configuration/application.properties)
 
 #### New Properties
-full.indexer.schedule.cron
-
-#### Removed Properties
-spring.mngt-datasource.dialect
+`full.indexer.schedule.cron`
 
 ### Sender
 The documentation for each property can be found in the [sender application.properties file](sender-app/configuration/application.properties)
 
 #### New Properties
+```
 openmrs.baseUrl
 openmrs.username
 openmrs.password
-
-#### Removed Properties
-spring.mngt-datasource.dialect
+```
 
 ## Receiver Upgrade
 1. Stop the receiver OpenMRS instance and any other applications using the database.
 2. Stop the DB sync receiver instance.
 3. Back up both the receiver OpenMRS and management databases.
 4. Replace the receiver's jar file with that of the version you're trying to upgrade to.
-5. Update the receiver's application properties file based on the new and removed properties.
-6. Start the DB sync receiver instance.
+5. Update the receiver's application properties file based on the new and removed properties in the new version.
+6. Switch to your deployment JRE version to 17
+7. Start the DB sync receiver instance.
 
 ## Sender Upgrade
 1. Stop the sender OpenMRS instance and any other applications using the database.
 2. Stop the DB sync sender instance.
 3. Back up both the sender OpenMRS and management databases.
 4. Replace the sender's jar file with that of the version you're trying to upgrade to.
-5. Update the sender's application properties file based on the new and removed properties.
-6. Start the DB sync sender instance.
+5. Update the sender's application properties file based on the new and removed properties in the new version.
+6. Switch to your deployment JRE version to 17
+7. Start the DB sync sender instance.
