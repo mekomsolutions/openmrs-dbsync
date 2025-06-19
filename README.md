@@ -329,7 +329,20 @@ openmrs.password
 3. Create backups of both the receiver OpenMRS and management databases.
 4. Create backups of the debezium history and offset files.
 5. Replace the receiver's jar file with that of the version you're trying to upgrade to.
-6. Update the receiver's application properties file based on the new and removed properties in the new version.
+6. Update the application properties file and set the properties as below,
+    
+    **Update**
+    ```
+    spring.mngt-datasource.driverClassName=com.mysql.cj.jdbc.Driver
+    spring.mngt-datasource.dialect=
+    ```
+    **Add**
+    ```
+    spring.jpa.open-in-view=false
+    full.indexer.schedule.cron=
+    ```
+    **Note that this `full.indexer.schedule.cron` takes a spring cron expression e.g. `0 0 0 * * *` which runs everyday 
+    at midnight. Please ONLY add the property if you wish to enable scheduled full indexing**
 7. Switch to your deployment JRE version to 17.
 8. Start the DB sync receiver instance.
 
@@ -339,7 +352,21 @@ openmrs.password
 3. Create backups of both the sender OpenMRS and management databases.
 4. Create backups of the debezium history and offset files.
 5. Replace the sender's jar file with that of the version you're trying to upgrade to.
-6. Update the sender's application properties file based on the new and removed properties in the new version.
+6. Update the application properties file and set the properties as below,
+    
+    **Update**
+    ```
+    spring.mngt-datasource.driverClassName=com.mysql.cj.jdbc.Driver
+    spring.mngt-datasource.dialect=
+    ```
+    **Add**
+    ```
+    spring.jpa.open-in-view=false
+    openmrs.baseUrl=
+    openmrs.username=
+    openmrs.password=
+    ```
+    **The properties with the `openmrs` prefix are required**
 7. Switch to your deployment JRE version to 17.
 8. Start the DB sync sender instance.
 
