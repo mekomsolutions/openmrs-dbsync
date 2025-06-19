@@ -22,6 +22,7 @@ Sender and Receiver applications to sync data between OpenMRS databases.
    1. [Upgrading to 4.0.0 from 3.1.x](#upgrading-to-400-from-31x)
    2. [Receiver Upgrade](#receiver-upgrade)
    3. [Sender Upgrade](#sender-upgrade)
+9. [Upgrading OpenMRS](#upgrading-openmrs)
 
 ## Introduction
 This installation guide is for those intending to set up database synchronization between 2 OpenMRS databases.
@@ -88,6 +89,7 @@ is kept as a read-only instance.
 ### Requirements
 - OpenMRS 2.5 or 2.6
 - Java 17
+- MySQL 5.7.x and 8.0.x
 
 ### JMS Server
 In this guide we recommend [ArtemisMQ](https://activemq.apache.org/components/artemis/documentation/) as the preferred
@@ -321,20 +323,42 @@ openmrs.username
 openmrs.password
 ```
 
-## Receiver Upgrade
+### Receiver Upgrade
 1. Stop the receiver OpenMRS instance and any other applications using the database.
 2. Stop the DB sync receiver instance.
-3. Back up both the receiver OpenMRS and management databases.
-4. Replace the receiver's jar file with that of the version you're trying to upgrade to.
-5. Update the receiver's application properties file based on the new and removed properties in the new version.
-6. Switch to your deployment JRE version to 17
-7. Start the DB sync receiver instance.
+3. Create backups of both the receiver OpenMRS and management databases.
+4. Create backups of the debezium history and offset files.
+5. Replace the receiver's jar file with that of the version you're trying to upgrade to.
+6. Update the receiver's application properties file based on the new and removed properties in the new version.
+7. Switch to your deployment JRE version to 17.
+8. Start the DB sync receiver instance.
 
-## Sender Upgrade
+### Sender Upgrade
 1. Stop the sender OpenMRS instance and any other applications using the database.
 2. Stop the DB sync sender instance.
-3. Back up both the sender OpenMRS and management databases.
-4. Replace the sender's jar file with that of the version you're trying to upgrade to.
-5. Update the sender's application properties file based on the new and removed properties in the new version.
-6. Switch to your deployment JRE version to 17
-7. Start the DB sync sender instance.
+3. Create backups of both the sender OpenMRS and management databases.
+4. Create backups of the debezium history and offset files.
+5. Replace the sender's jar file with that of the version you're trying to upgrade to.
+6. Update the sender's application properties file based on the new and removed properties in the new version.
+7. Switch to your deployment JRE version to 17.
+8. Start the DB sync sender instance.
+
+# Upgrading OpenMRS
+DB sync 4.0.0 **ONLY** supports OpenMRS platform 2.5.x and 2.6.x. Note that these are not reference application 
+versions.
+
+## Upgrading to OpenMRS platform 2.6.x from 2.5.x
+You **MUST** start with upgrading the central site before the remote sites.
+
+### Central Site Upgrade
+1. Stop the DB sync receiver application.
+2. Create backups of both the receiver OpenMRS and management databases.
+3. Upgrade central OpenMRS instance.
+4. Start the DB sync receiver instance.
+
+### Remote Site Upgrade
+1. Stop the DB sync sender application.
+2. Create backups of both the sender OpenMRS and management databases.
+3. Upgrade the remote OpenMRS instance.
+4. Start the DB sync sender instance. 
+
