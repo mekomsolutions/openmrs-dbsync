@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <eipVersion>4.1.0</eipVersion>
+        <eipVersion>4.2.0-SNAPSHOT</eipVersion>
         <sprintBootVersion>3.1.4</sprintBootVersion>
         <camelVersion>4.1.0</camelVersion>
         <camelTestSpringVersion>3.21.5</camelTestSpringVersion>
