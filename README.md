@@ -52,6 +52,10 @@ the same time zone. With that said, the application should be able to sync data 
 time zones by converting the datetime field values to the receiver's time zone. This conversion is not done for time ONLY
 fields and date fields with no time component.
 
+It is also assumed that the DB sync applications run on the same timezones as their respective OpenMRS databases, this 
+is so in order to ensure that during sync, datetime values preserve the same instant on the timeline i.e. the number of 
+milliseconds since the EPOCH.
+
 #### OpenMRS Instances are already installed
 This guide doesn't cover installation of the sender and receiver OpenMRS instances and databases, if not, please refer
 to the [OpenMRS](https://openmrs.org) documentation.
@@ -295,6 +299,9 @@ To run the hash updater task, you need to the following.
 
 ### Known Issues
 
+#### Sync For Order Subclasses Fails
+Sync for Order subclasses like TestOrder, DrugOrder and ReferralOrder fails, see [EIP-142](https://openmrs.atlassian.net/browse/EIP-142)
+
 #### Docker Swarm:
 When running DB Sync Sender or Receiver with Docker Swarm, you might face a TCP timeout issue with the database connection after 2 hours.
 The database services (MySQL/PostgreSQL) should use the `endpoint_mode` called `dnsrr` in order to avoid the TCP timeout.
@@ -334,7 +341,6 @@ openmrs.password
     **Update**
     ```
     spring.mngt-datasource.driverClassName=com.mysql.cj.jdbc.Driver
-    spring.mngt-datasource.dialect=
     ```
     **Add**
     ```
@@ -357,7 +363,6 @@ openmrs.password
     **Update**
     ```
     spring.mngt-datasource.driverClassName=com.mysql.cj.jdbc.Driver
-    spring.mngt-datasource.dialect=
     ```
     **Add**
     ```
