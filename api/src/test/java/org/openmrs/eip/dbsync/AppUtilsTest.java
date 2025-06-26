@@ -68,8 +68,21 @@ public class AppUtilsTest {
 	}
 	
 	@Test
+	public void adjustJpaMappings_shouldNotAdjustTheJpaMappingsForOpenMrs27() throws Exception {
+		final String version = "2.7.0 Build e44f55";
+		Map<String, Object> versionInfo = of("SystemInfo.OpenMRSInstallation.openmrsVersion", version);
+		Map<String, Object> systemInfo = of("systemInfo", of("SystemInfo.title.openmrsInformation", versionInfo));
+		byte[] response = new ObjectMapper().writeValueAsBytes(systemInfo);
+		Mockito.when(mockClient.sendGetRequest("systeminformation")).thenReturn(response);
+		try (MockedStatic<SyncUtils> mockSyncUtils = Mockito.mockStatic(SyncUtils.class)) {
+			AppUtils.adjustJpaMappings(mockClient);
+			Mockito.verifyNoInteractions(SyncUtils.class);
+		}
+	}
+	
+	@Test
 	public void adjustJpaMappings_shouldFailForOtherOpenMrsVersions() throws Exception {
-		final String version = "2.7.0";
+		final String version = "2.8.0";
 		final String fullVersion = version + " Build 5c4f33";
 		Map<Object, Object> versionInfo = of("SystemInfo.OpenMRSInstallation.openmrsVersion", fullVersion);
 		Map<Object, Object> systemInfo = of("systemInfo", of("SystemInfo.title.openmrsInformation", versionInfo));

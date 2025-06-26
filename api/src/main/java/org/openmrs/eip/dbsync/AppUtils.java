@@ -64,7 +64,7 @@ public class AppUtils {
 			if (openmrsFullVersion.startsWith("2.5")) {
 				List<Class<? extends Annotation>> annotations = List.of(JoinColumn.class, ManyToOne.class);
 				SyncUtils.makeTransient("patientProgram", PatientIdentifier.class, annotations);
-			} else if (!openmrsFullVersion.startsWith("2.6")) {
+			} else if (!openmrsFullVersion.startsWith("2.6") && !openmrsFullVersion.startsWith("2.7")) {
 				final String openmrsVersion = StringUtils.split(openmrsFullVersion, " ")[0];
 				throw new EIPException("DB sync does not support OpenMRS version " + openmrsVersion);
 			}
