@@ -75,7 +75,9 @@ public final class ReceiverUtils {
 	 * @return synced message or null
 	 */
 	public static SyncedMessage createSyncedMessageFromRetry(ReceiverRetryQueueItem retry) {
-		return createSyncedMessageInternal(retry, retry.getModelClassName());
+		SyncedMessage m = createSyncedMessageInternal(retry, retry.getModelClassName());
+		m.setDbSyncVersion(JsonPath.read(retry.getEntityPayload(), "metadata.dbSyncVersion"));
+		return m;
 	}
 	
 	private static SyncedMessage createSyncedMessageInternal(Object source, String modelClass) {
