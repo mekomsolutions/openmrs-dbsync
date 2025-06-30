@@ -30,7 +30,7 @@ public class FullIndexerTask {
 		log.info("Running full indexer task");
 		
 		if (log.isDebugEnabled()) {
-			log.debug("Capturing max id in the synced queue");
+			log.debug("Capturing max id in the synced message queue");
 		}
 		
 		final Long maxId = service.getSyncedMessageMaxId();
