@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Clears the entire cache and starts an asynchronous rebuild of the search index in the receiver
- * OpenMRS instance.
+ * An instance of this task clears the entire cache and starts an asynchronous rebuild of the search
+ * index in the receiver OpenMRS instance.
  */
 @Slf4j
 @Component
