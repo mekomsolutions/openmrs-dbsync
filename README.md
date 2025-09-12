@@ -303,8 +303,9 @@ To run the hash updater task, you need to the following.
 Sync for Order subclasses like TestOrder, DrugOrder and ReferralOrder fails, see [EIP-142](https://openmrs.atlassian.net/browse/EIP-142)
 
 #### Docker Swarm:
-When running DB Sync Sender or Receiver with Docker Swarm, you might face a TCP timeout issue with the database connection after 2 hours.
-The database services (MySQL/PostgreSQL) should use the `endpoint_mode` called `dnsrr` in order to avoid the TCP timeout.
+When running DB Sync Sender or Receiver with Docker Swarm, you might face a TCP timeout issue with the database 
+connection after 2 hours. The database services (MySQL/PostgreSQL) should use the `endpoint_mode` called `dnsrr` in 
+order to avoid the TCP timeout.
 
 - endpoint_mode: [https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode](https://docs.docker.com/compose/compose-file/compose-file-v3/#endpoint_mode)
 - TCP issue: [https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179](https://forums.docker.com/t/tcp-timeout-that-occurs-only-in-docker-swarm-not-simple-docker-run/58179)
