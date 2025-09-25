@@ -10,7 +10,11 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Base64;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.openmrs.eip.EIPException;
+import org.openmrs.eip.camel.OauthProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,6 +42,15 @@ public class OpenMrsHttpClient {
 	
 	private HttpClient client;
 	
+	private OauthProcessor oauthProcessor;
+	
+	private CamelContext camelContext;
+	
+	public OpenMrsHttpClient(OauthProcessor oauthProcessor, CamelContext camelContext) {
+		this.oauthProcessor = oauthProcessor;
+		this.camelContext = camelContext;
+	}
+	
 	public void initClientIfNecessary() {
 		if (client == null) {
 			client = HttpClient.newHttpClient();
@@ -52,8 +65,7 @@ public class OpenMrsHttpClient {
 	public byte[] sendGetRequest(String resource) throws Exception {
 		initClientIfNecessary();
 		HttpRequest.Builder reqBuilder = HttpRequest.newBuilder();
-		reqBuilder.GET().uri(URI.create(baseUrl + PATH + resource)).setHeader(HttpHeaders.AUTHORIZATION,
-		    "Basic " + new String(auth, UTF_8));
+		reqBuilder.GET().uri(URI.create(baseUrl + PATH + resource)).setHeader(HttpHeaders.AUTHORIZATION, getAuthHeader());
 		
 		HttpResponse<byte[]> response = client.send(reqBuilder.build(), BodyHandlers.ofByteArray());
 		if (response.statusCode() != HttpStatus.OK.value()) {
@@ -66,8 +78,7 @@ public class OpenMrsHttpClient {
 	public void sendPostRequest(String resource, String body, int expectedStatusCode) throws Exception {
 		initClientIfNecessary();
 		HttpRequest.Builder reqBuilder = HttpRequest.newBuilder();
-		reqBuilder.uri(URI.create(baseUrl + PATH + resource)).setHeader(HttpHeaders.AUTHORIZATION,
-		    "Basic " + new String(auth, UTF_8));
+		reqBuilder.uri(URI.create(baseUrl + PATH + resource)).setHeader(HttpHeaders.AUTHORIZATION, getAuthHeader());
 		HttpRequest.BodyPublisher bodyPublisher;
 		if (body != null) {
 			reqBuilder.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -82,6 +93,17 @@ public class OpenMrsHttpClient {
 		if (response.statusCode() != expectedStatusCode) {
 			throw new EIPException("Http POST request to OpenMRS failed with status code " + response.statusCode());
 		}
+	}
+	
+	private String getAuthHeader() throws Exception {
+		Exchange exchange = ExchangeBuilder.anExchange(camelContext).build();
+		oauthProcessor.process(exchange);
+		String oauthHeader = exchange.getMessage().getBody(String.class);
+		if (oauthHeader != null) {
+			return oauthHeader;
+		}
+		
+		return "Basic " + new String(auth, UTF_8);
 	}
 	
 }

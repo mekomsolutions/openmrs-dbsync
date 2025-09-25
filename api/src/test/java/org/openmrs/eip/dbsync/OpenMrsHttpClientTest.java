@@ -12,18 +12,29 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.MediaType;
 import org.openmrs.eip.EIPException;
+import org.openmrs.eip.camel.OauthProcessor;
 import org.powermock.reflect.Whitebox;
 
+@ExtendWith(MockitoExtension.class)
 public class OpenMrsHttpClientTest {
 	
 	private static final String HOST = "127.0.0.1";
@@ -40,6 +51,23 @@ public class OpenMrsHttpClientTest {
 	
 	private static final String AUTH = "Basic " + getEncoder().encodeToString((USER + ":" + PASSWORD).getBytes());
 	
+	private MockedStatic<ExchangeBuilder> mockStaticExchangeBuilder;
+	
+	@Mock
+	private ExchangeBuilder mockExchangeBuilder;
+	
+	@Mock
+	private CamelContext mockCamelContext;
+	
+	@Mock
+	private OauthProcessor mockOauthProcessor;
+	
+	@Mock
+	private Exchange mockExchange;
+	
+	@Mock
+	private Message mockMessage;
+	
 	private OpenMrsHttpClient client;
 	
 	@BeforeAll
@@ -49,8 +77,16 @@ public class OpenMrsHttpClientTest {
 	}
 	
 	@BeforeEach
-	public void setup() {
-		client = new OpenMrsHttpClient();
+	public void setup() throws Exception {
+		mockStaticExchangeBuilder = Mockito.mockStatic(ExchangeBuilder.class);
+		Mockito.when(ExchangeBuilder.anExchange(mockCamelContext)).thenReturn(mockExchangeBuilder);
+		Mockito.when(mockExchangeBuilder.build()).thenReturn(mockExchange);
+		Mockito.doAnswer(i -> {
+			Exchange exchange = (Exchange) i.getArguments()[0];
+			Mockito.when(exchange.getMessage()).thenReturn(mockMessage);
+			return null;
+		}).when(mockOauthProcessor).process(mockExchange);
+		client = new OpenMrsHttpClient(mockOauthProcessor, mockCamelContext);
 		Whitebox.setInternalState(client, "baseUrl", URL_PREFIX + mockServer.getPort());
 		Whitebox.setInternalState(client, "username", USER);
 		Whitebox.setInternalState(client, "password", PASSWORD.toCharArray());
@@ -58,6 +94,7 @@ public class OpenMrsHttpClientTest {
 	
 	@AfterEach
 	public void tearDown() {
+		mockStaticExchangeBuilder.close();
 		mockServerClient.reset();
 	}
 	
@@ -119,6 +156,20 @@ public class OpenMrsHttpClientTest {
 		EIPException e = assertThrows(EIPException.class, () -> client.sendPostRequest(resource, null, 200));
 		
 		assertEquals("Http POST request to OpenMRS failed with status code " + NO_CONTENT.value(), e.getMessage());
+	}
+	
+	@Test
+	public void shouldUseOauthToAuthenticateIfEnabled() throws Exception {
+		final String token = "test-token";
+		final String resource = "person";
+		final String json = "{}";
+		mockServerClient.when(request().withPath(PATH + resource).withMethod("GET").withHeader(AUTHORIZATION, token))
+		        .respond(response().withStatusCode(OK.value()).withBody(json.getBytes(UTF_8)));
+		Mockito.when(mockMessage.getBody(String.class)).thenReturn(token);
+		
+		byte[] data = client.sendGetRequest(resource);
+		
+		Assertions.assertArrayEquals(json.getBytes(UTF_8), data);
 	}
 	
 }
