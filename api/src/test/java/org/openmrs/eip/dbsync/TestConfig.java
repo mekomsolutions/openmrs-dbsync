@@ -1,16 +1,18 @@
 package org.openmrs.eip.dbsync;
 
-import jakarta.jms.ConnectionFactory;
 import javax.sql.DataSource;
 
 import org.apache.camel.ProducerTemplate;
 import org.mockito.Mockito;
 import org.openmrs.eip.Constants;
+import org.openmrs.eip.camel.OauthProcessor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.PropertySource;
+
+import jakarta.jms.ConnectionFactory;
 
 @EnableAutoConfiguration
 @ComponentScan
@@ -36,6 +38,11 @@ public class TestConfig {
 	@Bean(name = Constants.COMMON_PROP_SOURCE_BEAN_NAME)
 	public PropertySource getCommonPropertySource() {
 		return Mockito.mock(PropertySource.class);
+	}
+	
+	@Bean
+	public OauthProcessor getOauthProcessor() {
+		return Mockito.mock(OauthProcessor.class);
 	}
 	
 }
