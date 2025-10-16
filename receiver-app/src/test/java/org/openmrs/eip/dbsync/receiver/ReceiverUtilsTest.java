@@ -12,6 +12,7 @@ package org.openmrs.eip.dbsync.receiver;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.openmrs.eip.dbsync.model.PersonModel;
+import org.openmrs.eip.dbsync.model.VisitModel;
 import org.openmrs.eip.dbsync.receiver.management.entity.ReceiverRetryQueueItem;
 import org.openmrs.eip.dbsync.receiver.management.entity.SyncedMessage;
 
@@ -43,6 +45,13 @@ public class ReceiverUtilsTest {
 		assertFalse(msg.isSearchIndexUpdated());
 		assertTrue(msg.isCached());
 		assertFalse(msg.isEvictedFromCache());
+	}
+	
+	@Test
+	public void createSyncedMessageFromRetry_shouldReturnNullIfTheEntityIsNeitherCachedNorIndexed() {
+		ReceiverRetryQueueItem retry = new ReceiverRetryQueueItem();
+		retry.setModelClassName(VisitModel.class.getName());
+		assertNull(ReceiverUtils.createSyncedMessageFromRetry(retry));
 	}
 	
 }
