@@ -14,14 +14,17 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
 
 public class DbSyncUtils {
 	
-	public static final String URL = "jdbc:mysql://localhost:3305/openmrs_c2c";
+	public static final String DB_NAME = "openmrs_c2c";
+	
+	public static final String URL = "jdbc:mysql://localhost:3305/" + DB_NAME;
 	
 	public static final String USER = "";
 	
@@ -31,7 +34,8 @@ public class DbSyncUtils {
 	public void printRowCount() throws Exception {
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASS)) {
 			DatabaseMetaData metaData = connection.getMetaData();
-			try (ResultSet tables = metaData.getTables(null, null, null, new String[] { "TABLE" })) {
+			Map<String, Integer> tableNames = new TreeMap<>();
+			try (ResultSet tables = metaData.getTables(DB_NAME, null, null, new String[] { "TABLE" })) {
 				while (tables.next()) {
 					String tableName = tables.getString("TABLE_NAME");
 					try (Statement statement = connection.createStatement();
@@ -39,17 +43,16 @@ public class DbSyncUtils {
 						if (resultSet.next()) {
 							int rowCount = resultSet.getInt(1);
 							if (rowCount > 0) {
-								System.out.println(tableName + ", Row Count: " + rowCount);
+								tableNames.put(tableName, rowCount);
+							} else {
+								//System.out.println(tableName);
 							}
-						}
-					}
-					catch (SQLSyntaxErrorException e) {
-						if (!e.getMessage().equalsIgnoreCase("Table 'openmrs_c2c." + tableName + "' doesn't exist")) {
-							throw e;
 						}
 					}
 				}
 			}
+			
+			tableNames.forEach((k, v) -> System.out.println(k + ", Row Count: " + v));
 		}
 	}
 	
